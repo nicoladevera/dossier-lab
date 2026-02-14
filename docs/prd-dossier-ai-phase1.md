@@ -48,7 +48,7 @@ This PRD covers **Phase 1**: establishing the core RAG pipeline, hybrid search, 
 
 ### Onboarding
 - **US-15:** As a new user, I want a guided first-run experience so that I understand how to use the app and see value immediately.
-- **US-16:** As a new user, I want to capture my first source during onboarding so that I experience the full capture-search-ask cycle.
+- **US-16:** As a new user, I want to see a preview of the capture and Q&A features during onboarding so that I understand what the app does before setting up my API key.
 
 ### Authentication & Data
 - **US-17:** As a user, I want to create an account so that my knowledge base is saved and accessible from any device.
@@ -161,13 +161,14 @@ This PRD covers **Phase 1**: establishing the core RAG pipeline, hybrid search, 
 67. The system must securely store API keys (encrypted at rest).
 
 ### 4.11 Onboarding Flow
-68. The system must detect first-time users and present a minimal guided onboarding (3-4 steps).
-69. **Step 1 — Welcome:** Display a one-sentence value prop and prompt the user to add their first source.
-70. **Step 2 — First capture:** Guide the user through a URL paste with an optional suggested article, so they immediately see the ingestion pipeline work.
-71. **Step 3 — First query:** After ingestion completes, prompt the user to ask a question about the article they just added, demonstrating the core capture-search-ask cycle.
-72. **Step 4 — Explore:** Point the user to the knowledge base and evaluation dashboard, then dismiss onboarding.
-73. The system must allow users to skip onboarding at any step.
+68. The system must detect first-time users and present a minimal guided onboarding tour (4 steps).
+69. **Step 1 — Welcome:** Display a one-sentence value prop and invite the user to take a tour of the features.
+70. **Step 2 — Capture Preview:** Show a visual preview of the content capture feature with a mock URL example, explaining how content is extracted and indexed. No actual API calls are made.
+71. **Step 3 — Q&A Preview:** Show a visual preview of the Q&A feature with a mock question and AI-generated answer example. No actual API calls are made.
+72. **Step 4 — Get Started:** Direct the user to configure their API key in Settings as the first step, then highlight the Knowledge Base and Evaluation Dashboard features.
+73. The system must allow users to skip the onboarding tour at any step.
 74. The system must not show onboarding again once completed or skipped.
+75. The onboarding tour must be non-interactive (preview-only) since users have not yet configured their API keys.
 
 ### 4.12 Responsive Design
 75. The system must be usable on desktop browsers (Chrome, Firefox, Safari, Edge).
