@@ -19,12 +19,15 @@ export function WelcomeStep({ onNext, onSkip }: WelcomeStepProps) {
         <p className="text-muted-foreground max-w-md">
           Transform your reading into a searchable, synthesizable knowledge base.
         </p>
+        <p className="text-sm text-muted-foreground max-w-md pt-2">
+          Take a quick tour to see what you can do with Dossier AI.
+        </p>
       </div>
       <div className="flex gap-3">
         <Button variant="outline" onClick={onSkip}>
-          Skip
+          Skip Tour
         </Button>
-        <Button onClick={onNext}>Get Started</Button>
+        <Button onClick={onNext}>Start Tour</Button>
       </div>
     </div>
   );

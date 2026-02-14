@@ -259,10 +259,10 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 10.1 Add an `onboardingCompleted` boolean field to the User model (default `false`); run migration
   - [x] 10.2 Implement first-time user detection: check `onboardingCompleted` on login/dashboard load; if `false`, display the onboarding overlay/modal
   - [x] 10.3 Create the onboarding flow controller (`components/onboarding/onboarding-flow.tsx`): manage step progression (1→2→3→4), skip button on every step, and progress indicator
-  - [x] 10.4 Create Step 1 — Welcome (`components/onboarding/welcome-step.tsx`): display a one-sentence value prop ("Transform your reading into a searchable, synthesizable knowledge base") and a "Get Started" button
-  - [x] 10.5 Create Step 2 — First Capture (`components/onboarding/capture-step.tsx`): guide the user to paste a URL (provide a suggested article URL as a placeholder/default), show the ingestion pipeline working in real-time with loading state
-  - [x] 10.6 Create Step 3 — First Query (`components/onboarding/query-step.tsx`): after ingestion completes, prompt the user to ask a question about the article (suggest an example question), show the Q&A response with citations
-  - [x] 10.7 Create Step 4 — Explore (`components/onboarding/explore-step.tsx`): highlight the Knowledge Base and Evaluation Dashboard in the navigation, provide brief descriptions, and a "Finish" button
+  - [x] 10.4 Create Step 1 — Welcome (`components/onboarding/welcome-step.tsx`): display a one-sentence value prop and a "Start Tour" button to begin the feature preview
+  - [x] 10.5 Create Step 2 — Capture Preview (`components/onboarding/capture-step.tsx`): show a visual mockup of the capture feature with disabled form fields and mock success indicators; no actual API calls (users haven't configured API keys yet)
+  - [x] 10.6 Create Step 3 — Q&A Preview (`components/onboarding/query-step.tsx`): show a visual mockup of the Q&A feature with a mock question/answer example; no actual API calls
+  - [x] 10.7 Create Step 4 — Get Started (`components/onboarding/explore-step.tsx`): emphasize API key setup as the first step with a "Go to Settings" button, then highlight Knowledge Base and Evaluation Dashboard features
   - [x] 10.8 On completion or skip, set `onboardingCompleted = true` via an API call and dismiss the onboarding UI; never show again
   - [x] 10.9 Write tests for onboarding flow logic (step progression, skip behavior, completion persistence)
 
