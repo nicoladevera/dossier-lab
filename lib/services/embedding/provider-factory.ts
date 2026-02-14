@@ -8,18 +8,16 @@ interface OpenAISettingsLike {
   openaiApiKey?: string | null;
 }
 
-function resolveStoredOpenAIKey(storedKey: string): string {
-  try {
-    return decrypt(storedKey);
-  } catch {
-    // Backward compatibility for plaintext keys stored before encryption.
-    return storedKey;
-  }
-}
-
 export function resolveOpenAIApiKey(settings?: OpenAISettingsLike | null): string {
   if (settings?.openaiApiKey) {
-    return resolveStoredOpenAIKey(settings.openaiApiKey);
+    try {
+      return decrypt(settings.openaiApiKey);
+    } catch {
+      console.error(
+        "Failed to decrypt stored OpenAI API key. The user should re-enter their key in Settings."
+      );
+      return "";
+    }
   }
 
   return process.env.OPENAI_API_KEY || "";
