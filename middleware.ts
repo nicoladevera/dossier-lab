@@ -5,13 +5,13 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   const { pathname } = request.nextUrl;
 
-  // Allow auth pages and API routes
-  if (
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/signup") ||
-    pathname.startsWith("/api/auth")
-  ) {
-    // Redirect authenticated users away from auth pages
+  // Always allow NextAuth API routes
+  if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
+
+  // Redirect authenticated users away from login/signup pages
+  if (pathname.startsWith("/login") || pathname.startsWith("/signup")) {
     if (token) {
       return NextResponse.redirect(new URL("/", request.url));
     }
