@@ -5,8 +5,8 @@ A personal intelligence tool that transforms your reading into a searchable, syn
 ## Features
 
 - **Content Capture** -- Ingest URLs (with automatic article extraction), PDFs, Word documents, Markdown, and plain text
-- **Hybrid Search** -- Semantic vector search + PostgreSQL full-text search combined via Reciprocal Rank Fusion (RRF)
-- **Q&A with Citations** -- Ask natural language questions and get streaming answers with clickable, expandable citations
+- **Hybrid Search** -- Semantic vector search (when OpenAI embeddings are configured) + metadata-aware PostgreSQL full-text search with fallback loose matching
+- **Q&A with Citations** -- Ask natural language questions and get streaming answers with source-level citations and expandable evidence passages
 - **Evaluation Dashboard** -- Track retrieval accuracy, groundedness, latency, and cost with LLM-as-judge scoring
 - **Multi-Provider LLM Support** -- Switch between OpenAI (GPT-4o) and Anthropic (Claude) with encrypted API key storage
 
@@ -68,6 +68,7 @@ ENCRYPTION_KEY="your-generated-key"
 Also update the `DATABASE_URL` in `.env` to match (Prisma reads both files).
 
 API keys (OpenAI/Anthropic) are configured per-user in the Settings page, not in environment variables.
+OpenAI is optional: without it, ingestion/search/Q&A use keyword-only retrieval.
 
 ### 4. Set up the database schema
 
@@ -127,7 +128,7 @@ components/
 lib/
   services/
     chunking/          # Text chunking (recursive character splitter)
-    embedding/         # Embedding generation (OpenAI text-embedding-3-small)
+    embedding/         # Embedding generation + provider/key resolution
     encryption/        # AES-256-GCM API key encryption
     evaluation/        # Retrieval accuracy, groundedness, cost tracking
     extraction/        # Content extractors (URL, PDF, Word, Markdown, text)
@@ -145,16 +146,17 @@ prisma/
 
 ```
 Content Capture --> Text Extraction --> Chunking (500 char, 50 overlap)
-    --> Embedding (text-embedding-3-small) --> pgvector Storage
+    --> Optional Embedding (OpenAI text-embedding-3-small) --> Chunk Storage
 ```
 
 ### Search & Q&A Flow
 
 ```
-Query --> Embed Query --> Semantic Search (cosine similarity)
-                     --> Keyword Search (tsvector/tsquery)
-                     --> RRF Fusion (k=60, top 10)
-                     --> LLM Generation (streaming) --> Cited Answer
+Query --> Optional Query Embedding --> Semantic Search (cosine similarity)
+      --> Keyword Search (tsvector/tsquery + metadata + loose fallback)
+      --> RRF Fusion (k=60, top 10)
+      --> Source-level citation grouping
+      --> LLM Generation (streaming, source metadata + passages) --> Cited Answer
 ```
 
 ### Data Isolation

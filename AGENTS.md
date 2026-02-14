@@ -81,11 +81,11 @@ const sources = await prisma.source.findMany({
 Services live in `lib/services/` and follow a provider/strategy pattern:
 
 - **Chunking** (`chunking/`) -- `ChunkingStrategy` interface with `RecursiveCharacterSplitter` implementation
-- **Embedding** (`embedding/`) -- `EmbeddingProvider` interface with OpenAI implementation
+- **Embedding** (`embedding/`) -- `EmbeddingProvider` interface with OpenAI implementation plus key/provider resolution (`provider-factory.ts`)
 - **LLM** (`llm/`) -- `LLMProvider` interface with OpenAI and Anthropic implementations, plus a factory
 - **Extraction** (`extraction/`) -- Content extractors for URL, PDF, Word, Markdown, text
-- **Search** (`search/`) -- Semantic, keyword, and hybrid (RRF) search
-- **Processing** (`processing/`) -- Async pipeline: chunk -> embed -> store
+- **Search** (`search/`) -- Semantic, keyword, and hybrid (RRF) search with metadata-aware keyword fallback
+- **Processing** (`processing/`) -- Async pipeline: chunk -> optional embed -> store
 - **Evaluation** (`evaluation/`) -- Retrieval accuracy, groundedness, cost tracking
 - **Encryption** (`encryption.ts`) -- AES-256-GCM for API key storage
 
@@ -110,6 +110,7 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 - User API keys (OpenAI, Anthropic) are encrypted with AES-256-GCM before storage
 - Server-side `ENCRYPTION_KEY` must be set in environment variables
 - Keys are configured per-user in the Settings page, not in `.env.local`
+- OpenAI key is optional (enables semantic embeddings); without it, retrieval falls back to keyword-only mode
 - Never log or expose decrypted API keys
 
 ### Rate Limiting
@@ -127,8 +128,11 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 | `lib/rate-limit.ts` | Rate limiting middleware |
 | `middleware.ts` | Route protection |
 | `prisma/schema.prisma` | Database schema |
+| `lib/services/embedding/provider-factory.ts` | OpenAI embedding key resolution and optional provider creation |
 | `lib/services/processing/processing-queue.ts` | Document processing pipeline entry point |
 | `lib/services/search/hybrid-search.ts` | Search orchestration (RRF fusion) |
+| `lib/services/search/keyword-search.ts` | Metadata-aware keyword search with loose fallback |
+| `app/api/qa/route.ts` | Q&A orchestration (source-level citations + LLM context assembly) |
 | `lib/services/llm/provider-factory.ts` | LLM provider instantiation |
 | `lib/services/encryption.ts` | API key encrypt/decrypt |
 

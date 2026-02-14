@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { QuestionInput } from "@/components/qa/question-input";
 import { AnswerDisplay } from "@/components/qa/answer-display";
 import { Citation, CitationData } from "@/components/qa/citation";
@@ -18,6 +18,11 @@ export default function QAPage() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [budgetWarning, setBudgetWarning] = useState(false);
   const citationsRef = useRef<HTMLDivElement>(null);
+
+  const uniqueSourceCount = useMemo(
+    () => new Set(citations.map((citation) => citation.sourceId)).size,
+    [citations]
+  );
 
   // Check budget warning
   useEffect(() => {
@@ -198,7 +203,12 @@ export default function QAPage() {
 
       {citations.length > 0 && (
         <div ref={citationsRef} className="space-y-3">
-          <h3 className="text-sm font-medium">Sources</h3>
+          <div>
+            <h3 className="text-sm font-medium">Citations</h3>
+            <p className="text-xs text-muted-foreground">
+              {uniqueSourceCount} source{uniqueSourceCount === 1 ? "" : "s"} cited
+            </p>
+          </div>
           {citations.map((citation) => (
             <div key={citation.chunkId} data-citation-index={citation.index}>
               <Citation citation={citation} />
