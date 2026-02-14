@@ -25,8 +25,9 @@ npx prisma generate       # Regenerate Prisma client
 
 This project uses the **App Router** (not Pages Router). All routes are in `app/`. Route groups:
 
+- `app/page.tsx` -- Root redirect (authenticated users -> `/dashboard`, unauthenticated -> `/login`)
 - `(auth)/` -- Public pages (login, signup)
-- `(main)/` -- Authenticated pages, wrapped in `SessionProvider` with sidebar layout
+- `(main)/` -- Authenticated pages, wrapped in `SessionProvider` with sidebar layout. Dashboard is at `(main)/dashboard/page.tsx`.
 - `api/` -- API route handlers
 
 ### Data Isolation
@@ -55,11 +56,14 @@ const sources = await prisma.source.findMany({
 ### Database
 
 - **ORM:** Prisma 7 with PostgreSQL + pgvector extension
+- **Driver adapter:** Prisma 7 uses the client engine which requires `@prisma/adapter-pg`. The adapter is configured in `lib/db.ts`.
 - **Schema:** `prisma/schema.prisma`
 - **Client singleton:** `lib/db.ts` -- always import `prisma` from here
 - **Generated client location:** `app/generated/prisma` (in .gitignore)
+- **Import path:** Use `@/app/generated/prisma/client` (not `@/app/generated/prisma` -- there is no index file)
 - **Vector columns:** Use `Unsupported("vector(1536)")` in Prisma schema; interact via raw SQL (`$queryRawUnsafe`)
 - After schema changes: run `npx prisma migrate dev` then `npx prisma generate`
+- **Important:** Do not manually create the pgvector extension before running migrations -- it causes drift detection errors. The migration SQL handles extension creation.
 
 ### Key Models
 
@@ -118,7 +122,7 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 
 | File | Purpose |
 |------|---------|
-| `lib/db.ts` | Prisma client singleton |
+| `lib/db.ts` | Prisma client singleton (uses `@prisma/adapter-pg`) |
 | `lib/auth.ts` | Auth config, session helpers |
 | `lib/rate-limit.ts` | Rate limiting middleware |
 | `middleware.ts` | Route protection |

@@ -23,7 +23,14 @@ A personal intelligence tool that transforms your reading into a searchable, syn
 ## Prerequisites
 
 - Node.js 20+
-- PostgreSQL 15+ with the [pgvector](https://github.com/pgvector/pgvector) extension
+- PostgreSQL 17+ with the [pgvector](https://github.com/pgvector/pgvector) extension
+
+On macOS with Homebrew:
+
+```bash
+brew install postgresql@17 pgvector
+brew services start postgresql@17
+```
 
 ## Getting Started
 
@@ -33,39 +40,46 @@ A personal intelligence tool that transforms your reading into a searchable, syn
 npm install
 ```
 
-### 2. Configure environment variables
-
-Copy the example and fill in your values:
+### 2. Create the database
 
 ```bash
-cp .env .env.local
+createdb dossier_ai
 ```
 
-Required variables in `.env.local`:
+Do **not** manually create the pgvector extension -- the Prisma migration handles that.
 
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/dossier_ai"
-NEXTAUTH_SECRET="your-random-secret"
+### 3. Configure environment variables
+
+Create `.env.local` with the following (generate secrets with `openssl`):
+
+```bash
+# Database connection (macOS Homebrew uses your system user, no password)
+DATABASE_URL="postgresql://YOUR_USERNAME:@localhost:5432/dossier_ai"
+
+# Generate with: openssl rand -base64 32
+NEXTAUTH_SECRET="your-generated-secret"
+
 NEXTAUTH_URL="http://localhost:3000"
-ENCRYPTION_KEY="your-32-char-encryption-key"
+
+# Generate with: openssl rand -hex 16
+ENCRYPTION_KEY="your-generated-key"
 ```
+
+Also update the `DATABASE_URL` in `.env` to match (Prisma reads both files).
 
 API keys (OpenAI/Anthropic) are configured per-user in the Settings page, not in environment variables.
 
-### 3. Set up the database
+### 4. Set up the database schema
 
 ```bash
-# Enable pgvector extension (run once in psql)
-psql -d dossier_ai -c "CREATE EXTENSION IF NOT EXISTS vector;"
-
-# Run migrations
+# Run migrations (creates tables, pgvector extension, and indexes)
 npx prisma migrate dev
 
 # Generate Prisma client
 npx prisma generate
 ```
 
-### 4. Start the dev server
+### 5. Start the dev server
 
 ```bash
 npm run dev
@@ -89,8 +103,15 @@ Open [http://localhost:3000](http://localhost:3000) to create an account and get
 
 ```
 app/
+  page.tsx             # Root redirect (authenticated -> /dashboard, otherwise -> /login)
   (auth)/              # Login and signup pages
-  (main)/              # Authenticated pages (dashboard, KB, search, Q&A, eval, settings)
+  (main)/              # Authenticated pages with sidebar layout
+    dashboard/         # Dashboard home page
+    knowledge-base/    # Knowledge base list and detail pages
+    search/            # Search results page
+    qa/                # Q&A interface
+    evaluation/        # Evaluation dashboard
+    settings/          # Settings page
   api/                 # API routes (auth, ingest, search, qa, evaluation, settings, sources)
 components/
   capture/             # Content capture forms (URL, upload, text paste)
