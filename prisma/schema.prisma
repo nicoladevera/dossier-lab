@@ -1,0 +1,196 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../app/generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [pgvector(map: "vector", schema: "public")]
+}
+
+// NextAuth models
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String    @unique
+  emailVerified  DateTime?
+  hashedPassword String?
+  image          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  accounts    Account[]
+  sessions    Session[]
+  sources     Source[]
+  chunks      Chunk[]
+  settings    UserSettings?
+  evaluations Evaluation[]
+  testCases   QueryTestCase[]
+  onboardingCompleted Boolean @default(false)
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Application models
+enum SourceType {
+  URL
+  PDF
+  WORD
+  MARKDOWN
+  TEXT
+}
+
+enum SourceStatus {
+  PROCESSING
+  READY
+  ERROR
+}
+
+model Source {
+  id                 String       @id @default(cuid())
+  userId             String
+  title              String
+  sourceType         SourceType
+  sourceUrl          String?
+  author             String?
+  publicationDate    DateTime?
+  captureDate        DateTime     @default(now())
+  content            String       @db.Text
+  metadata           Json?
+  status             SourceStatus @default(PROCESSING)
+  processingProgress Int          @default(0)
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chunks Chunk[]
+
+  @@index([userId])
+  @@map("sources")
+}
+
+model Chunk {
+  id             String                        @id @default(cuid())
+  sourceId       String
+  userId         String
+  content        String                        @db.Text
+  chunkIndex     Int
+  embedding      Unsupported("vector(1536)")?
+  embeddingModel String?
+  createdAt      DateTime                      @default(now())
+
+  source Source @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([sourceId])
+  @@index([userId])
+  @@map("chunks")
+}
+
+enum LLMProvider {
+  OPENAI
+  ANTHROPIC
+}
+
+model UserSettings {
+  id                 String      @id @default(cuid())
+  userId             String      @unique
+  openaiApiKey       String?
+  anthropicApiKey    String?
+  defaultProvider    LLMProvider @default(OPENAI)
+  defaultModel       String      @default("gpt-4o")
+  dailyCostThreshold Decimal     @default(2.00)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+// Evaluation models
+enum UserFeedback {
+  GOOD
+  BAD
+}
+
+model Evaluation {
+  id                String       @id @default(cuid())
+  userId            String
+  query             String       @db.Text
+  retrievedChunkIds String[]
+  answer            String       @db.Text
+  retrievalScores   Json?
+  groundednessScore Float?
+  userFeedback      UserFeedback?
+  latencyMs         Int
+  tokenUsage        Json?
+  costUsd           Float        @default(0)
+  createdAt         DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("evaluations")
+}
+
+enum QueryType {
+  FACTUAL
+  CROSS_SOURCE
+  SPECIFIC_RECALL
+  NEGATIVE
+}
+
+model QueryTestCase {
+  id              String    @id @default(cuid())
+  userId          String
+  query           String    @db.Text
+  queryType       QueryType
+  goldenSourceIds String[]
+  createdAt       DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("query_test_cases")
+}
