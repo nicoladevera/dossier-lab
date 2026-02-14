@@ -12,6 +12,7 @@ export interface CitationData {
   sourceId: string;
   chunkIndex: number;
   content: string;
+  passageCount: number;
   source: {
     id: string;
     title: string;
@@ -34,9 +35,15 @@ export function Citation({ citation }: CitationProps) {
           <Badge variant="secondary" className="shrink-0">
             [{citation.index}]
           </Badge>
-          <span className="text-sm font-medium truncate">
-            {citation.source?.title || "Unknown source"}
-          </span>
+          <div className="min-w-0">
+            <div className="text-sm font-medium truncate">
+              {citation.source?.title || "Unknown source"}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {citation.passageCount} supporting passage
+              {citation.passageCount === 1 ? "" : "s"}
+            </div>
+          </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           <Link

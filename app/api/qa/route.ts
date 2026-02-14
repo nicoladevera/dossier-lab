@@ -11,6 +11,8 @@ import {
   resolveOpenAIApiKey,
 } from "@/lib/services/embedding/provider-factory";
 
+const SOURCE_CONTEXT_CHUNK_LIMIT = 3;
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getRequiredAuthSession();
@@ -73,21 +75,56 @@ export async function POST(request: NextRequest) {
       select: {
         id: true,
         title: true,
+        author: true,
         sourceType: true,
         sourceUrl: true,
       },
     });
-    const sourceMap = new Map(sources.map((s: { id: string; title: string; sourceType: string; sourceUrl: string | null }) => [s.id, s]));
+    const sourceMap = new Map(
+      sources.map(
+        (s: {
+          id: string;
+          title: string;
+          author: string | null;
+          sourceType: string;
+          sourceUrl: string | null;
+        }) => [s.id, s]
+      )
+    );
 
-    // Build citations metadata
-    const citations = searchResults.map((r, i) => ({
-      index: i + 1,
-      chunkId: r.chunkId,
-      sourceId: r.sourceId,
-      chunkIndex: r.chunkIndex,
-      content: r.content,
-      source: sourceMap.get(r.sourceId) || null,
-    }));
+    // Group retrieval results by source so citations are source-level.
+    const sourceGroups = new Map<
+      string,
+      Array<(typeof searchResults)[number]>
+    >();
+    for (const result of searchResults) {
+      if (!sourceGroups.has(result.sourceId)) {
+        sourceGroups.set(result.sourceId, []);
+      }
+      sourceGroups.get(result.sourceId)!.push(result);
+    }
+
+    const sourceLevelResults = Array.from(sourceGroups.entries()).map(
+      ([sourceId, results]) => ({
+        sourceId,
+        results,
+        source: sourceMap.get(sourceId) || null,
+      })
+    );
+
+    const citations = sourceLevelResults.map((item, i) => {
+      const contextChunks = item.results.slice(0, SOURCE_CONTEXT_CHUNK_LIMIT);
+      const [primaryChunk] = item.results;
+      return {
+        index: i + 1,
+        chunkId: primaryChunk.chunkId,
+        sourceId: item.sourceId,
+        chunkIndex: primaryChunk.chunkIndex,
+        content: contextChunks.map((chunk) => chunk.content).join("\n\n"),
+        source: item.source,
+        passageCount: item.results.length,
+      };
+    });
 
     // Get the appropriate LLM provider
     const provider = settings?.defaultProvider || "OPENAI";
@@ -120,7 +157,19 @@ export async function POST(request: NextRequest) {
     const llmProvider = createLLMProvider(provider, model, llmApiKey);
 
     // Generate answer with streaming
-    const contextTexts = searchResults.map((r) => r.content);
+    const contextTexts = citations.map((citation) => {
+      const source = citation.source;
+      const metadataLines = [
+        `Source title: ${source?.title || "Unknown"}`,
+        source?.author ? `Source author: ${source.author}` : null,
+        source?.sourceType ? `Source type: ${source.sourceType}` : null,
+        source?.sourceUrl ? `Source URL: ${source.sourceUrl}` : null,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      return `${metadataLines}\n\nRelevant passages:\n${citation.content}`;
+    });
     const { stream, getUsage } = await llmProvider.generateAnswer(
       question.trim(),
       contextTexts
