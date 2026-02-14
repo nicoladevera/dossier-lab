@@ -158,3 +158,13 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 2. Add to the factory in `lib/services/llm/provider-factory.ts`
 3. Add to `LLMProvider` enum in Prisma schema
 4. Update the Settings page model dropdown
+
+### After Major Changes
+
+After implementing significant features, refactors, or architectural changes, check and update relevant documentation:
+
+- `docs/tasks-dossier-ai-phase1.md` -- Mark completed tasks, update status
+- `docs/prd-dossier-ai-phase1.md` -- Ensure requirements still reflect reality
+- `AGENTS.md` -- Update if new patterns, models, services, or conventions were introduced
+- `README.md` -- Update if setup steps, architecture, or usage instructions changed
+- `prisma/schema.prisma` comments -- Keep in sync with model changes
