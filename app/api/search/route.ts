@@ -5,6 +5,10 @@ import { hybridSearch } from "@/lib/services/search/hybrid-search";
 import { createOpenAIEmbeddingProvider } from "@/lib/services/embedding/provider-factory";
 import { checkQueryRateLimit } from "@/lib/rate-limit";
 
+const SOURCE_RESULT_LIMIT = 10;
+const CHUNK_RESULT_FETCH_LIMIT = 40;
+const SNIPPET_LENGTH = 200;
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getRequiredAuthSession();
@@ -34,7 +38,12 @@ export async function GET(request: NextRequest) {
     });
     const embeddingProvider = createOpenAIEmbeddingProvider(settings);
 
-    const results = await hybridSearch(query.trim(), userId, embeddingProvider, 10);
+    const results = await hybridSearch(
+      query.trim(),
+      userId,
+      embeddingProvider,
+      CHUNK_RESULT_FETCH_LIMIT
+    );
 
     // Fetch source metadata for results
     const sourceIds = [...new Set(results.map((r) => r.sourceId))];
@@ -52,24 +61,61 @@ export async function GET(request: NextRequest) {
 
     const sourceMap = new Map(sources.map((s: typeof sources[number]) => [s.id, s]));
 
-    const enrichedResults = results.map((r) => {
-      const source = sourceMap.get(r.sourceId);
-      // Create a snippet - first 200 chars of chunk content
-      const snippet =
-        r.content.length > 200
-          ? r.content.slice(0, 200) + "..."
-          : r.content;
+    const groupedBySource = new Map<
+      string,
+      {
+        chunkId: string;
+        sourceId: string;
+        chunkIndex: number;
+        content: string;
+        score: number;
+        matchCount: number;
+      }
+    >();
 
-      return {
-        chunkId: r.chunkId,
-        sourceId: r.sourceId,
-        chunkIndex: r.chunkIndex,
-        content: r.content,
-        snippet,
-        score: r.score,
-        source: source || null,
-      };
-    });
+    for (const result of results) {
+      const existing = groupedBySource.get(result.sourceId);
+      if (!existing) {
+        groupedBySource.set(result.sourceId, {
+          chunkId: result.chunkId,
+          sourceId: result.sourceId,
+          chunkIndex: result.chunkIndex,
+          content: result.content,
+          score: result.score,
+          matchCount: 1,
+        });
+        continue;
+      }
+
+      existing.matchCount += 1;
+      if (result.score > existing.score) {
+        existing.chunkId = result.chunkId;
+        existing.chunkIndex = result.chunkIndex;
+        existing.content = result.content;
+        existing.score = result.score;
+      }
+    }
+
+    const enrichedResults = Array.from(groupedBySource.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, SOURCE_RESULT_LIMIT)
+      .map((result) => {
+        const source = sourceMap.get(result.sourceId);
+        const snippet =
+          result.content.length > SNIPPET_LENGTH
+            ? result.content.slice(0, SNIPPET_LENGTH) + "..."
+            : result.content;
+
+        return {
+          sourceId: result.sourceId,
+          chunkId: result.chunkId,
+          chunkIndex: result.chunkIndex,
+          snippet,
+          score: result.score,
+          matchCount: result.matchCount,
+          source: source || null,
+        };
+      });
 
     return NextResponse.json({ results: enrichedResults, query: query.trim() });
   } catch (error) {
