@@ -2,7 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "./sidebar";
 import { Menu, LogOut, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -20,6 +20,7 @@ export function Navbar() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">
+          <SheetTitle className="sr-only">Navigation menu</SheetTitle>
           <Sidebar />
         </SheetContent>
       </Sheet>
