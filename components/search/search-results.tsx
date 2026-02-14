@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
 
 interface SearchResultItem {
-  chunkId: string;
   sourceId: string;
+  chunkId: string;
   chunkIndex: number;
+  matchCount: number;
   snippet: string;
   score: number;
   source: {
@@ -62,6 +63,9 @@ export function SearchResults({ results, query }: SearchResultsProps) {
                       <Badge variant="secondary" className="text-xs">
                         {result.source.sourceType}
                       </Badge>
+                    )}
+                    {result.matchCount > 1 && (
+                      <span>{result.matchCount} matching passages</span>
                     )}
                     {result.source?.author && (
                       <span>by {result.source.author}</span>

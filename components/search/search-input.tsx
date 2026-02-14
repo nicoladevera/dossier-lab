@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2 } from "lucide-react";
@@ -19,6 +19,10 @@ export function SearchInput({
   placeholder = "Search your knowledge base...",
 }: SearchInputProps) {
   const [query, setQuery] = useState(defaultValue);
+
+  useEffect(() => {
+    setQuery(defaultValue);
+  }, [defaultValue]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

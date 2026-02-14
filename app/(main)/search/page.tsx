@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SearchInput } from "@/components/search/search-input";
 import { SearchResults } from "@/components/search/search-results";
 import { Search } from "lucide-react";
 
 interface SearchResultItem {
-  chunkId: string;
   sourceId: string;
+  chunkId: string;
   chunkIndex: number;
-  snippet: string;
+  matchCount: number;
   score: number;
+  snippet: string;
   source: {
     id: string;
     title: string;
@@ -22,12 +24,17 @@ interface SearchResultItem {
 }
 
 export default function SearchPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [results, setResults] = useState<SearchResultItem[] | null>(null);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const lastExecutedQueryRef = useRef<string | null>(null);
+  const activeRequestIdRef = useRef(0);
 
-  async function handleSearch(searchQuery: string) {
+  const executeSearch = useCallback(async (searchQuery: string) => {
+    const requestId = ++activeRequestIdRef.current;
     setLoading(true);
     setError(null);
     setQuery(searchQuery);
@@ -39,16 +46,53 @@ export default function SearchPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "Search failed");
+        if (requestId === activeRequestIdRef.current) {
+          setError(data.error || "Search failed");
+        }
         return;
       }
 
-      setResults(data.results);
+      if (requestId === activeRequestIdRef.current) {
+        setResults(data.results);
+      }
     } catch {
-      setError("Network error. Please try again.");
+      if (requestId === activeRequestIdRef.current) {
+        setError("Network error. Please try again.");
+      }
     } finally {
-      setLoading(false);
+      if (requestId === activeRequestIdRef.current) {
+        setLoading(false);
+      }
     }
+  }, []);
+
+  const queryFromUrl = (searchParams.get("q") || "").trim();
+
+  useEffect(() => {
+    if (!queryFromUrl) {
+      activeRequestIdRef.current += 1;
+      setResults(null);
+      setQuery("");
+      setError(null);
+      lastExecutedQueryRef.current = null;
+      return;
+    }
+
+    if (lastExecutedQueryRef.current === queryFromUrl) {
+      return;
+    }
+
+    lastExecutedQueryRef.current = queryFromUrl;
+    void executeSearch(queryFromUrl);
+  }, [executeSearch, queryFromUrl]);
+
+  function handleSearch(searchQuery: string) {
+    if (lastExecutedQueryRef.current !== searchQuery) {
+      lastExecutedQueryRef.current = searchQuery;
+      void executeSearch(searchQuery);
+    }
+
+    router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
   }
 
   return (
@@ -60,7 +104,11 @@ export default function SearchPage() {
         </p>
       </div>
 
-      <SearchInput onSearch={handleSearch} loading={loading} />
+      <SearchInput
+        onSearch={handleSearch}
+        loading={loading}
+        defaultValue={queryFromUrl}
+      />
 
       {error && (
         <p className="text-sm text-destructive">{error}</p>
