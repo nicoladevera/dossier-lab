@@ -36,6 +36,22 @@ export function MetricsChart({ data }: MetricsChartProps) {
     groundedness: Math.round(d.groundedness * 100),
   }));
 
+  const tooltipContentStyle = {
+    backgroundColor: "var(--card)",
+    border: "1px solid var(--border)",
+    borderRadius: "var(--radius)",
+    color: "var(--card-foreground)",
+  };
+
+  const tooltipLabelStyle = {
+    color: "var(--card-foreground)",
+    fontWeight: 600,
+  };
+
+  const tooltipItemStyle = {
+    color: "var(--card-foreground)",
+  };
+
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={chartData}>
@@ -56,6 +72,9 @@ export function MetricsChart({ data }: MetricsChartProps) {
           tickFormatter={(value: number) => `${value}%`}
         />
         <Tooltip
+          contentStyle={tooltipContentStyle}
+          labelStyle={tooltipLabelStyle}
+          itemStyle={tooltipItemStyle}
           formatter={(value, name) => [
             `${value}%`,
             name === "retrievalAccuracy"
