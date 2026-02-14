@@ -59,6 +59,10 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
+    if (typeof chunkIndex !== "number" || !Number.isInteger(chunkIndex) || chunkIndex < 0 || chunkIndex > 1000) {
+      return NextResponse.json({ error: "Invalid chunk index" }, { status: 400 });
+    }
+
     const evaluation = await prisma.evaluation.findFirst({
       where: { id: evaluationId, userId },
     });

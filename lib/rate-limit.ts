@@ -8,7 +8,9 @@ interface RateLimitEntry {
   resetAt: number;
 }
 
-// In-memory rate limiter (sufficient for single-instance deployment)
+// In-memory rate limiter — state resets on server restart and is not shared
+// across instances. For multi-instance production deployments, replace with a
+// Redis-backed store (e.g. @upstash/ratelimit or ioredis).
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
 // Clean up expired entries periodically

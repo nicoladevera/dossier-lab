@@ -19,11 +19,9 @@ export async function POST(request: Request) {
       if (response.ok) {
         return NextResponse.json({ valid: true, message: "OpenAI API key is valid" });
       } else {
-        const error = await response.text();
         return NextResponse.json({
           valid: false,
           message: `Invalid OpenAI API key: ${response.status}`,
-          details: error,
         });
       }
     }
