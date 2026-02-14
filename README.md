@@ -88,6 +88,59 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to create an account and get started.
 
+## Database Access
+
+### Using Prisma Studio (Recommended)
+
+The easiest way to browse and edit your database:
+
+```bash
+npx prisma studio
+```
+
+This opens a visual database browser at [http://localhost:5555](http://localhost:5555) where you can:
+- Browse all tables and relationships
+- View and edit data with a spreadsheet-like interface
+- Filter and search records
+- Inspect vector embeddings and JSON fields
+
+### Using PostgreSQL CLI
+
+For command-line access:
+
+```bash
+psql dossier_ai
+```
+
+Useful commands:
+
+```sql
+\dt                          -- List all tables
+\d+ chunks                   -- Show chunks table structure (includes vector column)
+\d+ sources                  -- Show sources table structure
+
+SELECT COUNT(*) FROM users;  -- Count users
+SELECT title, source_type FROM sources;  -- List all captured sources
+SELECT content FROM chunks WHERE source_id = 'abc123';  -- View chunks for a source
+
+\q                          -- Quit
+```
+
+### First-time Setup (macOS)
+
+If you get `psql: command not found`, add PostgreSQL to your PATH:
+
+```bash
+echo 'export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Then verify:
+
+```bash
+psql --version  # Should show PostgreSQL 17.x
+```
+
 ## Scripts
 
 | Command | Description |
