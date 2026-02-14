@@ -33,6 +33,7 @@ describe("extractFromUrl", () => {
     expect(result.data).toBeDefined();
     expect(result.data!.title).toBeTruthy();
     expect(result.data!.content).toBeTruthy();
+    expect(result.data!.content).not.toContain("<");
   });
 
   it("should return error for failed HTTP requests", async () => {

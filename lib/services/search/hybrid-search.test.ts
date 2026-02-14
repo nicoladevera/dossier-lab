@@ -1,8 +1,16 @@
 // Mock dependencies that import prisma
 jest.mock("@/lib/db", () => ({ prisma: {} }));
 jest.mock("@/lib/services/embedding/embedding-service", () => ({}));
+jest.mock("./semantic-search", () => ({
+  semanticSearch: jest.fn(),
+}));
+jest.mock("./keyword-search", () => ({
+  keywordSearch: jest.fn(),
+}));
 
-import { reciprocalRankFusion } from "./hybrid-search";
+import { hybridSearch, reciprocalRankFusion } from "./hybrid-search";
+import { semanticSearch } from "./semantic-search";
+import { keywordSearch } from "./keyword-search";
 
 describe("reciprocalRankFusion", () => {
   const makeResult = (id: string, sourceId = "src1", chunkIndex = 0) => ({
@@ -71,5 +79,36 @@ describe("reciprocalRankFusion", () => {
     expect(results[0].sourceId).toBe("src-123");
     expect(results[0].chunkIndex).toBe(5);
     expect(results[0].content).toBe("Content for a");
+  });
+});
+
+describe("hybridSearch", () => {
+  const semanticSearchMock = semanticSearch as jest.MockedFunction<
+    typeof semanticSearch
+  >;
+  const keywordSearchMock = keywordSearch as jest.MockedFunction<
+    typeof keywordSearch
+  >;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("uses keyword search only when embedding provider is not configured", async () => {
+    keywordSearchMock.mockResolvedValue([
+      {
+        chunkId: "kw1",
+        sourceId: "src1",
+        content: "Keyword only",
+        chunkIndex: 0,
+        score: 1,
+      },
+    ]);
+
+    const results = await hybridSearch("test", "user-1", null, 10);
+
+    expect(semanticSearchMock).not.toHaveBeenCalled();
+    expect(keywordSearchMock).toHaveBeenCalledWith("test", "user-1", 20);
+    expect(results[0].chunkId).toBe("kw1");
   });
 });

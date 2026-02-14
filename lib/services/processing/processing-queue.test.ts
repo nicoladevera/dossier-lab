@@ -135,4 +135,20 @@ describe("processSource", () => {
     expect(progressValues).toContain(70);
     expect(progressValues).toContain(100);
   });
+
+  it("should process and store chunks without embeddings when no provider is configured", async () => {
+    await processSource("source-1", {
+      chunkingStrategy: mockChunkingStrategy,
+    });
+
+    expect(prisma.$executeRawUnsafe).toHaveBeenCalledWith(
+      expect.any(String),
+      "source-1",
+      "user-1",
+      "chunk 1",
+      0,
+      null,
+      null
+    );
+  });
 });

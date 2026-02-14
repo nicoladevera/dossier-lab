@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRequiredAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { hybridSearch } from "@/lib/services/search/hybrid-search";
-import { OpenAIEmbeddingProvider } from "@/lib/services/embedding/embedding-service";
+import { createOpenAIEmbeddingProvider } from "@/lib/services/embedding/provider-factory";
 import { checkQueryRateLimit } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
@@ -32,8 +32,7 @@ export async function GET(request: NextRequest) {
     const settings = await prisma.userSettings.findUnique({
       where: { userId },
     });
-    const apiKey = settings?.openaiApiKey || process.env.OPENAI_API_KEY || "";
-    const embeddingProvider = new OpenAIEmbeddingProvider(apiKey);
+    const embeddingProvider = createOpenAIEmbeddingProvider(settings);
 
     const results = await hybridSearch(query.trim(), userId, embeddingProvider, 10);
 
