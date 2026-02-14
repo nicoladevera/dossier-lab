@@ -1,6 +1,6 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { Navbar } from "@/components/layout/navbar";
-import { SessionProvider } from "@/components/session-provider";
+import { SessionProvider } from "@/components/providers/session-provider";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
