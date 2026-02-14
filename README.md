@@ -6,7 +6,7 @@ A personal intelligence tool that transforms your reading into a searchable, syn
 
 - **Content Capture** -- Ingest URLs (with automatic article extraction), PDFs, Word documents, Markdown, and plain text
 - **Hybrid Search** -- Semantic vector search (when OpenAI embeddings are configured) + metadata-aware PostgreSQL full-text search with fallback loose matching
-- **Q&A with Citations** -- Ask natural language questions and get streaming answers with source-level citations and expandable evidence passages
+- **Q&A with Citations** -- Ask natural language questions and get streaming answers with source-level citations, expandable evidence passages, and markdown-style rendering (headings/lists/emphasis/links/code blocks)
 - **Evaluation Dashboard** -- Track retrieval accuracy, groundedness, latency, and cost with LLM-as-judge scoring
 - **Multi-Provider LLM Support** -- Switch between OpenAI (GPT-4o) and Anthropic (Claude) with encrypted API key storage
 

@@ -20,6 +20,7 @@ export class OpenAIProvider implements LLMProvider {
       options?.systemPrompt ||
       "You are a helpful research assistant. Answer the user's question based on the provided context. " +
         "Cite your sources using [1], [2], etc. notation corresponding to the context passages provided. " +
+        "Use Markdown formatting for structure (headings, bullet/numbered lists, emphasis) when helpful. " +
         "If the context does not contain relevant information, say so clearly.";
 
     const contextBlock = context
