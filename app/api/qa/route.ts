@@ -2,11 +2,14 @@ import { NextRequest } from "next/server";
 import { getRequiredAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { hybridSearch } from "@/lib/services/search/hybrid-search";
-import { OpenAIEmbeddingProvider } from "@/lib/services/embedding/embedding-service";
 import { createLLMProvider } from "@/lib/services/llm/provider-factory";
 import { decrypt } from "@/lib/services/encryption";
 import { calculateCost } from "@/lib/services/evaluation/cost-tracker";
 import { checkQueryRateLimit } from "@/lib/rate-limit";
+import {
+  createOpenAIEmbeddingProvider,
+  resolveOpenAIApiKey,
+} from "@/lib/services/embedding/provider-factory";
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,12 +39,8 @@ export async function POST(request: NextRequest) {
       where: { userId },
     });
 
-    const embeddingApiKey =
-      (settings?.openaiApiKey ? decrypt(settings.openaiApiKey) : null) ||
-      process.env.OPENAI_API_KEY ||
-      "";
-
-    const embeddingProvider = new OpenAIEmbeddingProvider(embeddingApiKey);
+    const embeddingApiKey = resolveOpenAIApiKey(settings);
+    const embeddingProvider = createOpenAIEmbeddingProvider(settings);
 
     // Retrieve relevant chunks
     const startTime = Date.now();

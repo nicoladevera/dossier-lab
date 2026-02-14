@@ -18,6 +18,14 @@ export interface UrlExtractionResult {
 
 const PARTIAL_CONTENT_THRESHOLD = 200;
 
+function normalizeTextContent(text: string): string {
+  return text
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export async function extractFromUrl(url: string): Promise<UrlExtractionResult> {
   let html: string;
   try {
@@ -62,7 +70,7 @@ export async function extractFromUrl(url: string): Promise<UrlExtractionResult> 
       };
     }
 
-    const textContent = article.textContent.trim();
+    const textContent = normalizeTextContent(article.textContent);
 
     if (textContent.length < PARTIAL_CONTENT_THRESHOLD) {
       return {
@@ -73,7 +81,7 @@ export async function extractFromUrl(url: string): Promise<UrlExtractionResult> 
 
     const data: ExtractedContent = {
       title: article.title || new URL(url).hostname,
-      content: article.content || "",
+      content: textContent,
       author: article.byline || undefined,
       excerpt: article.excerpt || undefined,
       siteName: article.siteName || undefined,

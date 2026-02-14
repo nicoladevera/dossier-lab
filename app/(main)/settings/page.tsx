@@ -143,7 +143,7 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>API Keys</CardTitle>
           <CardDescription>
-            Configure your API keys for LLM providers. Keys are encrypted at rest.
+            Configure your provider keys. Anthropic/OpenAI keys are used for answer generation, and OpenAI enables semantic embeddings for retrieval.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -170,6 +170,9 @@ export default function SettingsPage() {
                 Validate
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground">
+              If no OpenAI key is set, ingestion and search use keyword-only retrieval.
+            </p>
           </div>
 
           <div className="space-y-2">

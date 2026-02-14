@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +45,25 @@ interface SourceDetail {
   }>;
 }
 
+const MIN_OVERLAP_TRIM = 20;
+const MAX_OVERLAP_CHECK = 200;
+
+function trimChunkOverlap(previous: string, current: string): string {
+  const maxOverlap = Math.min(
+    previous.length,
+    current.length,
+    MAX_OVERLAP_CHECK
+  );
+
+  for (let len = maxOverlap; len >= MIN_OVERLAP_TRIM; len--) {
+    if (previous.slice(-len) === current.slice(0, len)) {
+      return current.slice(len).trimStart();
+    }
+  }
+
+  return current;
+}
+
 export default function SourceDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -52,6 +71,24 @@ export default function SourceDetailPage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const displayChunks = useMemo(() => {
+    if (!source || source.chunks.length === 0) {
+      return [];
+    }
+
+    const sortedChunks = [...source.chunks].sort(
+      (a, b) => a.chunkIndex - b.chunkIndex
+    );
+
+    return sortedChunks.map((chunk, index) => ({
+      ...chunk,
+      displayContent:
+        index === 0
+          ? chunk.content
+          : trimChunkOverlap(sortedChunks[index - 1].content, chunk.content),
+    }));
+  }, [source]);
 
   useEffect(() => {
     async function fetchSource() {
@@ -214,13 +251,13 @@ export default function SourceDetailPage() {
         <CardContent>
           {source.chunks.length > 0 ? (
             <div className="space-y-4">
-              {source.chunks.map((chunk) => (
+              {displayChunks.map((chunk) => (
                 <div
                   key={chunk.id}
                   id={`chunk-${chunk.chunkIndex}`}
                   className="scroll-mt-20 rounded-md border-l-2 border-transparent p-3 text-sm leading-relaxed target:border-primary target:bg-primary/5"
                 >
-                  <p className="whitespace-pre-wrap">{chunk.content}</p>
+                  <p className="whitespace-pre-wrap">{chunk.displayContent}</p>
                 </div>
               ))}
             </div>

@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { getRequiredAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { hybridSearch } from "@/lib/services/search/hybrid-search";
-import { OpenAIEmbeddingProvider } from "@/lib/services/embedding/embedding-service";
-import { decrypt } from "@/lib/services/encryption";
+import { createOpenAIEmbeddingProvider } from "@/lib/services/embedding/provider-factory";
 
 // GET: List test cases
 export async function GET() {
@@ -86,11 +85,7 @@ async function runTestSuite(userId: string) {
   const settings = await prisma.userSettings.findUnique({
     where: { userId },
   });
-  const apiKey =
-    (settings?.openaiApiKey ? decrypt(settings.openaiApiKey) : null) ||
-    process.env.OPENAI_API_KEY ||
-    "";
-  const embeddingProvider = new OpenAIEmbeddingProvider(apiKey);
+  const embeddingProvider = createOpenAIEmbeddingProvider(settings);
 
   const results = [];
   let passCount = 0;

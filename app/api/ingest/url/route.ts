@@ -3,7 +3,7 @@ import { getRequiredAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { extractFromUrl } from "@/lib/services/extraction/url-extractor";
 import { processSource } from "@/lib/services/processing/processing-queue";
-import { OpenAIEmbeddingProvider } from "@/lib/services/embedding/embedding-service";
+import { createOpenAIEmbeddingProvider } from "@/lib/services/embedding/provider-factory";
 import { checkIngestionRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -68,8 +68,7 @@ export async function POST(request: NextRequest) {
     const settings = await prisma.userSettings.findUnique({
       where: { userId },
     });
-    const apiKey = settings?.openaiApiKey || process.env.OPENAI_API_KEY || "";
-    const embeddingProvider = new OpenAIEmbeddingProvider(apiKey);
+    const embeddingProvider = createOpenAIEmbeddingProvider(settings);
 
     processSource(source.id, { embeddingProvider }).catch((err) =>
       console.error("Processing failed for source", source.id, err)

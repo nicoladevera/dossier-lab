@@ -1,5 +1,5 @@
-import { SearchResult, semanticSearch } from "./semantic-search";
-import { KeywordSearchResult, keywordSearch } from "./keyword-search";
+import { semanticSearch } from "./semantic-search";
+import { keywordSearch } from "./keyword-search";
 import { EmbeddingProvider } from "@/lib/services/embedding/embedding-service";
 
 export interface HybridSearchResult {
@@ -65,13 +65,16 @@ export function reciprocalRankFusion(
 export async function hybridSearch(
   query: string,
   userId: string,
-  embeddingProvider: EmbeddingProvider,
+  embeddingProvider: EmbeddingProvider | null,
   topN: number = 10
 ): Promise<HybridSearchResult[]> {
-  const [semanticResults, keywordResults] = await Promise.all([
-    semanticSearch(query, userId, embeddingProvider, 20),
-    keywordSearch(query, userId, 20),
-  ]);
+  const keywordResults = await keywordSearch(query, userId, 20);
+
+  if (!embeddingProvider) {
+    return reciprocalRankFusion([], keywordResults, 60, topN);
+  }
+
+  const semanticResults = await semanticSearch(query, userId, embeddingProvider, 20);
 
   return reciprocalRankFusion(semanticResults, keywordResults, 60, topN);
 }
