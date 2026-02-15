@@ -7,7 +7,7 @@ A personal intelligence tool that transforms your reading into a searchable, syn
 - **Content Capture** -- Ingest URLs (with automatic article extraction), PDFs, Word documents, Markdown, and plain text
 - **Hybrid Search** -- Semantic vector search (when OpenAI embeddings are configured) + metadata-aware PostgreSQL full-text search with fallback loose matching
 - **Q&A with Citations** -- Ask natural language questions and get streaming answers with source-level citations, expandable evidence passages, and markdown-style rendering (headings/lists/emphasis/links/code blocks)
-- **Evaluation Dashboard** -- Track retrieval accuracy, groundedness, latency, cost, and scoring coverage health; includes one-time backfill support for legacy unscored rows
+- **Evaluation Dashboard** -- Track retrieval accuracy, groundedness, scoring coverage health, operational trends (queries/latency/cost), and one-time backfill support for legacy unscored rows
 - **Multi-Provider LLM Support** -- Switch between OpenAI (GPT-4o) and Anthropic (Claude) with encrypted API key storage
 
 ## Tech Stack
@@ -169,7 +169,7 @@ app/
   api/                 # API routes (auth, ingest, search, qa, evaluation, settings, sources)
 components/
   capture/             # Content capture forms (URL, upload, text paste)
-  evaluation/          # Metrics chart, evaluation health chart, test suite runner
+  evaluation/          # Metrics chart, evaluation health chart, operational chart, test suite runner
   knowledge-base/      # Source list, card, filters
   layout/              # Navbar, sidebar
   onboarding/          # 4-step first-run flow
@@ -183,7 +183,7 @@ lib/
     chunking/          # Text chunking (recursive character splitter)
     embedding/         # Embedding generation + provider/key resolution
     encryption/        # AES-256-GCM API key encryption
-    evaluation/        # Retrieval accuracy, groundedness, cost tracking
+    evaluation/        # Retrieval accuracy, groundedness, scoring coverage, cost tracking
     extraction/        # Content extractors (URL, PDF, Word, Markdown, text)
     llm/               # LLM provider abstraction (OpenAI, Anthropic)
     processing/        # Async document processing queue

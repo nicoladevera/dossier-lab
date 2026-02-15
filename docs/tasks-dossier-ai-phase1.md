@@ -87,7 +87,8 @@
 - `lib/services/evaluation/cost-tracker.test.ts` - Tests for cost tracking
 - `app/(main)/evaluation/page.tsx` - Evaluation dashboard page
 - `components/evaluation/metrics-chart.tsx` - Metrics history chart (7d/30d)
-- `components/evaluation/health-chart.tsx` - Evaluation health chart (query volume + scoring coverage)
+- `components/evaluation/health-chart.tsx` - Evaluation health chart (scoring coverage + missing-score visibility)
+- `components/evaluation/operational-chart.tsx` - Operational trend chart (daily query volume, latency, cost)
 - `components/evaluation/test-suite-runner.tsx` - Test suite runner UI
 
 ### Settings
@@ -247,7 +248,8 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 8.16 Seed an initial test set of 20-30 queries covering factual retrieval (5-8), cross-source synthesis (8-10), specific source recall (5-7), and negative/boundary cases (3-5), each with 2-5 golden source IDs (to be populated once real sources are ingested)
   - [x] 8.17 Ensure Q&A scoring is persisted for new queries and include `evaluationId` in stream completion events for feedback linkage
   - [x] 8.18 Add a batched, user-scoped historical backfill API for evaluations missing `retrievalScores` and/or `groundednessScore`
-  - [x] 8.19 Add evaluation health monitoring (daily query volume + scoring coverage trend) and move backfill action to a muted, low-prominence section
+  - [x] 8.19 Add evaluation health monitoring and move backfill action to a muted, low-prominence section
+  - [x] 8.20 Split evaluation monitoring into focused views: health (coverage-only) and operational trend (daily query volume, latency, and cost)
 
 - [x] 9.0 Settings page (API keys, LLM provider selection)
   - [x] 9.1 Add a `UserSettings` model to Prisma schema with fields: `id`, `userId`, `openaiApiKey` (encrypted string), `anthropicApiKey` (encrypted string), `defaultProvider` (enum: OPENAI, ANTHROPIC), `defaultModel` (string), `dailyCostThreshold` (decimal, default 2.00); run migration
