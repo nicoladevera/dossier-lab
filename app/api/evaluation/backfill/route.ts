@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     });
 
     const provider = settings?.defaultProvider || "OPENAI";
-    const model = settings?.defaultModel || "gpt-4o";
+    const model = settings?.defaultModel || "gpt-5-mini";
     const llmApiKey =
       provider === "ANTHROPIC"
         ? (settings?.anthropicApiKey

@@ -18,9 +18,9 @@ import { Check, X, Loader2 } from "lucide-react";
 
 const MODELS: Record<string, { label: string; value: string }[]> = {
   OPENAI: [
-    { label: "GPT-4o", value: "gpt-4o" },
-    { label: "GPT-4 Turbo", value: "gpt-4-turbo" },
-    { label: "GPT-4o Mini", value: "gpt-4o-mini" },
+    { label: "GPT-5 Mini", value: "gpt-5-mini" },
+    { label: "GPT-5.2", value: "gpt-5.2" },
+    { label: "GPT-4.1 Nano", value: "gpt-4.1-nano" },
   ],
   ANTHROPIC: [
     { label: "Claude Sonnet 4.5", value: "claude-sonnet-4-5-20250929" },
@@ -42,7 +42,7 @@ export default function SettingsPage() {
     openaiApiKey: null,
     anthropicApiKey: null,
     defaultProvider: "OPENAI",
-    defaultModel: "gpt-4o",
+    defaultModel: "gpt-5-mini",
     dailyCostThreshold: 2.0,
   });
   const [openaiKey, setOpenaiKey] = useState("");

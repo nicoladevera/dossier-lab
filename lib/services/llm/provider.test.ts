@@ -4,10 +4,10 @@ import { AnthropicProvider } from "./anthropic-provider";
 
 describe("LLM Provider Factory", () => {
   it("creates an OpenAI provider", () => {
-    const provider = createLLMProvider("OPENAI", "gpt-4o", "test-key");
+    const provider = createLLMProvider("OPENAI", "gpt-5-mini", "test-key");
     expect(provider).toBeInstanceOf(OpenAIProvider);
     expect(provider.providerName).toBe("openai");
-    expect(provider.modelId).toBe("gpt-4o");
+    expect(provider.modelId).toBe("gpt-5-mini");
   });
 
   it("creates an Anthropic provider", () => {
@@ -18,7 +18,7 @@ describe("LLM Provider Factory", () => {
   });
 
   it("handles case-insensitive provider names", () => {
-    const provider = createLLMProvider("openai", "gpt-4o", "test-key");
+    const provider = createLLMProvider("openai", "gpt-5-mini", "test-key");
     expect(provider).toBeInstanceOf(OpenAIProvider);
   });
 
@@ -33,12 +33,12 @@ describe("OpenAI Provider", () => {
   it("has correct provider properties", () => {
     const provider = new OpenAIProvider("test-key");
     expect(provider.providerName).toBe("openai");
-    expect(provider.modelId).toBe("gpt-4o");
+    expect(provider.modelId).toBe("gpt-5-mini");
   });
 
   it("accepts custom model ID", () => {
-    const provider = new OpenAIProvider("test-key", "gpt-4-turbo");
-    expect(provider.modelId).toBe("gpt-4-turbo");
+    const provider = new OpenAIProvider("test-key", "gpt-5.2");
+    expect(provider.modelId).toBe("gpt-5.2");
   });
 });
 

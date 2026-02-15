@@ -1,16 +1,16 @@
 import { calculateCost, getPricing } from "./cost-tracker";
 
 describe("Cost Tracker", () => {
-  it("calculates cost for gpt-4o", () => {
-    const cost = calculateCost("gpt-4o", 1000, 500);
-    // 1000 * 2.5/1M + 500 * 10/1M = 0.0025 + 0.005 = 0.0075
-    expect(cost).toBeCloseTo(0.0075, 6);
+  it("calculates cost for gpt-5-mini", () => {
+    const cost = calculateCost("gpt-5-mini", 1000, 500);
+    // 1000 * 0.25/1M + 500 * 2.0/1M = 0.00025 + 0.001 = 0.00125
+    expect(cost).toBeCloseTo(0.00125, 6);
   });
 
-  it("calculates cost for gpt-4o-mini", () => {
-    const cost = calculateCost("gpt-4o-mini", 1000, 500);
-    // 1000 * 0.15/1M + 500 * 0.6/1M = 0.00015 + 0.0003 = 0.00045
-    expect(cost).toBeCloseTo(0.00045, 6);
+  it("calculates cost for gpt-4.1-nano", () => {
+    const cost = calculateCost("gpt-4.1-nano", 1000, 500);
+    // 1000 * 0.1/1M + 500 * 0.4/1M = 0.0001 + 0.0002 = 0.0003
+    expect(cost).toBeCloseTo(0.0003, 6);
   });
 
   it("calculates cost for claude-sonnet-4-5-20250929", () => {
@@ -27,17 +27,17 @@ describe("Cost Tracker", () => {
 
   it("uses fallback pricing for unknown models", () => {
     const cost = calculateCost("unknown-model", 1000, 500);
-    // Falls back to gpt-4o pricing
-    expect(cost).toBeCloseTo(0.0075, 6);
+    // Falls back to gpt-5-mini pricing
+    expect(cost).toBeCloseTo(0.00125, 6);
   });
 
   it("returns zero for zero tokens", () => {
-    const cost = calculateCost("gpt-4o", 0, 0);
+    const cost = calculateCost("gpt-5-mini", 0, 0);
     expect(cost).toBe(0);
   });
 
   it("returns pricing info", () => {
-    const pricing = getPricing("gpt-4o");
+    const pricing = getPricing("gpt-5-mini");
     expect(pricing).not.toBeNull();
     expect(pricing!.promptPricePerToken).toBeGreaterThan(0);
     expect(pricing!.completionPricePerToken).toBeGreaterThan(0);
