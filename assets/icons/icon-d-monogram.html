@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dossier AI - D Monogram Explorations</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #fafafa;
+      color: #111;
+    }
+
+    .page-header {
+      text-align: center;
+      padding: 56px 24px 40px;
+    }
+
+    .page-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      color: #888;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    /* ── Variant Section ── */
+    .variant-section {
+      max-width: 1100px;
+      margin: 0 auto 56px;
+      padding: 0 24px;
+    }
+
+    .variant-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .variant-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #999;
+    }
+
+    .variant-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .variant-desc {
+      font-size: 13px;
+      color: #777;
+      margin-top: 2px;
+    }
+
+    /* ── Mode Row ── */
+    .mode-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+      margin-bottom: 16px;
+    }
+
+    .mode-panel {
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .mode-panel.light {
+      background: #ffffff;
+    }
+
+    .mode-panel.dark {
+      background: #111111;
+    }
+
+    .mode-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      align-self: flex-start;
+    }
+
+    .mode-label.light-text { color: #bbb; }
+    .mode-label.dark-text { color: #555; }
+
+    /* ── Size Row ── */
+    .size-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .size-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .size-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .size-label.light-text { color: #ccc; }
+    .size-label.dark-text { color: #444; }
+
+    /* ── App Context Section ── */
+    .context-section {
+      max-width: 1100px;
+      margin: 0 auto 56px;
+      padding: 0 24px;
+    }
+
+    .context-header {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #999;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .context-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+    }
+
+    /* Simulated sidebar context */
+    .sidebar-mock {
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-mock.light { background: #fafafa; }
+    .sidebar-mock.dark { background: #1a1a1a; }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      margin-bottom: 16px;
+    }
+
+    .sidebar-brand span {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .sidebar-brand.light span { color: #111; }
+    .sidebar-brand.dark span { color: #f0f0f0; }
+
+    .sidebar-item {
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-item.light { color: #888; }
+    .sidebar-item.dark { color: #666; }
+    .sidebar-item.active.light { background: #111; color: #fff; }
+    .sidebar-item.active.dark { background: #f0f0f0; color: #111; }
+
+    .sidebar-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+    }
+
+    .sidebar-dot.light { background: #999; }
+    .sidebar-dot.dark { background: #555; }
+    .sidebar-item.active .sidebar-dot.light { background: #fff; }
+    .sidebar-item.active .sidebar-dot.dark { background: #111; }
+
+    /* Favicon bar mock */
+    .favicon-section {
+      max-width: 1100px;
+      margin: 0 auto 56px;
+      padding: 0 24px;
+    }
+
+    .browser-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 10px 10px 0 0;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .browser-tab.light {
+      background: #fff;
+      color: #333;
+      border: 1px solid #e0e0e0;
+      border-bottom: none;
+    }
+
+    .browser-tab.dark {
+      background: #222;
+      color: #ccc;
+      border: 1px solid #333;
+      border-bottom: none;
+    }
+
+    .tab-row {
+      display: flex;
+      gap: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+    }
+
+    .tab-panel {
+      flex: 1;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .tab-panel.light { background: #f5f5f5; }
+    .tab-panel.dark { background: #0a0a0a; }
+
+    /* ── Rounded app icon section ── */
+    .app-icon-row {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .app-icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .app-icon-wrap {
+      border-radius: 22%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .app-icon-wrap.light-bg {
+      background: #111;
+    }
+
+    .app-icon-wrap.dark-bg {
+      background: #fff;
+    }
+
+    .app-icon-wrap.white-bg {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+    }
+
+    .app-icon-wrap.black-bg {
+      background: #111;
+      border: 1px solid #333;
+    }
+
+    .app-name {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .app-name.light { color: #888; }
+    .app-name.dark { color: #666; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>D Monogram — Deep Dive</h1>
+  <p>Variations, sizes, and in-context previews across light and dark modes</p>
+</div>
+
+
+<!-- ════════════════════════════════════════════ -->
+<!-- VARIANT A: Original (Circuit Traces) -->
+<!-- ════════════════════════════════════════════ -->
+<div class="variant-section">
+  <div class="variant-header">
+    <span class="variant-label">Variant A</span>
+    <div>
+      <div class="variant-title">Circuit Traces (Original)</div>
+      <div class="variant-desc">The original concept — horizontal data lines that turn at right angles with terminal nodes</div>
+    </div>
+  </div>
+
+  <div class="mode-row">
+    <div class="mode-panel light">
+      <span class="mode-label light-text">Light Mode</span>
+      <div class="size-row">
+        <div class="size-item">
+          <svg width="128" height="128" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="3" fill="none"/>
+            <line x1="24" y1="36" x2="40" y2="36" stroke="#111" stroke-width="1.5"/><line x1="40" y1="36" x2="40" y2="28" stroke="#111" stroke-width="1.5"/><line x1="40" y1="28" x2="56" y2="28" stroke="#111" stroke-width="1.5"/><circle cx="56" cy="28" r="2" fill="#111"/>
+            <line x1="24" y1="48" x2="52" y2="48" stroke="#111" stroke-width="1.5"/><line x1="52" y1="48" x2="52" y2="40" stroke="#111" stroke-width="1.5"/><line x1="52" y1="40" x2="64" y2="40" stroke="#111" stroke-width="1.5"/><circle cx="64" cy="40" r="2" fill="#111"/>
+            <line x1="24" y1="60" x2="44" y2="60" stroke="#111" stroke-width="1.5"/><line x1="44" y1="60" x2="44" y2="52" stroke="#111" stroke-width="1.5"/><circle cx="44" cy="52" r="2" fill="#111"/>
+            <line x1="24" y1="72" x2="36" y2="72" stroke="#111" stroke-width="1.5"/><line x1="36" y1="72" x2="36" y2="66" stroke="#111" stroke-width="1.5"/><line x1="36" y1="66" x2="58" y2="66" stroke="#111" stroke-width="1.5"/><circle cx="58" cy="66" r="2" fill="#111"/>
+            <circle cx="72" cy="56" r="2.5" fill="#111"/><line x1="58" y1="66" x2="72" y2="56" stroke="#111" stroke-width="1"/>
+          </svg>
+          <span class="size-label light-text">128px</span>
+        </div>
+        <div class="size-item">
+          <svg width="96" height="96" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="3" fill="none"/>
+            <line x1="24" y1="36" x2="40" y2="36" stroke="#111" stroke-width="1.5"/><line x1="40" y1="36" x2="40" y2="28" stroke="#111" stroke-width="1.5"/><line x1="40" y1="28" x2="56" y2="28" stroke="#111" stroke-width="1.5"/><circle cx="56" cy="28" r="2" fill="#111"/>
+            <line x1="24" y1="48" x2="52" y2="48" stroke="#111" stroke-width="1.5"/><line x1="52" y1="48" x2="52" y2="40" stroke="#111" stroke-width="1.5"/><line x1="52" y1="40" x2="64" y2="40" stroke="#111" stroke-width="1.5"/><circle cx="64" cy="40" r="2" fill="#111"/>
+            <line x1="24" y1="60" x2="44" y2="60" stroke="#111" stroke-width="1.5"/><line x1="44" y1="60" x2="44" y2="52" stroke="#111" stroke-width="1.5"/><circle cx="44" cy="52" r="2" fill="#111"/>
+            <line x1="24" y1="72" x2="36" y2="72" stroke="#111" stroke-width="1.5"/><line x1="36" y1="72" x2="36" y2="66" stroke="#111" stroke-width="1.5"/><line x1="36" y1="66" x2="58" y2="66" stroke="#111" stroke-width="1.5"/><circle cx="58" cy="66" r="2" fill="#111"/>
+            <circle cx="72" cy="56" r="2.5" fill="#111"/><line x1="58" y1="66" x2="72" y2="56" stroke="#111" stroke-width="1"/>
+          </svg>
+          <span class="size-label light-text">96px</span>
+        </div>
+        <div class="size-item">
+          <svg width="64" height="64" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="3.5" fill="none"/>
+            <line x1="24" y1="36" x2="40" y2="36" stroke="#111" stroke-width="2"/><line x1="40" y1="36" x2="40" y2="28" stroke="#111" stroke-width="2"/><line x1="40" y1="28" x2="56" y2="28" stroke="#111" stroke-width="2"/><circle cx="56" cy="28" r="2.5" fill="#111"/>
+            <line x1="24" y1="48" x2="52" y2="48" stroke="#111" stroke-width="2"/><line x1="52" y1="48" x2="52" y2="40" stroke="#111" stroke-width="2"/><line x1="52" y1="40" x2="64" y2="40" stroke="#111" stroke-width="2"/><circle cx="64" cy="40" r="2.5" fill="#111"/>
+            <line x1="24" y1="60" x2="44" y2="60" stroke="#111" stroke-width="2"/><line x1="44" y1="60" x2="44" y2="52" stroke="#111" stroke-width="2"/><circle cx="44" cy="52" r="2.5" fill="#111"/>
+            <line x1="24" y1="72" x2="36" y2="72" stroke="#111" stroke-width="2"/><line x1="36" y1="72" x2="36" y2="66" stroke="#111" stroke-width="2"/><line x1="36" y1="66" x2="58" y2="66" stroke="#111" stroke-width="2"/><circle cx="58" cy="66" r="2.5" fill="#111"/>
+          </svg>
+          <span class="size-label light-text">64px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="4" fill="none"/>
+            <line x1="24" y1="38" x2="56" y2="38" stroke="#111" stroke-width="2.5"/><circle cx="56" cy="38" r="3" fill="#111"/>
+            <line x1="24" y1="56" x2="48" y2="56" stroke="#111" stroke-width="2.5"/><line x1="48" y1="56" x2="48" y2="48" stroke="#111" stroke-width="2.5"/><circle cx="48" cy="48" r="3" fill="#111"/>
+            <line x1="24" y1="68" x2="60" y2="68" stroke="#111" stroke-width="2.5"/><circle cx="60" cy="68" r="3" fill="#111"/>
+          </svg>
+          <span class="size-label light-text">48px</span>
+        </div>
+        <div class="size-item">
+          <svg width="32" height="32" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="6" fill="none"/>
+            <line x1="24" y1="40" x2="58" y2="40" stroke="#111" stroke-width="4"/><circle cx="58" cy="40" r="4" fill="#111"/>
+            <line x1="24" y1="58" x2="50" y2="58" stroke="#111" stroke-width="4"/><circle cx="50" cy="58" r="4" fill="#111"/>
+          </svg>
+          <span class="size-label light-text">32px</span>
+        </div>
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="8" fill="none"/>
+            <line x1="24" y1="48" x2="56" y2="48" stroke="#111" stroke-width="6"/>
+          </svg>
+          <span class="size-label light-text">16px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mode-panel dark">
+      <span class="mode-label dark-text">Dark Mode</span>
+      <div class="size-row">
+        <div class="size-item">
+          <svg width="128" height="128" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="3" fill="none"/>
+            <line x1="24" y1="36" x2="40" y2="36" stroke="#f0f0f0" stroke-width="1.5"/><line x1="40" y1="36" x2="40" y2="28" stroke="#f0f0f0" stroke-width="1.5"/><line x1="40" y1="28" x2="56" y2="28" stroke="#f0f0f0" stroke-width="1.5"/><circle cx="56" cy="28" r="2" fill="#f0f0f0"/>
+            <line x1="24" y1="48" x2="52" y2="48" stroke="#f0f0f0" stroke-width="1.5"/><line x1="52" y1="48" x2="52" y2="40" stroke="#f0f0f0" stroke-width="1.5"/><line x1="52" y1="40" x2="64" y2="40" stroke="#f0f0f0" stroke-width="1.5"/><circle cx="64" cy="40" r="2" fill="#f0f0f0"/>
+            <line x1="24" y1="60" x2="44" y2="60" stroke="#f0f0f0" stroke-width="1.5"/><line x1="44" y1="60" x2="44" y2="52" stroke="#f0f0f0" stroke-width="1.5"/><circle cx="44" cy="52" r="2" fill="#f0f0f0"/>
+            <line x1="24" y1="72" x2="36" y2="72" stroke="#f0f0f0" stroke-width="1.5"/><line x1="36" y1="72" x2="36" y2="66" stroke="#f0f0f0" stroke-width="1.5"/><line x1="36" y1="66" x2="58" y2="66" stroke="#f0f0f0" stroke-width="1.5"/><circle cx="58" cy="66" r="2" fill="#f0f0f0"/>
+            <circle cx="72" cy="56" r="2.5" fill="#f0f0f0"/><line x1="58" y1="66" x2="72" y2="56" stroke="#f0f0f0" stroke-width="1"/>
+          </svg>
+          <span class="size-label dark-text">128px</span>
+        </div>
+        <div class="size-item">
+          <svg width="96" height="96" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="3" fill="none"/>
+            <line x1="24" y1="36" x2="40" y2="36" stroke="#f0f0f0" stroke-width="1.5"/><line x1="40" y1="36" x2="40" y2="28" stroke="#f0f0f0" stroke-width="1.5"/><line x1="40" y1="28" x2="56" y2="28" stroke="#f0f0f0" stroke-width="1.5"/><circle cx="56" cy="28" r="2" fill="#f0f0f0"/>
+            <line x1="24" y1="48" x2="52" y2="48" stroke="#f0f0f0" stroke-width="1.5"/><line x1="52" y1="48" x2="52" y2="40" stroke="#f0f0f0" stroke-width="1.5"/><line x1="52" y1="40" x2="64" y2="40" stroke="#f0f0f0" stroke-width="1.5"/><circle cx="64" cy="40" r="2" fill="#f0f0f0"/>
+            <line x1="24" y1="60" x2="44" y2="60" stroke="#f0f0f0" stroke-width="1.5"/><line x1="44" y1="60" x2="44" y2="52" stroke="#f0f0f0" stroke-width="1.5"/><circle cx="44" cy="52" r="2" fill="#f0f0f0"/>
+            <line x1="24" y1="72" x2="36" y2="72" stroke="#f0f0f0" stroke-width="1.5"/><line x1="36" y1="72" x2="36" y2="66" stroke="#f0f0f0" stroke-width="1.5"/><line x1="36" y1="66" x2="58" y2="66" stroke="#f0f0f0" stroke-width="1.5"/><circle cx="58" cy="66" r="2" fill="#f0f0f0"/>
+            <circle cx="72" cy="56" r="2.5" fill="#f0f0f0"/><line x1="58" y1="66" x2="72" y2="56" stroke="#f0f0f0" stroke-width="1"/>
+          </svg>
+          <span class="size-label dark-text">96px</span>
+        </div>
+        <div class="size-item">
+          <svg width="64" height="64" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="3.5" fill="none"/>
+            <line x1="24" y1="36" x2="40" y2="36" stroke="#f0f0f0" stroke-width="2"/><line x1="40" y1="36" x2="40" y2="28" stroke="#f0f0f0" stroke-width="2"/><line x1="40" y1="28" x2="56" y2="28" stroke="#f0f0f0" stroke-width="2"/><circle cx="56" cy="28" r="2.5" fill="#f0f0f0"/>
+            <line x1="24" y1="48" x2="52" y2="48" stroke="#f0f0f0" stroke-width="2"/><line x1="52" y1="48" x2="52" y2="40" stroke="#f0f0f0" stroke-width="2"/><line x1="52" y1="40" x2="64" y2="40" stroke="#f0f0f0" stroke-width="2"/><circle cx="64" cy="40" r="2.5" fill="#f0f0f0"/>
+            <line x1="24" y1="60" x2="44" y2="60" stroke="#f0f0f0" stroke-width="2"/><line x1="44" y1="60" x2="44" y2="52" stroke="#f0f0f0" stroke-width="2"/><circle cx="44" cy="52" r="2.5" fill="#f0f0f0"/>
+            <line x1="24" y1="72" x2="36" y2="72" stroke="#f0f0f0" stroke-width="2"/><line x1="36" y1="72" x2="36" y2="66" stroke="#f0f0f0" stroke-width="2"/><line x1="36" y1="66" x2="58" y2="66" stroke="#f0f0f0" stroke-width="2"/><circle cx="58" cy="66" r="2.5" fill="#f0f0f0"/>
+          </svg>
+          <span class="size-label dark-text">64px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="4" fill="none"/>
+            <line x1="24" y1="38" x2="56" y2="38" stroke="#f0f0f0" stroke-width="2.5"/><circle cx="56" cy="38" r="3" fill="#f0f0f0"/>
+            <line x1="24" y1="56" x2="48" y2="56" stroke="#f0f0f0" stroke-width="2.5"/><line x1="48" y1="56" x2="48" y2="48" stroke="#f0f0f0" stroke-width="2.5"/><circle cx="48" cy="48" r="3" fill="#f0f0f0"/>
+            <line x1="24" y1="68" x2="60" y2="68" stroke="#f0f0f0" stroke-width="2.5"/><circle cx="60" cy="68" r="3" fill="#f0f0f0"/>
+          </svg>
+          <span class="size-label dark-text">48px</span>
+        </div>
+        <div class="size-item">
+          <svg width="32" height="32" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="6" fill="none"/>
+            <line x1="24" y1="40" x2="58" y2="40" stroke="#f0f0f0" stroke-width="4"/><circle cx="58" cy="40" r="4" fill="#f0f0f0"/>
+            <line x1="24" y1="58" x2="50" y2="58" stroke="#f0f0f0" stroke-width="4"/><circle cx="50" cy="58" r="4" fill="#f0f0f0"/>
+          </svg>
+          <span class="size-label dark-text">32px</span>
+        </div>
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="8" fill="none"/>
+            <line x1="24" y1="48" x2="56" y2="48" stroke="#f0f0f0" stroke-width="6"/>
+          </svg>
+          <span class="size-label dark-text">16px</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════ -->
+<!-- VARIANT B: Filled D with Knockout Traces -->
+<!-- ════════════════════════════════════════════ -->
+<div class="variant-section">
+  <div class="variant-header">
+    <span class="variant-label">Variant B</span>
+    <div>
+      <div class="variant-title">Filled D with Knockout Traces</div>
+      <div class="variant-desc">Solid filled D shape with circuit traces cut out as negative space — bolder, higher contrast</div>
+    </div>
+  </div>
+
+  <div class="mode-row">
+    <div class="mode-panel light">
+      <span class="mode-label light-text">Light Mode</span>
+      <div class="size-row">
+        <div class="size-item">
+          <svg width="128" height="128" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-128">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="34" x2="42" y2="34" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="42" y1="34" x2="42" y2="26" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="42" y1="26" x2="58" y2="26" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="58" cy="26" r="3" fill="black"/>
+                <line x1="24" y1="48" x2="54" y2="48" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="54" y1="48" x2="54" y2="40" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="54" y1="40" x2="66" y2="40" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="66" cy="40" r="3" fill="black"/>
+                <line x1="24" y1="62" x2="46" y2="62" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="46" y1="62" x2="46" y2="54" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="46" cy="54" r="3" fill="black"/>
+                <line x1="24" y1="72" x2="38" y2="72" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="38" y1="72" x2="38" y2="66" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="38" y1="66" x2="56" y2="66" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="56" cy="66" r="3" fill="black"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#111" mask="url(#b-mask-128)"/>
+          </svg>
+          <span class="size-label light-text">128px</span>
+        </div>
+        <div class="size-item">
+          <svg width="96" height="96" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-96">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="34" x2="42" y2="34" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="42" y1="34" x2="42" y2="26" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="42" y1="26" x2="58" y2="26" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="58" cy="26" r="3" fill="black"/>
+                <line x1="24" y1="48" x2="54" y2="48" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="54" y1="48" x2="54" y2="40" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="54" y1="40" x2="66" y2="40" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="66" cy="40" r="3" fill="black"/>
+                <line x1="24" y1="62" x2="46" y2="62" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="46" y1="62" x2="46" y2="54" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="46" cy="54" r="3" fill="black"/>
+                <line x1="24" y1="72" x2="38" y2="72" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="38" y1="72" x2="38" y2="66" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="38" y1="66" x2="56" y2="66" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="56" cy="66" r="3" fill="black"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#111" mask="url(#b-mask-96)"/>
+          </svg>
+          <span class="size-label light-text">96px</span>
+        </div>
+        <div class="size-item">
+          <svg width="64" height="64" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-64">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="36" x2="58" y2="36" stroke="black" stroke-width="3.5" stroke-linecap="round"/>
+                <circle cx="58" cy="36" r="4" fill="black"/>
+                <line x1="24" y1="52" x2="50" y2="52" stroke="black" stroke-width="3.5" stroke-linecap="round"/>
+                <line x1="50" y1="52" x2="50" y2="44" stroke="black" stroke-width="3.5" stroke-linecap="round"/>
+                <circle cx="50" cy="44" r="4" fill="black"/>
+                <line x1="24" y1="66" x2="54" y2="66" stroke="black" stroke-width="3.5" stroke-linecap="round"/>
+                <circle cx="54" cy="66" r="4" fill="black"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#111" mask="url(#b-mask-64)"/>
+          </svg>
+          <span class="size-label light-text">64px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-48">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="38" x2="60" y2="38" stroke="black" stroke-width="4.5" stroke-linecap="round"/>
+                <circle cx="60" cy="38" r="5" fill="black"/>
+                <line x1="24" y1="58" x2="52" y2="58" stroke="black" stroke-width="4.5" stroke-linecap="round"/>
+                <circle cx="52" cy="58" r="5" fill="black"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#111" mask="url(#b-mask-48)"/>
+          </svg>
+          <span class="size-label light-text">48px</span>
+        </div>
+        <div class="size-item">
+          <svg width="32" height="32" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-32">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="48" x2="60" y2="48" stroke="black" stroke-width="7" stroke-linecap="round"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#111" mask="url(#b-mask-32)"/>
+          </svg>
+          <span class="size-label light-text">32px</span>
+        </div>
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 96 96" fill="none">
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#111"/>
+          </svg>
+          <span class="size-label light-text">16px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mode-panel dark">
+      <span class="mode-label dark-text">Dark Mode</span>
+      <div class="size-row">
+        <div class="size-item">
+          <svg width="128" height="128" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-d128">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="34" x2="42" y2="34" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="42" y1="34" x2="42" y2="26" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="42" y1="26" x2="58" y2="26" stroke="black" stroke-width="2.5" stroke-linecap="round"/><circle cx="58" cy="26" r="3" fill="black"/>
+                <line x1="24" y1="48" x2="54" y2="48" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="54" y1="48" x2="54" y2="40" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="54" y1="40" x2="66" y2="40" stroke="black" stroke-width="2.5" stroke-linecap="round"/><circle cx="66" cy="40" r="3" fill="black"/>
+                <line x1="24" y1="62" x2="46" y2="62" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="62" x2="46" y2="54" stroke="black" stroke-width="2.5" stroke-linecap="round"/><circle cx="46" cy="54" r="3" fill="black"/>
+                <line x1="24" y1="72" x2="38" y2="72" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="72" x2="38" y2="66" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="66" x2="56" y2="66" stroke="black" stroke-width="2.5" stroke-linecap="round"/><circle cx="56" cy="66" r="3" fill="black"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#f0f0f0" mask="url(#b-mask-d128)"/>
+          </svg>
+          <span class="size-label dark-text">128px</span>
+        </div>
+        <div class="size-item">
+          <svg width="96" height="96" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-d96">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="34" x2="42" y2="34" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="42" y1="34" x2="42" y2="26" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="42" y1="26" x2="58" y2="26" stroke="black" stroke-width="2.5" stroke-linecap="round"/><circle cx="58" cy="26" r="3" fill="black"/>
+                <line x1="24" y1="48" x2="54" y2="48" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="54" y1="48" x2="54" y2="40" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="54" y1="40" x2="66" y2="40" stroke="black" stroke-width="2.5" stroke-linecap="round"/><circle cx="66" cy="40" r="3" fill="black"/>
+                <line x1="24" y1="62" x2="46" y2="62" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="62" x2="46" y2="54" stroke="black" stroke-width="2.5" stroke-linecap="round"/><circle cx="46" cy="54" r="3" fill="black"/>
+                <line x1="24" y1="72" x2="38" y2="72" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="72" x2="38" y2="66" stroke="black" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="66" x2="56" y2="66" stroke="black" stroke-width="2.5" stroke-linecap="round"/><circle cx="56" cy="66" r="3" fill="black"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#f0f0f0" mask="url(#b-mask-d96)"/>
+          </svg>
+          <span class="size-label dark-text">96px</span>
+        </div>
+        <div class="size-item">
+          <svg width="64" height="64" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-d64">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="36" x2="58" y2="36" stroke="black" stroke-width="3.5" stroke-linecap="round"/><circle cx="58" cy="36" r="4" fill="black"/>
+                <line x1="24" y1="52" x2="50" y2="52" stroke="black" stroke-width="3.5" stroke-linecap="round"/><line x1="50" y1="52" x2="50" y2="44" stroke="black" stroke-width="3.5" stroke-linecap="round"/><circle cx="50" cy="44" r="4" fill="black"/>
+                <line x1="24" y1="66" x2="54" y2="66" stroke="black" stroke-width="3.5" stroke-linecap="round"/><circle cx="54" cy="66" r="4" fill="black"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#f0f0f0" mask="url(#b-mask-d64)"/>
+          </svg>
+          <span class="size-label dark-text">64px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-d48">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="38" x2="60" y2="38" stroke="black" stroke-width="4.5" stroke-linecap="round"/><circle cx="60" cy="38" r="5" fill="black"/>
+                <line x1="24" y1="58" x2="52" y2="58" stroke="black" stroke-width="4.5" stroke-linecap="round"/><circle cx="52" cy="58" r="5" fill="black"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#f0f0f0" mask="url(#b-mask-d48)"/>
+          </svg>
+          <span class="size-label dark-text">48px</span>
+        </div>
+        <div class="size-item">
+          <svg width="32" height="32" viewBox="0 0 96 96" fill="none">
+            <defs>
+              <mask id="b-mask-d32">
+                <rect width="96" height="96" fill="white"/>
+                <line x1="24" y1="48" x2="60" y2="48" stroke="black" stroke-width="7" stroke-linecap="round"/>
+              </mask>
+            </defs>
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#f0f0f0" mask="url(#b-mask-d32)"/>
+          </svg>
+          <span class="size-label dark-text">32px</span>
+        </div>
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 96 96" fill="none">
+            <path d="M24 10 L24 86 L52 86 C74 86 86 72 86 48 C86 24 74 10 52 10 Z" fill="#f0f0f0"/>
+          </svg>
+          <span class="size-label dark-text">16px</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════ -->
+<!-- VARIANT C: Minimal Traces (Cleaner) -->
+<!-- ════════════════════════════════════════════ -->
+<div class="variant-section">
+  <div class="variant-header">
+    <span class="variant-label">Variant C</span>
+    <div>
+      <div class="variant-title">Minimal Traces</div>
+      <div class="variant-desc">Stripped back — fewer traces, more breathing room, slightly heavier D stroke for presence</div>
+    </div>
+  </div>
+
+  <div class="mode-row">
+    <div class="mode-panel light">
+      <span class="mode-label light-text">Light Mode</span>
+      <div class="size-row">
+        <div class="size-item">
+          <svg width="128" height="128" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="3.5" fill="none"/>
+            <line x1="24" y1="38" x2="44" y2="38" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="44" y1="38" x2="44" y2="28" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="44" y1="28" x2="62" y2="28" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="62" cy="28" r="2.5" fill="#111"/>
+            <line x1="24" y1="56" x2="50" y2="56" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="50" y1="56" x2="50" y2="48" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="50" y1="48" x2="68" y2="48" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="68" cy="48" r="2.5" fill="#111"/>
+            <line x1="24" y1="70" x2="38" y2="70" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="38" y1="70" x2="38" y2="64" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="38" y1="64" x2="56" y2="64" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="56" cy="64" r="2.5" fill="#111"/>
+          </svg>
+          <span class="size-label light-text">128px</span>
+        </div>
+        <div class="size-item">
+          <svg width="96" height="96" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="3.5" fill="none"/>
+            <line x1="24" y1="38" x2="44" y2="38" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><line x1="44" y1="38" x2="44" y2="28" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><line x1="44" y1="28" x2="62" y2="28" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><circle cx="62" cy="28" r="2.5" fill="#111"/>
+            <line x1="24" y1="56" x2="50" y2="56" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><line x1="50" y1="56" x2="50" y2="48" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><line x1="50" y1="48" x2="68" y2="48" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><circle cx="68" cy="48" r="2.5" fill="#111"/>
+            <line x1="24" y1="70" x2="38" y2="70" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><line x1="38" y1="70" x2="38" y2="64" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><line x1="38" y1="64" x2="56" y2="64" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><circle cx="56" cy="64" r="2.5" fill="#111"/>
+          </svg>
+          <span class="size-label light-text">96px</span>
+        </div>
+        <div class="size-item">
+          <svg width="64" height="64" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="4" fill="none"/>
+            <line x1="24" y1="38" x2="62" y2="38" stroke="#111" stroke-width="2.5" stroke-linecap="round"/><circle cx="62" cy="38" r="3" fill="#111"/>
+            <line x1="24" y1="56" x2="50" y2="56" stroke="#111" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="56" x2="50" y2="48" stroke="#111" stroke-width="2.5" stroke-linecap="round"/><circle cx="50" cy="48" r="3" fill="#111"/>
+            <line x1="24" y1="70" x2="56" y2="70" stroke="#111" stroke-width="2.5" stroke-linecap="round"/><circle cx="56" cy="70" r="3" fill="#111"/>
+          </svg>
+          <span class="size-label light-text">64px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="4.5" fill="none"/>
+            <line x1="24" y1="40" x2="62" y2="40" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="62" cy="40" r="3.5" fill="#111"/>
+            <line x1="24" y1="60" x2="54" y2="60" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="54" cy="60" r="3.5" fill="#111"/>
+          </svg>
+          <span class="size-label light-text">48px</span>
+        </div>
+        <div class="size-item">
+          <svg width="32" height="32" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="6" fill="none"/>
+            <line x1="24" y1="48" x2="60" y2="48" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="60" cy="48" r="4.5" fill="#111"/>
+          </svg>
+          <span class="size-label light-text">32px</span>
+        </div>
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="8" fill="none"/>
+          </svg>
+          <span class="size-label light-text">16px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mode-panel dark">
+      <span class="mode-label dark-text">Dark Mode</span>
+      <div class="size-row">
+        <div class="size-item">
+          <svg width="128" height="128" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="3.5" fill="none"/>
+            <line x1="24" y1="38" x2="44" y2="38" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="44" y1="38" x2="44" y2="28" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="44" y1="28" x2="62" y2="28" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><circle cx="62" cy="28" r="2.5" fill="#f0f0f0"/>
+            <line x1="24" y1="56" x2="50" y2="56" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="50" y1="56" x2="50" y2="48" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="50" y1="48" x2="68" y2="48" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><circle cx="68" cy="48" r="2.5" fill="#f0f0f0"/>
+            <line x1="24" y1="70" x2="38" y2="70" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="38" y1="70" x2="38" y2="64" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="38" y1="64" x2="56" y2="64" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><circle cx="56" cy="64" r="2.5" fill="#f0f0f0"/>
+          </svg>
+          <span class="size-label dark-text">128px</span>
+        </div>
+        <div class="size-item">
+          <svg width="96" height="96" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="3.5" fill="none"/>
+            <line x1="24" y1="38" x2="44" y2="38" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="44" y1="38" x2="44" y2="28" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="44" y1="28" x2="62" y2="28" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><circle cx="62" cy="28" r="2.5" fill="#f0f0f0"/>
+            <line x1="24" y1="56" x2="50" y2="56" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="50" y1="56" x2="50" y2="48" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="50" y1="48" x2="68" y2="48" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><circle cx="68" cy="48" r="2.5" fill="#f0f0f0"/>
+            <line x1="24" y1="70" x2="38" y2="70" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="38" y1="70" x2="38" y2="64" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><line x1="38" y1="64" x2="56" y2="64" stroke="#f0f0f0" stroke-width="1.8" stroke-linecap="round"/><circle cx="56" cy="64" r="2.5" fill="#f0f0f0"/>
+          </svg>
+          <span class="size-label dark-text">96px</span>
+        </div>
+        <div class="size-item">
+          <svg width="64" height="64" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="4" fill="none"/>
+            <line x1="24" y1="38" x2="62" y2="38" stroke="#f0f0f0" stroke-width="2.5" stroke-linecap="round"/><circle cx="62" cy="38" r="3" fill="#f0f0f0"/>
+            <line x1="24" y1="56" x2="50" y2="56" stroke="#f0f0f0" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="56" x2="50" y2="48" stroke="#f0f0f0" stroke-width="2.5" stroke-linecap="round"/><circle cx="50" cy="48" r="3" fill="#f0f0f0"/>
+            <line x1="24" y1="70" x2="56" y2="70" stroke="#f0f0f0" stroke-width="2.5" stroke-linecap="round"/><circle cx="56" cy="70" r="3" fill="#f0f0f0"/>
+          </svg>
+          <span class="size-label dark-text">64px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="4.5" fill="none"/>
+            <line x1="24" y1="40" x2="62" y2="40" stroke="#f0f0f0" stroke-width="3" stroke-linecap="round"/><circle cx="62" cy="40" r="3.5" fill="#f0f0f0"/>
+            <line x1="24" y1="60" x2="54" y2="60" stroke="#f0f0f0" stroke-width="3" stroke-linecap="round"/><circle cx="54" cy="60" r="3.5" fill="#f0f0f0"/>
+          </svg>
+          <span class="size-label dark-text">48px</span>
+        </div>
+        <div class="size-item">
+          <svg width="32" height="32" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="6" fill="none"/>
+            <line x1="24" y1="48" x2="60" y2="48" stroke="#f0f0f0" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="60" cy="48" r="4.5" fill="#f0f0f0"/>
+          </svg>
+          <span class="size-label dark-text">32px</span>
+        </div>
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 96 96" fill="none">
+            <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="8" fill="none"/>
+          </svg>
+          <span class="size-label dark-text">16px</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════ -->
+<!-- APP ICON PREVIEWS (Variant A) -->
+<!-- ════════════════════════════════════════════ -->
+<div class="context-section">
+  <div class="context-header">App Icon Previews — Rounded with Background (Variant A)</div>
+
+  <div class="mode-row">
+    <div class="mode-panel light" style="gap: 32px;">
+      <span class="mode-label light-text">White on Black</span>
+      <div class="app-icon-row">
+        <div class="app-icon-item">
+          <div class="app-icon-wrap light-bg" style="width:128px;height:128px;padding:20px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#fff" stroke-width="3" fill="none"/>
+              <line x1="24" y1="36" x2="40" y2="36" stroke="#fff" stroke-width="1.5"/><line x1="40" y1="36" x2="40" y2="28" stroke="#fff" stroke-width="1.5"/><line x1="40" y1="28" x2="56" y2="28" stroke="#fff" stroke-width="1.5"/><circle cx="56" cy="28" r="2" fill="#fff"/>
+              <line x1="24" y1="48" x2="52" y2="48" stroke="#fff" stroke-width="1.5"/><line x1="52" y1="48" x2="52" y2="40" stroke="#fff" stroke-width="1.5"/><line x1="52" y1="40" x2="64" y2="40" stroke="#fff" stroke-width="1.5"/><circle cx="64" cy="40" r="2" fill="#fff"/>
+              <line x1="24" y1="60" x2="44" y2="60" stroke="#fff" stroke-width="1.5"/><line x1="44" y1="60" x2="44" y2="52" stroke="#fff" stroke-width="1.5"/><circle cx="44" cy="52" r="2" fill="#fff"/>
+              <line x1="24" y1="72" x2="36" y2="72" stroke="#fff" stroke-width="1.5"/><line x1="36" y1="72" x2="36" y2="66" stroke="#fff" stroke-width="1.5"/><line x1="36" y1="66" x2="58" y2="66" stroke="#fff" stroke-width="1.5"/><circle cx="58" cy="66" r="2" fill="#fff"/>
+              <circle cx="72" cy="56" r="2.5" fill="#fff"/><line x1="58" y1="66" x2="72" y2="56" stroke="#fff" stroke-width="1"/>
+            </svg>
+          </div>
+          <span class="app-name light">128px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap light-bg" style="width:96px;height:96px;padding:16px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#fff" stroke-width="3" fill="none"/>
+              <line x1="24" y1="36" x2="40" y2="36" stroke="#fff" stroke-width="1.5"/><line x1="40" y1="36" x2="40" y2="28" stroke="#fff" stroke-width="1.5"/><line x1="40" y1="28" x2="56" y2="28" stroke="#fff" stroke-width="1.5"/><circle cx="56" cy="28" r="2" fill="#fff"/>
+              <line x1="24" y1="48" x2="52" y2="48" stroke="#fff" stroke-width="1.5"/><line x1="52" y1="48" x2="52" y2="40" stroke="#fff" stroke-width="1.5"/><line x1="52" y1="40" x2="64" y2="40" stroke="#fff" stroke-width="1.5"/><circle cx="64" cy="40" r="2" fill="#fff"/>
+              <line x1="24" y1="60" x2="44" y2="60" stroke="#fff" stroke-width="1.5"/><line x1="44" y1="60" x2="44" y2="52" stroke="#fff" stroke-width="1.5"/><circle cx="44" cy="52" r="2" fill="#fff"/>
+              <line x1="24" y1="72" x2="36" y2="72" stroke="#fff" stroke-width="1.5"/><line x1="36" y1="72" x2="36" y2="66" stroke="#fff" stroke-width="1.5"/><line x1="36" y1="66" x2="58" y2="66" stroke="#fff" stroke-width="1.5"/><circle cx="58" cy="66" r="2" fill="#fff"/>
+              <circle cx="72" cy="56" r="2.5" fill="#fff"/><line x1="58" y1="66" x2="72" y2="56" stroke="#fff" stroke-width="1"/>
+            </svg>
+          </div>
+          <span class="app-name light">96px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap light-bg" style="width:64px;height:64px;padding:12px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#fff" stroke-width="3.5" fill="none"/>
+              <line x1="24" y1="36" x2="40" y2="36" stroke="#fff" stroke-width="2"/><line x1="40" y1="36" x2="40" y2="28" stroke="#fff" stroke-width="2"/><line x1="40" y1="28" x2="56" y2="28" stroke="#fff" stroke-width="2"/><circle cx="56" cy="28" r="2.5" fill="#fff"/>
+              <line x1="24" y1="48" x2="52" y2="48" stroke="#fff" stroke-width="2"/><line x1="52" y1="48" x2="52" y2="40" stroke="#fff" stroke-width="2"/><line x1="52" y1="40" x2="64" y2="40" stroke="#fff" stroke-width="2"/><circle cx="64" cy="40" r="2.5" fill="#fff"/>
+              <line x1="24" y1="60" x2="44" y2="60" stroke="#fff" stroke-width="2"/><line x1="44" y1="60" x2="44" y2="52" stroke="#fff" stroke-width="2"/><circle cx="44" cy="52" r="2.5" fill="#fff"/>
+              <line x1="24" y1="72" x2="36" y2="72" stroke="#fff" stroke-width="2"/><line x1="36" y1="72" x2="36" y2="66" stroke="#fff" stroke-width="2"/><line x1="36" y1="66" x2="58" y2="66" stroke="#fff" stroke-width="2"/><circle cx="58" cy="66" r="2.5" fill="#fff"/>
+            </svg>
+          </div>
+          <span class="app-name light">64px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap light-bg" style="width:48px;height:48px;padding:10px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#fff" stroke-width="4" fill="none"/>
+              <line x1="24" y1="38" x2="56" y2="38" stroke="#fff" stroke-width="2.5"/><circle cx="56" cy="38" r="3" fill="#fff"/>
+              <line x1="24" y1="56" x2="48" y2="56" stroke="#fff" stroke-width="2.5"/><line x1="48" y1="56" x2="48" y2="48" stroke="#fff" stroke-width="2.5"/><circle cx="48" cy="48" r="3" fill="#fff"/>
+              <line x1="24" y1="68" x2="60" y2="68" stroke="#fff" stroke-width="2.5"/><circle cx="60" cy="68" r="3" fill="#fff"/>
+            </svg>
+          </div>
+          <span class="app-name light">48px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap light-bg" style="width:32px;height:32px;padding:6px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#fff" stroke-width="6" fill="none"/>
+              <line x1="24" y1="40" x2="58" y2="40" stroke="#fff" stroke-width="4"/><circle cx="58" cy="40" r="4" fill="#fff"/>
+              <line x1="24" y1="58" x2="50" y2="58" stroke="#fff" stroke-width="4"/><circle cx="50" cy="58" r="4" fill="#fff"/>
+            </svg>
+          </div>
+          <span class="app-name light">32px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap light-bg" style="width:16px;height:16px;padding:2px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#fff" stroke-width="8" fill="none"/>
+              <line x1="24" y1="48" x2="56" y2="48" stroke="#fff" stroke-width="6"/>
+            </svg>
+          </div>
+          <span class="app-name light">16px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mode-panel dark" style="gap: 32px;">
+      <span class="mode-label dark-text">Black on White</span>
+      <div class="app-icon-row">
+        <div class="app-icon-item">
+          <div class="app-icon-wrap dark-bg" style="width:128px;height:128px;padding:20px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="3" fill="none"/>
+              <line x1="24" y1="36" x2="40" y2="36" stroke="#111" stroke-width="1.5"/><line x1="40" y1="36" x2="40" y2="28" stroke="#111" stroke-width="1.5"/><line x1="40" y1="28" x2="56" y2="28" stroke="#111" stroke-width="1.5"/><circle cx="56" cy="28" r="2" fill="#111"/>
+              <line x1="24" y1="48" x2="52" y2="48" stroke="#111" stroke-width="1.5"/><line x1="52" y1="48" x2="52" y2="40" stroke="#111" stroke-width="1.5"/><line x1="52" y1="40" x2="64" y2="40" stroke="#111" stroke-width="1.5"/><circle cx="64" cy="40" r="2" fill="#111"/>
+              <line x1="24" y1="60" x2="44" y2="60" stroke="#111" stroke-width="1.5"/><line x1="44" y1="60" x2="44" y2="52" stroke="#111" stroke-width="1.5"/><circle cx="44" cy="52" r="2" fill="#111"/>
+              <line x1="24" y1="72" x2="36" y2="72" stroke="#111" stroke-width="1.5"/><line x1="36" y1="72" x2="36" y2="66" stroke="#111" stroke-width="1.5"/><line x1="36" y1="66" x2="58" y2="66" stroke="#111" stroke-width="1.5"/><circle cx="58" cy="66" r="2" fill="#111"/>
+              <circle cx="72" cy="56" r="2.5" fill="#111"/><line x1="58" y1="66" x2="72" y2="56" stroke="#111" stroke-width="1"/>
+            </svg>
+          </div>
+          <span class="app-name dark">128px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap dark-bg" style="width:96px;height:96px;padding:16px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="3" fill="none"/>
+              <line x1="24" y1="36" x2="40" y2="36" stroke="#111" stroke-width="1.5"/><line x1="40" y1="36" x2="40" y2="28" stroke="#111" stroke-width="1.5"/><line x1="40" y1="28" x2="56" y2="28" stroke="#111" stroke-width="1.5"/><circle cx="56" cy="28" r="2" fill="#111"/>
+              <line x1="24" y1="48" x2="52" y2="48" stroke="#111" stroke-width="1.5"/><line x1="52" y1="48" x2="52" y2="40" stroke="#111" stroke-width="1.5"/><line x1="52" y1="40" x2="64" y2="40" stroke="#111" stroke-width="1.5"/><circle cx="64" cy="40" r="2" fill="#111"/>
+              <line x1="24" y1="60" x2="44" y2="60" stroke="#111" stroke-width="1.5"/><line x1="44" y1="60" x2="44" y2="52" stroke="#111" stroke-width="1.5"/><circle cx="44" cy="52" r="2" fill="#111"/>
+              <line x1="24" y1="72" x2="36" y2="72" stroke="#111" stroke-width="1.5"/><line x1="36" y1="72" x2="36" y2="66" stroke="#111" stroke-width="1.5"/><line x1="36" y1="66" x2="58" y2="66" stroke="#111" stroke-width="1.5"/><circle cx="58" cy="66" r="2" fill="#111"/>
+              <circle cx="72" cy="56" r="2.5" fill="#111"/><line x1="58" y1="66" x2="72" y2="56" stroke="#111" stroke-width="1"/>
+            </svg>
+          </div>
+          <span class="app-name dark">96px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap dark-bg" style="width:64px;height:64px;padding:12px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="3.5" fill="none"/>
+              <line x1="24" y1="36" x2="40" y2="36" stroke="#111" stroke-width="2"/><line x1="40" y1="36" x2="40" y2="28" stroke="#111" stroke-width="2"/><line x1="40" y1="28" x2="56" y2="28" stroke="#111" stroke-width="2"/><circle cx="56" cy="28" r="2.5" fill="#111"/>
+              <line x1="24" y1="48" x2="52" y2="48" stroke="#111" stroke-width="2"/><line x1="52" y1="48" x2="52" y2="40" stroke="#111" stroke-width="2"/><line x1="52" y1="40" x2="64" y2="40" stroke="#111" stroke-width="2"/><circle cx="64" cy="40" r="2.5" fill="#111"/>
+              <line x1="24" y1="60" x2="44" y2="60" stroke="#111" stroke-width="2"/><line x1="44" y1="60" x2="44" y2="52" stroke="#111" stroke-width="2"/><circle cx="44" cy="52" r="2.5" fill="#111"/>
+              <line x1="24" y1="72" x2="36" y2="72" stroke="#111" stroke-width="2"/><line x1="36" y1="72" x2="36" y2="66" stroke="#111" stroke-width="2"/><line x1="36" y1="66" x2="58" y2="66" stroke="#111" stroke-width="2"/><circle cx="58" cy="66" r="2.5" fill="#111"/>
+            </svg>
+          </div>
+          <span class="app-name dark">64px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap dark-bg" style="width:48px;height:48px;padding:10px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="4" fill="none"/>
+              <line x1="24" y1="38" x2="56" y2="38" stroke="#111" stroke-width="2.5"/><circle cx="56" cy="38" r="3" fill="#111"/>
+              <line x1="24" y1="56" x2="48" y2="56" stroke="#111" stroke-width="2.5"/><line x1="48" y1="56" x2="48" y2="48" stroke="#111" stroke-width="2.5"/><circle cx="48" cy="48" r="3" fill="#111"/>
+              <line x1="24" y1="68" x2="60" y2="68" stroke="#111" stroke-width="2.5"/><circle cx="60" cy="68" r="3" fill="#111"/>
+            </svg>
+          </div>
+          <span class="app-name dark">48px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap dark-bg" style="width:32px;height:32px;padding:6px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="6" fill="none"/>
+              <line x1="24" y1="40" x2="58" y2="40" stroke="#111" stroke-width="4"/><circle cx="58" cy="40" r="4" fill="#111"/>
+              <line x1="24" y1="58" x2="50" y2="58" stroke="#111" stroke-width="4"/><circle cx="50" cy="58" r="4" fill="#111"/>
+            </svg>
+          </div>
+          <span class="app-name dark">32px</span>
+        </div>
+        <div class="app-icon-item">
+          <div class="app-icon-wrap dark-bg" style="width:16px;height:16px;padding:2px;">
+            <svg viewBox="0 0 96 96" fill="none">
+              <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="8" fill="none"/>
+              <line x1="24" y1="48" x2="56" y2="48" stroke="#111" stroke-width="6"/>
+            </svg>
+          </div>
+          <span class="app-name dark">16px</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════ -->
+<!-- IN-CONTEXT: Sidebar -->
+<!-- ════════════════════════════════════════════ -->
+<div class="context-section">
+  <div class="context-header">In Context — Sidebar Brand</div>
+
+  <div class="context-grid">
+    <div class="sidebar-mock light">
+      <div class="sidebar-brand light">
+        <svg width="28" height="28" viewBox="0 0 96 96" fill="none">
+          <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="4" fill="none"/>
+          <line x1="24" y1="38" x2="56" y2="38" stroke="#111" stroke-width="2.5"/><circle cx="56" cy="38" r="3" fill="#111"/>
+          <line x1="24" y1="56" x2="48" y2="56" stroke="#111" stroke-width="2.5"/><line x1="48" y1="56" x2="48" y2="48" stroke="#111" stroke-width="2.5"/><circle cx="48" cy="48" r="3" fill="#111"/>
+          <line x1="24" y1="68" x2="60" y2="68" stroke="#111" stroke-width="2.5"/><circle cx="60" cy="68" r="3" fill="#111"/>
+        </svg>
+        <span>Dossier AI</span>
+      </div>
+      <div class="sidebar-item active light"><div class="sidebar-dot light"></div>Dashboard</div>
+      <div class="sidebar-item light"><div class="sidebar-dot light"></div>Knowledge Base</div>
+      <div class="sidebar-item light"><div class="sidebar-dot light"></div>Search</div>
+      <div class="sidebar-item light"><div class="sidebar-dot light"></div>Q&A</div>
+      <div class="sidebar-item light"><div class="sidebar-dot light"></div>Evaluation</div>
+      <div class="sidebar-item light"><div class="sidebar-dot light"></div>Settings</div>
+    </div>
+
+    <div class="sidebar-mock dark">
+      <div class="sidebar-brand dark">
+        <svg width="28" height="28" viewBox="0 0 96 96" fill="none">
+          <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="4" fill="none"/>
+          <line x1="24" y1="38" x2="56" y2="38" stroke="#f0f0f0" stroke-width="2.5"/><circle cx="56" cy="38" r="3" fill="#f0f0f0"/>
+          <line x1="24" y1="56" x2="48" y2="56" stroke="#f0f0f0" stroke-width="2.5"/><line x1="48" y1="56" x2="48" y2="48" stroke="#f0f0f0" stroke-width="2.5"/><circle cx="48" cy="48" r="3" fill="#f0f0f0"/>
+          <line x1="24" y1="68" x2="60" y2="68" stroke="#f0f0f0" stroke-width="2.5"/><circle cx="60" cy="68" r="3" fill="#f0f0f0"/>
+        </svg>
+        <span>Dossier AI</span>
+      </div>
+      <div class="sidebar-item active dark"><div class="sidebar-dot dark"></div>Dashboard</div>
+      <div class="sidebar-item dark"><div class="sidebar-dot dark"></div>Knowledge Base</div>
+      <div class="sidebar-item dark"><div class="sidebar-dot dark"></div>Search</div>
+      <div class="sidebar-item dark"><div class="sidebar-dot dark"></div>Q&A</div>
+      <div class="sidebar-item dark"><div class="sidebar-dot dark"></div>Evaluation</div>
+      <div class="sidebar-item dark"><div class="sidebar-dot dark"></div>Settings</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════ -->
+<!-- IN-CONTEXT: Browser Tab -->
+<!-- ════════════════════════════════════════════ -->
+<div class="context-section" style="margin-bottom: 80px;">
+  <div class="context-header">In Context — Browser Favicon</div>
+
+  <div class="tab-row">
+    <div class="tab-panel light">
+      <div class="browser-tab light">
+        <svg width="14" height="14" viewBox="0 0 96 96" fill="none">
+          <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111" stroke-width="8" fill="none"/>
+          <line x1="24" y1="40" x2="58" y2="40" stroke="#111" stroke-width="6"/>
+          <line x1="24" y1="58" x2="50" y2="58" stroke="#111" stroke-width="6"/>
+        </svg>
+        Dossier AI
+      </div>
+    </div>
+    <div class="tab-panel dark">
+      <div class="browser-tab dark">
+        <svg width="14" height="14" viewBox="0 0 96 96" fill="none">
+          <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#f0f0f0" stroke-width="8" fill="none"/>
+          <line x1="24" y1="40" x2="58" y2="40" stroke="#f0f0f0" stroke-width="6"/>
+          <line x1="24" y1="58" x2="50" y2="58" stroke="#f0f0f0" stroke-width="6"/>
+        </svg>
+        Dossier AI
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
