@@ -58,9 +58,13 @@ interface BackfillResponse {
 
 export default function EvaluationPage() {
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
+  const [healthMetrics, setHealthMetrics] = useState<MetricsData | null>(null);
   const [testCases, setTestCases] = useState<TestCase[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [days, setDays] = useState(7);
+  const [metricsLoading, setMetricsLoading] = useState(true);
+  const [healthLoading, setHealthLoading] = useState(true);
+  const [testCasesLoading, setTestCasesLoading] = useState(true);
+  const [metricsDays, setMetricsDays] = useState(7);
+  const [healthDays, setHealthDays] = useState(7);
   const [backfilling, setBackfilling] = useState(false);
   const [backfillSummary, setBackfillSummary] = useState<{
     updated: number;
@@ -69,28 +73,50 @@ export default function EvaluationPage() {
   } | null>(null);
   const [backfillError, setBackfillError] = useState<string | null>(null);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [metricsRes, testCasesRes] = await Promise.all([
-        fetch(`/api/evaluation/metrics?days=${days}`),
-        fetch("/api/evaluation/test-suite"),
-      ]);
-      const metricsData = await metricsRes.json();
-      const testCasesData = await testCasesRes.json();
+  const fetchMetricsForWindow = useCallback(
+    async (
+      days: number,
+      setter: (data: MetricsData) => void,
+      setLoadingState: (value: boolean) => void
+    ) => {
+      setLoadingState(true);
+      try {
+        const response = await fetch(`/api/evaluation/metrics?days=${days}`);
+        const data = (await response.json()) as MetricsData;
+        if (response.ok) setter(data);
+      } catch {
+        console.error("Failed to fetch evaluation metrics");
+      } finally {
+        setLoadingState(false);
+      }
+    },
+    []
+  );
 
-      if (metricsRes.ok) setMetrics(metricsData);
+  const fetchTestCases = useCallback(async () => {
+    setTestCasesLoading(true);
+    try {
+      const testCasesRes = await fetch("/api/evaluation/test-suite");
+      const testCasesData = await testCasesRes.json();
       if (testCasesRes.ok) setTestCases(testCasesData.testCases || []);
     } catch {
-      console.error("Failed to fetch evaluation data");
+      console.error("Failed to fetch evaluation test cases");
     } finally {
-      setLoading(false);
+      setTestCasesLoading(false);
     }
-  }, [days]);
+  }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchMetricsForWindow(metricsDays, setMetrics, setMetricsLoading);
+  }, [fetchMetricsForWindow, metricsDays]);
+
+  useEffect(() => {
+    fetchMetricsForWindow(healthDays, setHealthMetrics, setHealthLoading);
+  }, [fetchMetricsForWindow, healthDays]);
+
+  useEffect(() => {
+    fetchTestCases();
+  }, [fetchTestCases]);
 
   async function handleBackfill() {
     setBackfilling(true);
@@ -132,7 +158,10 @@ export default function EvaluationPage() {
         failed: totalFailed,
         remaining,
       });
-      await fetchData();
+      await Promise.all([
+        fetchMetricsForWindow(metricsDays, setMetrics, setMetricsLoading),
+        fetchMetricsForWindow(healthDays, setHealthMetrics, setHealthLoading),
+      ]);
     } catch (err) {
       setBackfillError(
         err instanceof Error ? err.message : "Backfill failed unexpectedly"
@@ -142,28 +171,41 @@ export default function EvaluationPage() {
     }
   }
 
+  const loading = metricsLoading || healthLoading || testCasesLoading;
+  const backfillMetrics = healthMetrics || metrics;
+
   const hasMissingScores = Boolean(
-    metrics &&
-      (metrics.retrievalEvaluatedQueries < metrics.totalQueries ||
-        metrics.groundednessEvaluatedQueries < metrics.totalQueries)
+    backfillMetrics &&
+      (backfillMetrics.retrievalEvaluatedQueries < backfillMetrics.totalQueries ||
+        backfillMetrics.groundednessEvaluatedQueries < backfillMetrics.totalQueries)
   );
-  const retrievalCoveragePct = metrics
-    ? metrics.totalQueries > 0
-      ? Math.round((metrics.retrievalEvaluatedQueries / metrics.totalQueries) * 100)
-      : null
-    : null;
-  const groundednessCoveragePct = metrics
-    ? metrics.totalQueries > 0
+  const retrievalCoveragePct = healthMetrics
+    ? healthMetrics.totalQueries > 0
       ? Math.round(
-          (metrics.groundednessEvaluatedQueries / metrics.totalQueries) * 100
+          (healthMetrics.retrievalEvaluatedQueries / healthMetrics.totalQueries) * 100
         )
       : null
     : null;
-  const retrievalMissing = metrics
-    ? Math.max(metrics.totalQueries - metrics.retrievalEvaluatedQueries, 0)
+  const groundednessCoveragePct = healthMetrics
+    ? healthMetrics.totalQueries > 0
+      ? Math.round(
+          (healthMetrics.groundednessEvaluatedQueries /
+            healthMetrics.totalQueries) *
+            100
+        )
+      : null
+    : null;
+  const retrievalMissing = healthMetrics
+    ? Math.max(
+        healthMetrics.totalQueries - healthMetrics.retrievalEvaluatedQueries,
+        0
+      )
     : 0;
-  const groundednessMissing = metrics
-    ? Math.max(metrics.totalQueries - metrics.groundednessEvaluatedQueries, 0)
+  const groundednessMissing = healthMetrics
+    ? Math.max(
+        healthMetrics.totalQueries - healthMetrics.groundednessEvaluatedQueries,
+        0
+      )
     : 0;
 
   if (loading) {
@@ -207,7 +249,7 @@ export default function EvaluationPage() {
             </div>
             <p className="text-xs text-muted-foreground">
               {metrics?.retrievalEvaluatedQueries ?? 0} scored of{" "}
-              {metrics?.totalQueries ?? 0} queries in {days}d
+              {metrics?.totalQueries ?? 0} queries in {metricsDays}d
             </p>
           </CardContent>
         </Card>
@@ -253,7 +295,9 @@ export default function EvaluationPage() {
             <div className="text-2xl font-bold">
               ${metrics?.totalCost?.toFixed(4) ?? "0.00"}
             </div>
-            <p className="text-xs text-muted-foreground">Last {days} days</p>
+            <p className="text-xs text-muted-foreground">
+              Last {metricsDays} days
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -291,16 +335,16 @@ export default function EvaluationPage() {
           <CardTitle className="text-sm font-medium">Metrics Trend</CardTitle>
           <div className="flex gap-1">
             <Button
-              variant={days === 7 ? "default" : "outline"}
+              variant={metricsDays === 7 ? "default" : "outline"}
               size="sm"
-              onClick={() => setDays(7)}
+              onClick={() => setMetricsDays(7)}
             >
               7d
             </Button>
             <Button
-              variant={days === 30 ? "default" : "outline"}
+              variant={metricsDays === 30 ? "default" : "outline"}
               size="sm"
-              onClick={() => setDays(30)}
+              onClick={() => setMetricsDays(30)}
             >
               30d
             </Button>
@@ -312,17 +356,39 @@ export default function EvaluationPage() {
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-sm font-medium">Evaluation Health</CardTitle>
-          <p className="text-xs text-muted-foreground">
-            Daily query volume and scoring coverage
-          </p>
+        <CardHeader className="flex flex-row items-start justify-between">
+          <div>
+            <CardTitle className="text-sm font-medium">Evaluation Health</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Daily query volume and scoring coverage
+            </p>
+          </div>
+          <div className="flex gap-1">
+            <Button
+              variant={healthDays === 7 ? "default" : "outline"}
+              size="sm"
+              onClick={() => setHealthDays(7)}
+            >
+              7d
+            </Button>
+            <Button
+              variant={healthDays === 30 ? "default" : "outline"}
+              size="sm"
+              onClick={() => setHealthDays(30)}
+            >
+              30d
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-md border p-3">
-              <p className="text-xs text-muted-foreground">Queries ({days}d)</p>
-              <p className="text-lg font-semibold">{metrics?.totalQueries ?? 0}</p>
+              <p className="text-xs text-muted-foreground">
+                Queries ({healthDays}d)
+              </p>
+              <p className="text-lg font-semibold">
+                {healthMetrics?.totalQueries ?? 0}
+              </p>
             </div>
             <div className="rounded-md border p-3">
               <p className="text-xs text-muted-foreground">
@@ -350,7 +416,7 @@ export default function EvaluationPage() {
             </div>
           </div>
 
-          <HealthChart data={metrics?.trend || []} />
+          <HealthChart data={healthMetrics?.trend || []} />
         </CardContent>
       </Card>
 
