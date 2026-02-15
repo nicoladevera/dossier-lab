@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DossierLogo } from "@/components/shared/dossier-logo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,7 +45,9 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+      <div className="flex flex-col items-center gap-6">
+        <DossierLogo className="h-12 w-12" />
+        <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Welcome Back</CardTitle>
           <CardDescription>Log in to Dossier AI</CardDescription>
@@ -84,7 +87,8 @@ export default function LoginPage() {
             </Link>
           </p>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }

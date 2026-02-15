@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Library } from "lucide-react";
+import { DossierLogo } from "@/components/shared/dossier-logo";
 
 interface WelcomeStepProps {
   onNext: () => void;
@@ -12,7 +12,7 @@ export function WelcomeStep({ onNext, onSkip }: WelcomeStepProps) {
   return (
     <div className="flex flex-col items-center text-center space-y-6 py-8">
       <div className="rounded-full bg-primary/10 p-4">
-        <Library className="h-10 w-10 text-primary" />
+        <DossierLogo className="h-10 w-10 text-primary" />
       </div>
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Welcome to Dossier AI</h2>

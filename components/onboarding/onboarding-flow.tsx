@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { WelcomeStep } from "./welcome-step";
 import { CaptureStep } from "./capture-step";
@@ -43,6 +44,7 @@ export function OnboardingFlow() {
   return (
     <Dialog open={open} onOpenChange={(o) => !o && complete()}>
       <DialogContent className="sm:max-w-xl">
+        <DialogTitle className="sr-only">Product onboarding</DialogTitle>
         {/* Progress indicator */}
         <div className="mb-2">
           <div className="flex justify-between text-xs text-muted-foreground mb-1">
