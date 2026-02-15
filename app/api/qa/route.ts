@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
 
     // Get the appropriate LLM provider
     const provider = settings?.defaultProvider || "OPENAI";
-    const model = settings?.defaultModel || "gpt-4o";
+    const model = settings?.defaultModel || "gpt-5-mini";
     let llmApiKey: string;
 
     if (provider === "ANTHROPIC") {

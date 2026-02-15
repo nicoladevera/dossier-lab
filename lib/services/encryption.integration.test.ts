@@ -67,10 +67,10 @@ describe("Settings API logic", () => {
 
     it("should have default model for each provider", () => {
       const defaults: Record<string, string> = {
-        OPENAI: "gpt-4o",
+        OPENAI: "gpt-5-mini",
         ANTHROPIC: "claude-sonnet-4-5-20250929",
       };
-      expect(defaults.OPENAI).toBe("gpt-4o");
+      expect(defaults.OPENAI).toBe("gpt-5-mini");
       expect(defaults.ANTHROPIC).toBe("claude-sonnet-4-5-20250929");
     });
   });

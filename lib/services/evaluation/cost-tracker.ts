@@ -6,17 +6,17 @@ export interface TokenPricing {
 // Pricing per token (in USD) - based on current published rates
 const PRICING: Record<string, TokenPricing> = {
   // OpenAI models
-  "gpt-4o": {
-    promptPricePerToken: 2.5 / 1_000_000,
-    completionPricePerToken: 10.0 / 1_000_000,
+  "gpt-5.2": {
+    promptPricePerToken: 1.75 / 1_000_000,
+    completionPricePerToken: 14.0 / 1_000_000,
   },
-  "gpt-4-turbo": {
-    promptPricePerToken: 10.0 / 1_000_000,
-    completionPricePerToken: 30.0 / 1_000_000,
+  "gpt-5-mini": {
+    promptPricePerToken: 0.25 / 1_000_000,
+    completionPricePerToken: 2.0 / 1_000_000,
   },
-  "gpt-4o-mini": {
-    promptPricePerToken: 0.15 / 1_000_000,
-    completionPricePerToken: 0.6 / 1_000_000,
+  "gpt-4.1-nano": {
+    promptPricePerToken: 0.1 / 1_000_000,
+    completionPricePerToken: 0.4 / 1_000_000,
   },
   // Anthropic models
   "claude-sonnet-4-5-20250929": {
@@ -45,8 +45,8 @@ export function calculateCost(
 ): number {
   const pricing = PRICING[modelId];
   if (!pricing) {
-    // Fallback to gpt-4o pricing
-    const fallback = PRICING["gpt-4o"];
+    // Fallback to gpt-5-mini pricing
+    const fallback = PRICING["gpt-5-mini"];
     return (
       promptTokens * fallback.promptPricePerToken +
       completionTokens * fallback.completionPricePerToken

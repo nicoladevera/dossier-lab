@@ -16,7 +16,7 @@ export async function GET() {
         openaiApiKey: null,
         anthropicApiKey: null,
         defaultProvider: "OPENAI",
-        defaultModel: "gpt-4o",
+        defaultModel: "gpt-5-mini",
         dailyCostThreshold: 2.0,
       });
     }
