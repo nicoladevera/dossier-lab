@@ -1,8 +1,9 @@
 "use client";
 
 import {
+  Bar,
   CartesianGrid,
-  LineChart,
+  ComposedChart,
   Legend,
   Line,
   ResponsiveContainer,
@@ -11,11 +12,12 @@ import {
   YAxis,
 } from "recharts";
 
-interface HealthChartProps {
+interface OperationalChartProps {
   data: Array<{
     date: string;
-    retrievalScoredPct: number;
-    groundednessScoredPct: number;
+    queries: number;
+    avgLatencyMs: number;
+    cost: number;
   }>;
 }
 
@@ -30,16 +32,20 @@ interface LegendPayloadEntry {
   dataKey?: string | number;
 }
 
-const HEALTH_LEGEND_ORDER = [
-  "retrievalScoredPct",
-  "groundednessScoredPct",
+const OPERATIONAL_LEGEND_ORDER = [
+  "queries",
+  "avgLatencySec",
+  "dailyCostUsd",
 ] as const;
 
-const HEALTH_LEGEND_LABELS: Record<(typeof HEALTH_LEGEND_ORDER)[number], string> =
-  {
-    retrievalScoredPct: "Retrieval Scored %",
-    groundednessScoredPct: "Groundedness Scored %",
-  };
+const OPERATIONAL_LEGEND_LABELS: Record<
+  (typeof OPERATIONAL_LEGEND_ORDER)[number],
+  string
+> = {
+  queries: "Queries",
+  avgLatencySec: "Avg Latency",
+  dailyCostUsd: "Daily Cost",
+};
 
 function renderSquareDot(props: DotRenderProps) {
   const { cx, cy, stroke = "var(--foreground)", strokeWidth = 1.5 } = props;
@@ -77,22 +83,7 @@ function renderSquareActiveDot(props: DotRenderProps) {
   );
 }
 
-function renderCircleActiveDot(props: DotRenderProps) {
-  const { cx, cy, strokeWidth = 2 } = props;
-  if (cx === undefined || cy === undefined) return null;
-  return (
-    <circle
-      cx={cx}
-      cy={cy}
-      r={5}
-      fill="var(--card)"
-      stroke="var(--foreground)"
-      strokeWidth={strokeWidth}
-    />
-  );
-}
-
-export function HealthChart({ data }: HealthChartProps) {
+export function OperationalChart({ data }: OperationalChartProps) {
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-sm text-muted-foreground">
@@ -103,8 +94,8 @@ export function HealthChart({ data }: HealthChartProps) {
 
   const chartData = data.map((d) => ({
     ...d,
-    retrievalScoredPct: Math.round(d.retrievalScoredPct * 100),
-    groundednessScoredPct: Math.round(d.groundednessScoredPct * 100),
+    avgLatencySec: Math.round((d.avgLatencyMs / 1000) * 10) / 10,
+    dailyCostUsd: Math.round(d.cost * 10000) / 10000,
   }));
 
   const tooltipContentStyle = {
@@ -123,7 +114,6 @@ export function HealthChart({ data }: HealthChartProps) {
     color: "var(--card-foreground)",
   };
 
-  // Match metrics chart contrast behavior.
   const baseDot = {
     r: 3,
     fill: "var(--foreground)",
@@ -131,9 +121,18 @@ export function HealthChart({ data }: HealthChartProps) {
     strokeWidth: 1,
   };
 
+  const activeDot = {
+    r: 5,
+    fill: "var(--card)",
+    stroke: "var(--foreground)",
+    strokeWidth: 2,
+  };
+
+  const queriesColor = "var(--muted-foreground)";
+
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={chartData}>
+      <ComposedChart data={chartData}>
         <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
         <XAxis
           dataKey="date"
@@ -145,20 +144,29 @@ export function HealthChart({ data }: HealthChartProps) {
           }}
         />
         <YAxis
+          yAxisId="queries"
           className="text-xs"
           tick={{ fontSize: 12 }}
-          domain={[0, 100]}
-          tickFormatter={(value: number) => `${value}%`}
-          width={50}
+          allowDecimals={false}
+          width={42}
         />
+        <YAxis
+          yAxisId="latency"
+          orientation="right"
+          className="text-xs"
+          tick={{ fontSize: 12 }}
+          tickFormatter={(value: number) => `${value.toFixed(1)}s`}
+          width={52}
+        />
+        <YAxis yAxisId="cost" hide />
         <Tooltip
           contentStyle={tooltipContentStyle}
           labelStyle={tooltipLabelStyle}
           itemStyle={tooltipItemStyle}
           formatter={(value, name) => {
-            if (name === "retrievalScoredPct")
-              return [`${value}%`, "Retrieval Scored %"];
-            return [`${value}%`, "Groundedness Scored %"];
+            if (name === "queries") return [value, "Queries"];
+            if (name === "avgLatencySec") return [`${value}s`, "Avg Latency"];
+            return [`$${value}`, "Daily Cost"];
           }}
           labelFormatter={(label) =>
             new Date(String(label)).toLocaleDateString()
@@ -169,42 +177,70 @@ export function HealthChart({ data }: HealthChartProps) {
             const keys = new Set(
               (payload || [])
                 .map((entry) => String(entry.dataKey || ""))
-                .filter((k) => HEALTH_LEGEND_ORDER.includes(k as (typeof HEALTH_LEGEND_ORDER)[number]))
+                .filter((k) =>
+                  OPERATIONAL_LEGEND_ORDER.includes(
+                    k as (typeof OPERATIONAL_LEGEND_ORDER)[number]
+                  )
+                )
             );
 
             if (keys.size === 0) return null;
 
             return (
               <div className="mt-2 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground sm:text-sm">
-                {HEALTH_LEGEND_ORDER.filter((k) => keys.has(k)).map((key) => (
-                    <div key={key} className="flex items-center gap-2">
-                      <span
-                        className="inline-block w-5 border-t-2 border-foreground"
-                        style={
-                          key === "groundednessScoredPct"
-                            ? { borderTopStyle: "dashed" }
-                            : undefined
-                        }
-                      />
-                      <span>{HEALTH_LEGEND_LABELS[key]}</span>
-                    </div>
-                  ))}
+                {OPERATIONAL_LEGEND_ORDER.filter((k) => keys.has(k)).map(
+                  (key) => {
+                    if (key === "queries") {
+                      return (
+                        <div key={key} className="flex items-center gap-2">
+                          <span
+                            className="inline-block h-3 w-3 rounded-[2px]"
+                            style={{ backgroundColor: queriesColor }}
+                          />
+                          <span>{OPERATIONAL_LEGEND_LABELS[key]}</span>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={key} className="flex items-center gap-2">
+                        <span
+                          className="inline-block w-5 border-t-2 border-foreground"
+                          style={
+                            key === "dailyCostUsd"
+                              ? { borderTopStyle: "dashed" }
+                              : undefined
+                          }
+                        />
+                        <span>{OPERATIONAL_LEGEND_LABELS[key]}</span>
+                      </div>
+                    );
+                  }
+                )}
               </div>
             );
           }}
         />
+        <Bar
+          yAxisId="queries"
+          dataKey="queries"
+          fill={queriesColor}
+          radius={[4, 4, 0, 0]}
+        />
         <Line
+          yAxisId="latency"
           type="monotone"
-          dataKey="retrievalScoredPct"
+          dataKey="avgLatencySec"
           stroke="var(--foreground)"
           strokeWidth={2.5}
           connectNulls
           dot={baseDot}
-          activeDot={renderCircleActiveDot}
+          activeDot={activeDot}
         />
         <Line
+          yAxisId="cost"
           type="monotone"
-          dataKey="groundednessScoredPct"
+          dataKey="dailyCostUsd"
           stroke="var(--foreground)"
           strokeWidth={2}
           strokeDasharray="6 4"
@@ -212,7 +248,7 @@ export function HealthChart({ data }: HealthChartProps) {
           dot={renderSquareDot}
           activeDot={renderSquareActiveDot}
         />
-      </LineChart>
+      </ComposedChart>
     </ResponsiveContainer>
   );
 }

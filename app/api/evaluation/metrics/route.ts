@@ -62,6 +62,7 @@ export async function GET(request: NextRequest) {
         count: number;
         retrievalCount: number;
         groundednessCount: number;
+        latencyMsSum: number;
         cost: number;
       }
     > = {};
@@ -76,12 +77,14 @@ export async function GET(request: NextRequest) {
           count: 0,
           retrievalCount: 0,
           groundednessCount: 0,
+          latencyMsSum: 0,
           cost: 0,
         };
       }
       const dm = dailyMetrics[dateKey];
       dm.count++;
       dm.cost += ev.costUsd;
+      dm.latencyMsSum += ev.latencyMs;
 
       if (ev.retrievalScores) {
         const scores = ev.retrievalScores as number[];
@@ -111,6 +114,7 @@ export async function GET(request: NextRequest) {
       retrievalScoredPct: dm.count > 0 ? dm.retrievalCount / dm.count : 0,
       groundednessScoredPct:
         dm.count > 0 ? dm.groundednessCount / dm.count : 0,
+      avgLatencyMs: dm.count > 0 ? Math.round(dm.latencyMsSum / dm.count) : 0,
       cost: dm.cost,
     }));
 
