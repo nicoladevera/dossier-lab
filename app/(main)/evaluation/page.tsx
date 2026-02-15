@@ -55,6 +55,16 @@ interface MetricsData {
   };
 }
 
+interface FeedbackData {
+  good: number;
+  bad: number;
+  ratedCount: number;
+  totalQueries: number;
+  goodRatePct: number | null;
+  badRatePct: number | null;
+  ratingCoveragePct: number | null;
+}
+
 interface TestCase {
   id: string;
   query: string;
@@ -77,7 +87,9 @@ export default function EvaluationPage() {
   const [operationalMetrics, setOperationalMetrics] = useState<MetricsData | null>(
     null
   );
+  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [testCases, setTestCases] = useState<TestCase[]>([]);
+  const [feedbackLoading, setFeedbackLoading] = useState(true);
   const [metricsLoading, setMetricsLoading] = useState(true);
   const [healthLoading, setHealthLoading] = useState(true);
   const [operationalLoading, setOperationalLoading] = useState(true);
@@ -126,6 +138,19 @@ export default function EvaluationPage() {
     }
   }, []);
 
+  const fetchFeedback = useCallback(async () => {
+    setFeedbackLoading(true);
+    try {
+      const res = await fetch("/api/evaluation/feedback");
+      const data = (await res.json()) as FeedbackData;
+      if (res.ok) setFeedback(data);
+    } catch {
+      console.error("Failed to fetch feedback stats");
+    } finally {
+      setFeedbackLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchMetricsForWindow(metricsDays, setMetrics, setMetricsLoading);
   }, [fetchMetricsForWindow, metricsDays]);
@@ -145,6 +170,10 @@ export default function EvaluationPage() {
   useEffect(() => {
     fetchTestCases();
   }, [fetchTestCases]);
+
+  useEffect(() => {
+    fetchFeedback();
+  }, [fetchFeedback]);
 
   async function handleBackfill() {
     setBackfilling(true);
@@ -205,7 +234,7 @@ export default function EvaluationPage() {
   }
 
   const loading =
-    metricsLoading || healthLoading || operationalLoading || testCasesLoading;
+    metricsLoading || healthLoading || operationalLoading || testCasesLoading || feedbackLoading;
   const backfillMetrics = healthMetrics || metrics;
 
   const hasMissingScores = Boolean(
@@ -367,46 +396,71 @@ export default function EvaluationPage() {
       </TooltipProvider>
 
       {/* User feedback summary */}
-      {metrics && (metrics.feedback.good > 0 || metrics.feedback.bad > 0) && (
+      {feedback && (feedback.good > 0 || feedback.bad > 0) && (
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-medium">
               User Feedback
             </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              All-time ratings across {feedback.totalQueries} queries
+            </p>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <ThumbsUp className="h-4 w-4 text-foreground" />
-                <span className="text-sm font-medium">
-                  {metrics.feedback.good}
-                </span>
-                <span className="text-xs text-muted-foreground">Good</span>
+          <CardContent className="space-y-4">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="rounded-md border p-3">
+                <p className="text-xs text-muted-foreground">Good Rate</p>
+                <p className="text-lg font-semibold">
+                  {feedback.goodRatePct ?? 0}%
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {feedback.good}/{feedback.ratedCount} rated
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <ThumbsDown className="h-4 w-4 text-foreground" />
-                <span className="text-sm font-medium">
-                  {metrics.feedback.bad}
-                </span>
-                <span className="text-xs text-muted-foreground">Bad</span>
+              <div className="rounded-md border p-3">
+                <p className="text-xs text-muted-foreground">Rating Coverage</p>
+                <p className="text-lg font-semibold">
+                  {feedback.ratingCoveragePct ?? 0}%
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {feedback.ratedCount}/{feedback.totalQueries} queries
+                </p>
+              </div>
+              <div className="rounded-md border p-3">
+                <p className="text-xs text-muted-foreground">Responses</p>
+                <div className="flex items-center gap-4 mt-1">
+                  <div className="flex items-center gap-1.5">
+                    <ThumbsUp className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-lg font-semibold">{feedback.good}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <ThumbsDown className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-lg font-semibold">{feedback.bad}</span>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {feedback.ratedCount} total ratings
+                </p>
               </div>
             </div>
-            <div className="grid gap-1 text-xs text-muted-foreground">
-              <p>
-                Good rate:{" "}
-                <span className="font-medium text-foreground">
-                  {metrics.feedback.goodRatePct ?? 0}%
-                </span>{" "}
-                ({metrics.feedback.good}/{metrics.feedback.ratedCount} rated)
-              </p>
-              <p>
-                Rating coverage:{" "}
-                <span className="font-medium text-foreground">
-                  {metrics.feedback.ratingCoveragePct ?? 0}%
-                </span>{" "}
-                ({metrics.feedback.ratedCount}/{metrics.totalQueries} queries)
-              </p>
-            </div>
+
+            {/* Sentiment ratio bar */}
+            {feedback.ratedCount > 0 && (
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Good ({feedback.goodRatePct ?? 0}%)</span>
+                  <span>Bad ({feedback.badRatePct ?? 0}%)</span>
+                </div>
+                <div className="flex h-2 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="bg-foreground transition-all"
+                    style={{
+                      width: `${feedback.goodRatePct ?? 0}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
