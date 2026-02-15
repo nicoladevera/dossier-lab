@@ -251,7 +251,7 @@ The following are explicitly **not** included in Phase 1:
 ### 7.3 Dependencies
 - **Content extraction:** 
   - URLs: Mozilla Readability or similar article extraction library
-  - PDFs: pdf-parse or pdf.js
+  - PDFs: pdfjs-dist (pdf.js)
   - Word documents (.doc, .docx): mammoth.js or docx library
   - Markdown (.md): markdown-it or remark for parsing
   - Text files (.txt): Native Node.js fs module
