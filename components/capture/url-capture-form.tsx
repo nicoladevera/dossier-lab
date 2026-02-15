@@ -73,7 +73,7 @@ export function UrlCaptureForm({ onSuccess, onSwitchToText }: UrlCaptureFormProp
           disabled={loading}
           className="flex-1"
         />
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading || !url.trim()}>
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
