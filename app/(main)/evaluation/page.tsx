@@ -4,6 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { MetricsChart } from "@/components/evaluation/metrics-chart";
 import { HealthChart } from "@/components/evaluation/health-chart";
 import { OperationalChart } from "@/components/evaluation/operational-chart";
@@ -253,75 +259,105 @@ export default function EvaluationPage() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Retrieval Accuracy
-            </CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {metrics?.avgRetrievalAccuracy !== null &&
-              metrics?.avgRetrievalAccuracy !== undefined
-                ? `${metrics.avgRetrievalAccuracy}%`
-                : "N/A"}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {metrics?.retrievalEvaluatedQueries ?? 0} scored of{" "}
-              {metrics?.totalQueries ?? 0} queries in {metricsDays}d
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Groundedness</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {metrics?.avgGroundedness !== null &&
-              metrics?.avgGroundedness !== undefined
-                ? `${metrics.avgGroundedness}%`
-                : "N/A"}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {metrics?.groundednessEvaluatedQueries ?? 0} scored answers
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Latency</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {metrics?.avgLatencyMs
-                ? `${(metrics.avgLatencyMs / 1000).toFixed(1)}s`
-                : "N/A"}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Question to answer
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              ${metrics?.totalCost?.toFixed(4) ?? "0.00"}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Last {metricsDays} days
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <TooltipProvider delayDuration={200}>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Retrieval Accuracy
+              </CardTitle>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Target className="h-4 w-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Average relevance score of retrieved documents across all evaluated queries. Higher means the system finds more relevant sources.</p>
+                </TooltipContent>
+              </Tooltip>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {metrics?.avgRetrievalAccuracy !== null &&
+                metrics?.avgRetrievalAccuracy !== undefined
+                  ? `${metrics.avgRetrievalAccuracy}%`
+                  : "N/A"}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {metrics?.retrievalEvaluatedQueries ?? 0} scored of{" "}
+                {metrics?.totalQueries ?? 0} queries in {metricsDays}d
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Groundedness</CardTitle>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Shield className="h-4 w-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Fraction of claims in the answer that are supported by the cited source passages, scored by an LLM evaluator (0-100%).</p>
+                </TooltipContent>
+              </Tooltip>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {metrics?.avgGroundedness !== null &&
+                metrics?.avgGroundedness !== undefined
+                  ? `${metrics.avgGroundedness}%`
+                  : "N/A"}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {metrics?.groundednessEvaluatedQueries ?? 0} scored answers
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Avg Latency</CardTitle>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Average time from question submission to answer completion, across all queries in the selected period.</p>
+                </TooltipContent>
+              </Tooltip>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {metrics?.avgLatencyMs
+                  ? `${(metrics.avgLatencyMs / 1000).toFixed(1)}s`
+                  : "N/A"}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Question to answer
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Cumulative LLM API spend (embeddings + completions) for all queries in the selected period.</p>
+                </TooltipContent>
+              </Tooltip>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                ${metrics?.totalCost?.toFixed(4) ?? "0.00"}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Last {metricsDays} days
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </TooltipProvider>
 
       {/* User feedback summary */}
       {metrics && (metrics.feedback.good > 0 || metrics.feedback.bad > 0) && (
