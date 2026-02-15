@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DossierLogo } from "@/components/shared/dossier-logo";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -58,7 +59,9 @@ export default function SignUpPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+      <div className="flex flex-col items-center gap-6">
+        <DossierLogo className="h-12 w-12" />
+        <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Create Account</CardTitle>
           <CardDescription>Sign up for Dossier AI</CardDescription>
@@ -110,7 +113,8 @@ export default function SignUpPage() {
             </Link>
           </p>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }
