@@ -45,7 +45,14 @@ interface MetricsData {
     avgLatencyMs: number;
     cost: number;
   }>;
-  feedback: { good: number; bad: number };
+  feedback: {
+    good: number;
+    bad: number;
+    ratedCount: number;
+    goodRatePct: number | null;
+    badRatePct: number | null;
+    ratingCoveragePct: number | null;
+  };
 }
 
 interface TestCase {
@@ -367,20 +374,38 @@ export default function EvaluationPage() {
               User Feedback
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <ThumbsUp className="h-4 w-4 text-foreground" />
-              <span className="text-sm font-medium">
-                {metrics.feedback.good}
-              </span>
-              <span className="text-xs text-muted-foreground">Good</span>
+          <CardContent className="space-y-3">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <ThumbsUp className="h-4 w-4 text-foreground" />
+                <span className="text-sm font-medium">
+                  {metrics.feedback.good}
+                </span>
+                <span className="text-xs text-muted-foreground">Good</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ThumbsDown className="h-4 w-4 text-foreground" />
+                <span className="text-sm font-medium">
+                  {metrics.feedback.bad}
+                </span>
+                <span className="text-xs text-muted-foreground">Bad</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <ThumbsDown className="h-4 w-4 text-foreground" />
-              <span className="text-sm font-medium">
-                {metrics.feedback.bad}
-              </span>
-              <span className="text-xs text-muted-foreground">Bad</span>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <p>
+                Good rate:{" "}
+                <span className="font-medium text-foreground">
+                  {metrics.feedback.goodRatePct ?? 0}%
+                </span>{" "}
+                ({metrics.feedback.good}/{metrics.feedback.ratedCount} rated)
+              </p>
+              <p>
+                Rating coverage:{" "}
+                <span className="font-medium text-foreground">
+                  {metrics.feedback.ratingCoveragePct ?? 0}%
+                </span>{" "}
+                ({metrics.feedback.ratedCount}/{metrics.totalQueries} queries)
+              </p>
             </div>
           </CardContent>
         </Card>

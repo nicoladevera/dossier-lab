@@ -134,6 +134,13 @@ export async function GET(request: NextRequest) {
     const badCount = evaluations.filter(
       (e: { userFeedback: string | null }) => e.userFeedback === "BAD"
     ).length;
+    const ratedCount = goodCount + badCount;
+    const goodRatePct =
+      ratedCount > 0 ? Math.round((goodCount / ratedCount) * 100) : null;
+    const badRatePct =
+      ratedCount > 0 ? Math.round((badCount / ratedCount) * 100) : null;
+    const ratingCoveragePct =
+      totalEvals > 0 ? Math.round((ratedCount / totalEvals) * 100) : null;
 
     return NextResponse.json({
       totalQueries: totalEvals,
@@ -149,7 +156,14 @@ export async function GET(request: NextRequest) {
       budgetWarning,
       todayCost: Math.round(todayCost * 10000) / 10000,
       dailyThreshold: threshold,
-      feedback: { good: goodCount, bad: badCount },
+      feedback: {
+        good: goodCount,
+        bad: badCount,
+        ratedCount,
+        goodRatePct,
+        badRatePct,
+        ratingCoveragePct,
+      },
     });
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
