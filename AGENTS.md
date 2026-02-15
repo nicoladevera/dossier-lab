@@ -86,7 +86,7 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 - **Extraction** (`extraction/`) -- Content extractors for URL, PDF, Word, Markdown, text
 - **Search** (`search/`) -- Semantic, keyword, and hybrid (RRF) search with metadata-aware keyword fallback
 - **Processing** (`processing/`) -- Async pipeline: chunk -> optional embed -> store
-- **Evaluation** (`evaluation/`) -- Retrieval accuracy, groundedness, cost tracking
+- **Evaluation** (`evaluation/`) -- Retrieval accuracy, groundedness, scoring coverage health, and cost tracking
 - **Encryption** (`encryption.ts`) -- AES-256-GCM for API key storage
 
 ### Testing
@@ -133,6 +133,8 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 | `lib/services/search/hybrid-search.ts` | Search orchestration (RRF fusion) |
 | `lib/services/search/keyword-search.ts` | Metadata-aware keyword search with loose fallback |
 | `app/api/qa/route.ts` | Q&A orchestration (source-level citations + LLM context assembly) |
+| `app/api/evaluation/backfill/route.ts` | One-time historical evaluation score backfill (user-scoped, batched) |
+| `components/evaluation/health-chart.tsx` | Evaluation health chart (query volume + scoring coverage) |
 | `lib/services/llm/provider-factory.ts` | LLM provider instantiation |
 | `lib/services/encryption.ts` | API key encrypt/decrypt |
 

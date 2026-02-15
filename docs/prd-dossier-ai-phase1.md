@@ -141,6 +141,8 @@ This PRD covers **Phase 1**: establishing the core RAG pipeline, hybrid search, 
 54. The system must display current retrieval accuracy as a percentage (average relevance across recent queries).
 55. The system must display current groundedness score as a percentage (average across recent answers).
 56. The system must show a history chart of metrics over time (last 7 days, 30 days).
+56a. The system should show evaluation health coverage over time (queries per day and percentage of queries with retrieval/groundedness scoring populated).
+56b. The system should support one-time backfilling of historical evaluation rows missing retrieval or groundedness scores.
 57. The system must track query latency (time from question to answer).
 58. The system must track actual cost per query by parsing token usage from API responses (prompt_tokens, completion_tokens) and multiplying by configurable per-token pricing for each provider.
 59. The system must allow users to mark answers as "good" or "bad" for feedback.
