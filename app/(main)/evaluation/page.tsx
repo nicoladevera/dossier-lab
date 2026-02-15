@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MetricsChart } from "@/components/evaluation/metrics-chart";
+import { HealthChart } from "@/components/evaluation/health-chart";
 import { TestSuiteRunner } from "@/components/evaluation/test-suite-runner";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -14,19 +15,26 @@ import {
   DollarSign,
   ThumbsUp,
   ThumbsDown,
+  Loader2,
 } from "lucide-react";
 
 interface MetricsData {
   totalQueries: number;
-  avgRetrievalAccuracy: number;
-  avgGroundedness: number;
+  avgRetrievalAccuracy: number | null;
+  avgGroundedness: number | null;
   avgLatencyMs: number;
   totalCost: number;
+  retrievalEvaluatedQueries: number;
+  groundednessEvaluatedQueries: number;
   trend: Array<{
     date: string;
     retrievalAccuracy: number;
     groundedness: number;
     queries: number;
+    retrievalScoredQueries: number;
+    groundednessScoredQueries: number;
+    retrievalScoredPct: number;
+    groundednessScoredPct: number;
     cost: number;
   }>;
   feedback: { good: number; bad: number };
@@ -39,33 +47,124 @@ interface TestCase {
   goldenSourceIds: string[];
 }
 
+interface BackfillResponse {
+  scanned: number;
+  updated: number;
+  failed: number;
+  pendingBefore: number;
+  remaining: number;
+  done: boolean;
+}
+
 export default function EvaluationPage() {
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
   const [testCases, setTestCases] = useState<TestCase[]>([]);
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState(7);
+  const [backfilling, setBackfilling] = useState(false);
+  const [backfillSummary, setBackfillSummary] = useState<{
+    updated: number;
+    failed: number;
+    remaining: number;
+  } | null>(null);
+  const [backfillError, setBackfillError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [metricsRes, testCasesRes] = await Promise.all([
+        fetch(`/api/evaluation/metrics?days=${days}`),
+        fetch("/api/evaluation/test-suite"),
+      ]);
+      const metricsData = await metricsRes.json();
+      const testCasesData = await testCasesRes.json();
+
+      if (metricsRes.ok) setMetrics(metricsData);
+      if (testCasesRes.ok) setTestCases(testCasesData.testCases || []);
+    } catch {
+      console.error("Failed to fetch evaluation data");
+    } finally {
+      setLoading(false);
+    }
+  }, [days]);
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      try {
-        const [metricsRes, testCasesRes] = await Promise.all([
-          fetch(`/api/evaluation/metrics?days=${days}`),
-          fetch("/api/evaluation/test-suite"),
-        ]);
-        const metricsData = await metricsRes.json();
-        const testCasesData = await testCasesRes.json();
-
-        if (metricsRes.ok) setMetrics(metricsData);
-        if (testCasesRes.ok) setTestCases(testCasesData.testCases || []);
-      } catch {
-        console.error("Failed to fetch evaluation data");
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchData();
-  }, [days]);
+  }, [fetchData]);
+
+  async function handleBackfill() {
+    setBackfilling(true);
+    setBackfillSummary(null);
+    setBackfillError(null);
+
+    let totalUpdated = 0;
+    let totalFailed = 0;
+    let remaining = 0;
+
+    try {
+      // Run in batches to avoid long single requests.
+      for (let i = 0; i < 20; i++) {
+        const res = await fetch("/api/evaluation/backfill", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ limit: 10 }),
+        });
+
+        const data = (await res.json()) as BackfillResponse | { error?: string };
+        if (!res.ok) {
+          throw new Error(
+            (data as { error?: string }).error || "Backfill request failed"
+          );
+        }
+
+        const batch = data as BackfillResponse;
+        totalUpdated += batch.updated;
+        totalFailed += batch.failed;
+        remaining = batch.remaining;
+
+        if (batch.done || batch.scanned === 0) {
+          break;
+        }
+      }
+
+      setBackfillSummary({
+        updated: totalUpdated,
+        failed: totalFailed,
+        remaining,
+      });
+      await fetchData();
+    } catch (err) {
+      setBackfillError(
+        err instanceof Error ? err.message : "Backfill failed unexpectedly"
+      );
+    } finally {
+      setBackfilling(false);
+    }
+  }
+
+  const hasMissingScores = Boolean(
+    metrics &&
+      (metrics.retrievalEvaluatedQueries < metrics.totalQueries ||
+        metrics.groundednessEvaluatedQueries < metrics.totalQueries)
+  );
+  const retrievalCoveragePct = metrics
+    ? metrics.totalQueries > 0
+      ? Math.round((metrics.retrievalEvaluatedQueries / metrics.totalQueries) * 100)
+      : null
+    : null;
+  const groundednessCoveragePct = metrics
+    ? metrics.totalQueries > 0
+      ? Math.round(
+          (metrics.groundednessEvaluatedQueries / metrics.totalQueries) * 100
+        )
+      : null
+    : null;
+  const retrievalMissing = metrics
+    ? Math.max(metrics.totalQueries - metrics.retrievalEvaluatedQueries, 0)
+    : 0;
+  const groundednessMissing = metrics
+    ? Math.max(metrics.totalQueries - metrics.groundednessEvaluatedQueries, 0)
+    : 0;
 
   if (loading) {
     return (
@@ -101,9 +200,13 @@ export default function EvaluationPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {metrics?.avgRetrievalAccuracy ?? 0}%
+              {metrics?.avgRetrievalAccuracy !== null &&
+              metrics?.avgRetrievalAccuracy !== undefined
+                ? `${metrics.avgRetrievalAccuracy}%`
+                : "N/A"}
             </div>
             <p className="text-xs text-muted-foreground">
+              {metrics?.retrievalEvaluatedQueries ?? 0} scored of{" "}
               {metrics?.totalQueries ?? 0} queries in {days}d
             </p>
           </CardContent>
@@ -115,10 +218,13 @@ export default function EvaluationPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {metrics?.avgGroundedness ?? 0}%
+              {metrics?.avgGroundedness !== null &&
+              metrics?.avgGroundedness !== undefined
+                ? `${metrics.avgGroundedness}%`
+                : "N/A"}
             </div>
             <p className="text-xs text-muted-foreground">
-              Claim support rate
+              {metrics?.groundednessEvaluatedQueries ?? 0} scored answers
             </p>
           </CardContent>
         </Card>
@@ -205,6 +311,49 @@ export default function EvaluationPage() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium">Evaluation Health</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Daily query volume and scoring coverage
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-md border p-3">
+              <p className="text-xs text-muted-foreground">Queries ({days}d)</p>
+              <p className="text-lg font-semibold">{metrics?.totalQueries ?? 0}</p>
+            </div>
+            <div className="rounded-md border p-3">
+              <p className="text-xs text-muted-foreground">
+                Retrieval Scored Coverage
+              </p>
+              <p className="text-lg font-semibold">
+                {retrievalCoveragePct !== null ? `${retrievalCoveragePct}%` : "N/A"}
+              </p>
+            </div>
+            <div className="rounded-md border p-3">
+              <p className="text-xs text-muted-foreground">
+                Groundedness Scored Coverage
+              </p>
+              <p className="text-lg font-semibold">
+                {groundednessCoveragePct !== null
+                  ? `${groundednessCoveragePct}%`
+                  : "N/A"}
+              </p>
+            </div>
+            <div className="rounded-md border p-3">
+              <p className="text-xs text-muted-foreground">Missing Scores</p>
+              <p className="text-lg font-semibold">
+                R:{retrievalMissing} / G:{groundednessMissing}
+              </p>
+            </div>
+          </div>
+
+          <HealthChart data={metrics?.trend || []} />
+        </CardContent>
+      </Card>
+
       <Separator />
 
       {/* Test suite */}
@@ -218,6 +367,42 @@ export default function EvaluationPage() {
           <TestSuiteRunner testCases={testCases} />
         </CardContent>
       </Card>
+
+      {hasMissingScores && (
+        <Card className="border-dashed bg-muted/20">
+          <CardContent className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-medium">Backfill Missing Scores</p>
+              <p className="text-xs text-muted-foreground">
+                One-time recovery for historical rows that were logged before scoring was enabled.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleBackfill}
+                disabled={backfilling}
+                size="sm"
+                variant="secondary"
+              >
+                {backfilling ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                Run Backfill
+              </Button>
+              {backfillSummary && (
+                <p className="text-xs text-muted-foreground">
+                  Updated {backfillSummary.updated}, failed {backfillSummary.failed}, remaining {backfillSummary.remaining}
+                </p>
+              )}
+            </div>
+          </CardContent>
+          {backfillError && (
+            <CardContent className="pt-0">
+              <p className="text-xs text-destructive">{backfillError}</p>
+            </CardContent>
+          )}
+        </Card>
+      )}
     </div>
   );
 }
