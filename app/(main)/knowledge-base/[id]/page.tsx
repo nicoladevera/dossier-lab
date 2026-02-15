@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Trash2, ExternalLink, Globe, FileText, File, FileCode, AlignLeft } from "lucide-react";
+import { ArrowLeft, ArrowUp, Trash2, ExternalLink, Globe, FileText, File, FileCode, AlignLeft } from "lucide-react";
 
 const typeIcons: Record<string, React.ElementType> = {
   URL: Globe,
@@ -71,6 +71,19 @@ export default function SourceDetailPage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    function handleScroll() {
+      setShowScrollTop(window.scrollY > 300);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const displayChunks = useMemo(() => {
     if (!source || source.chunks.length === 0) {
@@ -148,58 +161,34 @@ export default function SourceDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push("/knowledge-base")}>
+      <div className="flex items-start gap-4">
+        <Button variant="ghost" size="icon" className="mt-1 shrink-0" onClick={() => router.push("/knowledge-base")}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1 min-w-0">
-          <h2 className="text-2xl font-bold tracking-tight truncate">{source.title}</h2>
-          <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+          <h2 className="text-2xl font-bold tracking-tight break-words">{source.title}</h2>
+          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
             <Badge variant="secondary" className="flex items-center gap-1">
               <Icon className="h-3 w-3" />
               {source.sourceType}
             </Badge>
+            {source.sourceUrl && (
+              <a
+                href={source.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ExternalLink className="h-3 w-3" />
+                Original
+              </a>
+            )}
             {source.author && <span>by {source.author}</span>}
-            <span>{new Date(source.captureDate).toLocaleDateString()}</span>
+            <span className="shrink-0">{new Date(source.captureDate).toLocaleDateString()}</span>
             {source.status === "PROCESSING" && (
               <Badge variant="outline">Processing {source.processingProgress}%</Badge>
             )}
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {source.sourceUrl && (
-            <Button variant="outline" size="sm" asChild>
-              <a href={source.sourceUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="mr-1 h-4 w-4" />
-                Original
-              </a>
-            </Button>
-          )}
-          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="destructive" size="sm">
-                <Trash2 className="mr-1 h-4 w-4" />
-                Delete
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Delete source?</DialogTitle>
-                <DialogDescription>
-                  This will permanently delete &quot;{source.title}&quot; and all associated chunks.
-                  This action cannot be undone.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
-                  {deleting ? "Deleting..." : "Delete"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </div>
       </div>
 
@@ -212,7 +201,7 @@ export default function SourceDetailPage() {
             <CardTitle className="text-sm font-medium">Metadata</CardTitle>
           </CardHeader>
           <CardContent>
-            <dl className="grid grid-cols-2 gap-2 text-sm">
+            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
               {source.sourceUrl && (
                 <>
                   <dt className="text-muted-foreground">Source URL</dt>
@@ -269,6 +258,48 @@ export default function SourceDetailPage() {
           )}
         </CardContent>
       </Card>
+
+      <Separator />
+
+      <div className="flex justify-end py-2">
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive shrink-0">
+              <Trash2 className="mr-1 h-4 w-4" />
+              Delete source
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete source?</DialogTitle>
+              <DialogDescription>
+                This will permanently delete &quot;{source.title}&quot; and all associated chunks.
+                This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+                {deleting ? "Deleting..." : "Delete"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {showScrollTop && (
+        <Button
+          variant="outline"
+          size="icon"
+          className="fixed bottom-28 right-6 z-50 rounded-full shadow-md animate-in fade-in slide-in-from-bottom-2 duration-200"
+          onClick={scrollToTop}
+          aria-label="Scroll to top"
+        >
+          <ArrowUp className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 }

@@ -64,7 +64,7 @@ export function UrlCaptureForm({ onSuccess, onSwitchToText }: UrlCaptureFormProp
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="flex gap-2">
+      <div className="flex gap-2 min-w-0">
         <Input
           type="url"
           placeholder="https://example.com/article"
