@@ -106,6 +106,11 @@ export async function GET(request: NextRequest) {
           ? dm.groundedness / dm.groundednessCount
           : 0,
       queries: dm.count,
+      retrievalScoredQueries: dm.retrievalCount,
+      groundednessScoredQueries: dm.groundednessCount,
+      retrievalScoredPct: dm.count > 0 ? dm.retrievalCount / dm.count : 0,
+      groundednessScoredPct:
+        dm.count > 0 ? dm.groundednessCount / dm.count : 0,
       cost: dm.cost,
     }));
 
@@ -128,10 +133,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       totalQueries: totalEvals,
-      avgRetrievalAccuracy: Math.round(avgRetrievalAccuracy * 100),
-      avgGroundedness: Math.round(avgGroundedness * 100),
+      avgRetrievalAccuracy:
+        retrievalCount > 0 ? Math.round(avgRetrievalAccuracy * 100) : null,
+      avgGroundedness:
+        groundednessCount > 0 ? Math.round(avgGroundedness * 100) : null,
       avgLatencyMs: Math.round(avgLatency),
       totalCost: Math.round(totalCost * 10000) / 10000,
+      retrievalEvaluatedQueries: retrievalCount,
+      groundednessEvaluatedQueries: groundednessCount,
       trend,
       budgetWarning,
       todayCost: Math.round(todayCost * 10000) / 10000,

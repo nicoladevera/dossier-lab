@@ -5,6 +5,8 @@ import { hybridSearch } from "@/lib/services/search/hybrid-search";
 import { createLLMProvider } from "@/lib/services/llm/provider-factory";
 import { decrypt } from "@/lib/services/encryption";
 import { calculateCost } from "@/lib/services/evaluation/cost-tracker";
+import { scoreGroundedness } from "@/lib/services/evaluation/groundedness";
+import { scoreRetrievalAccuracy } from "@/lib/services/evaluation/retrieval-accuracy";
 import { checkQueryRateLimit } from "@/lib/rate-limit";
 import {
   createOpenAIEmbeddingProvider,
@@ -12,6 +14,49 @@ import {
 } from "@/lib/services/embedding/provider-factory";
 
 const SOURCE_CONTEXT_CHUNK_LIMIT = 3;
+
+function runBackgroundEvaluationScoring(params: {
+  evaluationId: string;
+  query: string;
+  answer: string;
+  chunkContents: string[];
+  citedPassages: string[];
+  llmProvider: ReturnType<typeof createLLMProvider>;
+}) {
+  const {
+    evaluationId,
+    query,
+    answer,
+    chunkContents,
+    citedPassages,
+    llmProvider,
+  } = params;
+
+  void (async () => {
+    try {
+      const retrievalScores = await scoreRetrievalAccuracy(
+        query,
+        chunkContents.map((content) => ({ content })),
+        llmProvider
+      );
+      const groundednessScore = await scoreGroundedness(
+        answer,
+        citedPassages,
+        llmProvider
+      );
+
+      await prisma.evaluation.update({
+        where: { id: evaluationId },
+        data: {
+          retrievalScores,
+          groundednessScore,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to score evaluation:", err);
+    }
+  })();
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -202,25 +247,14 @@ export async function POST(request: NextRequest) {
           const latencyMs = Date.now() - startTime;
           const usage = getUsage();
 
-          // Send completion event
-          controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify({
-                type: "done",
-                latencyMs,
-                usage,
-              })}\n\n`
-            )
-          );
-
           // Calculate cost
           const costUsd = usage
             ? calculateCost(model, usage.promptTokens, usage.completionTokens)
             : 0;
 
-          // Log the Q&A interaction asynchronously
-          prisma.evaluation
-            .create({
+          let evaluationId: string | null = null;
+          try {
+            const evaluation = await prisma.evaluation.create({
               data: {
                 userId,
                 query: question.trim(),
@@ -235,10 +269,32 @@ export async function POST(request: NextRequest) {
                   : {},
                 costUsd,
               },
-            })
-            .catch((err: unknown) =>
-              console.error("Failed to log evaluation:", err)
-            );
+            });
+            evaluationId = evaluation.id;
+
+            runBackgroundEvaluationScoring({
+              evaluationId,
+              query: question.trim(),
+              answer: fullAnswer,
+              chunkContents: searchResults.map((r) => r.content),
+              citedPassages: citations.map((citation) => citation.content),
+              llmProvider,
+            });
+          } catch (err) {
+            console.error("Failed to log evaluation:", err);
+          }
+
+          // Send completion event
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({
+                type: "done",
+                latencyMs,
+                usage,
+                evaluationId,
+              })}\n\n`
+            )
+          );
 
           controller.close();
         } catch (err) {
