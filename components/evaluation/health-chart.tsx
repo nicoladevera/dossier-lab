@@ -23,6 +23,66 @@ interface HealthChartProps {
   }>;
 }
 
+interface DotRenderProps {
+  cx?: number;
+  cy?: number;
+  stroke?: string;
+  strokeWidth?: number;
+}
+
+interface LegendPayloadEntry {
+  dataKey?: string | number;
+}
+
+const HEALTH_LEGEND_ORDER = [
+  "queries",
+  "retrievalScoredPct",
+  "groundednessScoredPct",
+] as const;
+
+const HEALTH_LEGEND_LABELS: Record<(typeof HEALTH_LEGEND_ORDER)[number], string> =
+  {
+    queries: "Queries",
+    retrievalScoredPct: "Retrieval Scored %",
+    groundednessScoredPct: "Groundedness Scored %",
+  };
+
+function renderSquareDot(props: DotRenderProps) {
+  const { cx, cy, stroke = "var(--foreground)", strokeWidth = 1.5 } = props;
+  if (cx === undefined || cy === undefined) return null;
+  const size = 6;
+  return (
+    <rect
+      x={cx - size / 2}
+      y={cy - size / 2}
+      width={size}
+      height={size}
+      fill={stroke}
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      rx={1}
+    />
+  );
+}
+
+function renderSquareActiveDot(props: DotRenderProps) {
+  const { cx, cy, stroke = "var(--foreground)", strokeWidth = 2 } = props;
+  if (cx === undefined || cy === undefined) return null;
+  const size = 9;
+  return (
+    <rect
+      x={cx - size / 2}
+      y={cy - size / 2}
+      width={size}
+      height={size}
+      fill="var(--card)"
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      rx={1}
+    />
+  );
+}
+
 export function HealthChart({ data }: HealthChartProps) {
   if (data.length === 0) {
     return (
@@ -53,6 +113,24 @@ export function HealthChart({ data }: HealthChartProps) {
   const tooltipItemStyle = {
     color: "var(--card-foreground)",
   };
+
+  // Match metrics chart contrast behavior.
+  const baseDot = {
+    r: 3,
+    fill: "var(--foreground)",
+    stroke: "var(--foreground)",
+    strokeWidth: 1,
+  };
+
+  const activeDot = {
+    r: 5,
+    fill: "var(--card)",
+    stroke: "var(--foreground)",
+    strokeWidth: 2,
+  };
+
+  // Keep query bars and legend marker in the same neutral tone across themes.
+  const queryBarColor = "var(--muted-foreground)";
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -98,33 +176,74 @@ export function HealthChart({ data }: HealthChartProps) {
           }
         />
         <Legend
-          formatter={(value: string) => {
-            if (value === "queries") return "Queries";
-            if (value === "retrievalScoredPct") return "Retrieval Scored %";
-            return "Groundedness Scored %";
+          content={({ payload }: { payload?: LegendPayloadEntry[] }) => {
+            const keys = new Set(
+              (payload || [])
+                .map((entry) => String(entry.dataKey || ""))
+                .filter((k) => HEALTH_LEGEND_ORDER.includes(k as (typeof HEALTH_LEGEND_ORDER)[number]))
+            );
+
+            if (keys.size === 0) return null;
+
+            return (
+              <div className="mt-2 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground sm:text-sm">
+                {HEALTH_LEGEND_ORDER.filter((k) => keys.has(k)).map((key) => {
+                  if (key === "queries") {
+                    return (
+                      <div key={key} className="flex items-center gap-2">
+                        <span
+                          className="inline-block h-3 w-3 rounded-[2px]"
+                          style={{ backgroundColor: queryBarColor }}
+                        />
+                        <span>{HEALTH_LEGEND_LABELS[key]}</span>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div key={key} className="flex items-center gap-2">
+                      <span
+                        className="inline-block w-5 border-t-2 border-foreground"
+                        style={
+                          key === "groundednessScoredPct"
+                            ? { borderTopStyle: "dashed" }
+                            : undefined
+                        }
+                      />
+                      <span>{HEALTH_LEGEND_LABELS[key]}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
           }}
         />
         <Bar
           yAxisId="queries"
           dataKey="queries"
-          fill="hsl(var(--muted-foreground) / 0.35)"
+          fill={queryBarColor}
           radius={[4, 4, 0, 0]}
         />
         <Line
           yAxisId="pct"
           type="monotone"
           dataKey="retrievalScoredPct"
-          stroke="hsl(var(--primary))"
-          strokeWidth={2}
-          dot={{ r: 3 }}
+          stroke="var(--foreground)"
+          strokeWidth={2.5}
+          connectNulls
+          dot={baseDot}
+          activeDot={activeDot}
         />
         <Line
           yAxisId="pct"
           type="monotone"
           dataKey="groundednessScoredPct"
-          stroke="hsl(var(--chart-2, 160 60% 45%))"
+          stroke="var(--foreground)"
           strokeWidth={2}
-          dot={{ r: 3 }}
+          strokeDasharray="6 4"
+          connectNulls
+          dot={renderSquareDot}
+          activeDot={renderSquareActiveDot}
         />
       </ComposedChart>
     </ResponsiveContainer>
