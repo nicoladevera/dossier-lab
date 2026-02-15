@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MetricsChart } from "@/components/evaluation/metrics-chart";
 import { HealthChart } from "@/components/evaluation/health-chart";
+import { OperationalChart } from "@/components/evaluation/operational-chart";
 import { TestSuiteRunner } from "@/components/evaluation/test-suite-runner";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -35,6 +36,7 @@ interface MetricsData {
     groundednessScoredQueries: number;
     retrievalScoredPct: number;
     groundednessScoredPct: number;
+    avgLatencyMs: number;
     cost: number;
   }>;
   feedback: { good: number; bad: number };
@@ -59,12 +61,17 @@ interface BackfillResponse {
 export default function EvaluationPage() {
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
   const [healthMetrics, setHealthMetrics] = useState<MetricsData | null>(null);
+  const [operationalMetrics, setOperationalMetrics] = useState<MetricsData | null>(
+    null
+  );
   const [testCases, setTestCases] = useState<TestCase[]>([]);
   const [metricsLoading, setMetricsLoading] = useState(true);
   const [healthLoading, setHealthLoading] = useState(true);
+  const [operationalLoading, setOperationalLoading] = useState(true);
   const [testCasesLoading, setTestCasesLoading] = useState(true);
   const [metricsDays, setMetricsDays] = useState(7);
   const [healthDays, setHealthDays] = useState(7);
+  const [operationalDays, setOperationalDays] = useState(7);
   const [backfilling, setBackfilling] = useState(false);
   const [backfillSummary, setBackfillSummary] = useState<{
     updated: number;
@@ -115,6 +122,14 @@ export default function EvaluationPage() {
   }, [fetchMetricsForWindow, healthDays]);
 
   useEffect(() => {
+    fetchMetricsForWindow(
+      operationalDays,
+      setOperationalMetrics,
+      setOperationalLoading
+    );
+  }, [fetchMetricsForWindow, operationalDays]);
+
+  useEffect(() => {
     fetchTestCases();
   }, [fetchTestCases]);
 
@@ -161,6 +176,11 @@ export default function EvaluationPage() {
       await Promise.all([
         fetchMetricsForWindow(metricsDays, setMetrics, setMetricsLoading),
         fetchMetricsForWindow(healthDays, setHealthMetrics, setHealthLoading),
+        fetchMetricsForWindow(
+          operationalDays,
+          setOperationalMetrics,
+          setOperationalLoading
+        ),
       ]);
     } catch (err) {
       setBackfillError(
@@ -171,7 +191,8 @@ export default function EvaluationPage() {
     }
   }
 
-  const loading = metricsLoading || healthLoading || testCasesLoading;
+  const loading =
+    metricsLoading || healthLoading || operationalLoading || testCasesLoading;
   const backfillMetrics = healthMetrics || metrics;
 
   const hasMissingScores = Boolean(
@@ -331,8 +352,13 @@ export default function EvaluationPage() {
 
       {/* Metrics chart */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-sm font-medium">Metrics Trend</CardTitle>
+        <CardHeader className="flex flex-row items-start justify-between">
+          <div>
+            <CardTitle className="text-sm font-medium">Metrics Trend</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Daily retrieval quality and answer groundedness
+            </p>
+          </div>
           <div className="flex gap-1">
             <Button
               variant={metricsDays === 7 ? "default" : "outline"}
@@ -360,7 +386,7 @@ export default function EvaluationPage() {
           <div>
             <CardTitle className="text-sm font-medium">Evaluation Health</CardTitle>
             <p className="text-xs text-muted-foreground">
-              Daily query volume and scoring coverage
+              Scoring coverage and missing-score status
             </p>
           </div>
           <div className="flex gap-1">
@@ -381,21 +407,17 @@ export default function EvaluationPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-md border p-3">
-              <p className="text-xs text-muted-foreground">
-                Queries ({healthDays}d)
-              </p>
-              <p className="text-lg font-semibold">
-                {healthMetrics?.totalQueries ?? 0}
-              </p>
-            </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-md border p-3">
               <p className="text-xs text-muted-foreground">
                 Retrieval Scored Coverage
               </p>
               <p className="text-lg font-semibold">
                 {retrievalCoveragePct !== null ? `${retrievalCoveragePct}%` : "N/A"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {healthMetrics?.retrievalEvaluatedQueries ?? 0} of{" "}
+                {healthMetrics?.totalQueries ?? 0} queries
               </p>
             </div>
             <div className="rounded-md border p-3">
@@ -407,6 +429,10 @@ export default function EvaluationPage() {
                   ? `${groundednessCoveragePct}%`
                   : "N/A"}
               </p>
+              <p className="text-xs text-muted-foreground">
+                {healthMetrics?.groundednessEvaluatedQueries ?? 0} of{" "}
+                {healthMetrics?.totalQueries ?? 0} answers
+              </p>
             </div>
             <div className="rounded-md border p-3">
               <p className="text-xs text-muted-foreground">Missing Scores</p>
@@ -417,6 +443,63 @@ export default function EvaluationPage() {
           </div>
 
           <HealthChart data={healthMetrics?.trend || []} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-start justify-between">
+          <div>
+            <CardTitle className="text-sm font-medium">
+              Operational Trend
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Daily query volume, average latency, and cost
+            </p>
+          </div>
+          <div className="flex gap-1">
+            <Button
+              variant={operationalDays === 7 ? "default" : "outline"}
+              size="sm"
+              onClick={() => setOperationalDays(7)}
+            >
+              7d
+            </Button>
+            <Button
+              variant={operationalDays === 30 ? "default" : "outline"}
+              size="sm"
+              onClick={() => setOperationalDays(30)}
+            >
+              30d
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-md border p-3">
+              <p className="text-xs text-muted-foreground">
+                Queries ({operationalDays}d)
+              </p>
+              <p className="text-lg font-semibold">
+                {operationalMetrics?.totalQueries ?? 0}
+              </p>
+            </div>
+            <div className="rounded-md border p-3">
+              <p className="text-xs text-muted-foreground">Avg Latency</p>
+              <p className="text-lg font-semibold">
+                {operationalMetrics?.avgLatencyMs
+                  ? `${(operationalMetrics.avgLatencyMs / 1000).toFixed(1)}s`
+                  : "N/A"}
+              </p>
+            </div>
+            <div className="rounded-md border p-3">
+              <p className="text-xs text-muted-foreground">Total Cost</p>
+              <p className="text-lg font-semibold">
+                ${operationalMetrics?.totalCost?.toFixed(4) ?? "0.00"}
+              </p>
+            </div>
+          </div>
+
+          <OperationalChart data={operationalMetrics?.trend || []} />
         </CardContent>
       </Card>
 
