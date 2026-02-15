@@ -31,7 +31,7 @@
 ### Content Extraction
 - `lib/services/extraction/url-extractor.ts` - URL content extraction (Mozilla Readability)
 - `lib/services/extraction/url-extractor.test.ts` - Tests for URL extraction
-- `lib/services/extraction/pdf-extractor.ts` - PDF text extraction (pdf-parse)
+- `lib/services/extraction/pdf-extractor.ts` - PDF text extraction (pdfjs-dist / pdf.js)
 - `lib/services/extraction/pdf-extractor.test.ts` - Tests for PDF extraction
 - `lib/services/extraction/word-extractor.ts` - Word document extraction (mammoth.js)
 - `lib/services/extraction/word-extractor.test.ts` - Tests for Word extraction
@@ -185,7 +185,7 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 4.5 Write tests for URL extraction — mock HTTP responses for full articles, partial/paywall content, and failures
   - [x] 4.6 Implement the document upload form (`components/capture/document-upload-form.tsx`) with drag-and-drop or file picker, accepted formats display, file size validation, and progress indicator
   - [x] 4.7 Implement the document upload API endpoint (`app/api/ingest/upload/route.ts`): validate file type and size (PDF/Word ≤20MB, Markdown/Text ≤10MB), save file temporarily, extract text, save source to DB, trigger processing pipeline
-  - [x] 4.8 Implement PDF extraction (`lib/services/extraction/pdf-extractor.ts`) using `pdf-parse`: extract text content, title, and author from document properties; handle multi-page documents
+  - [x] 4.8 Implement PDF extraction (`lib/services/extraction/pdf-extractor.ts`) using `pdfjs-dist` (pdf.js): extract text content, title, and author from document properties; handle multi-page documents
   - [x] 4.9 Implement Word extraction (`lib/services/extraction/word-extractor.ts`) using `mammoth`: extract text preserving structure (headings, paragraphs, lists), title, and author from document properties
   - [x] 4.10 Implement Markdown extraction (`lib/services/extraction/markdown-extractor.ts`): parse markdown to extract plain text and derive title from first heading or filename
   - [x] 4.11 Implement plain text extraction (`lib/services/extraction/text-extractor.ts`): read text content, derive title from filename
