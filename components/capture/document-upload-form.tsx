@@ -81,7 +81,7 @@ export function DocumentUploadForm({ onSuccess }: DocumentUploadFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div
-        className={`flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors ${
+        className={`relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors ${
           dragOver
             ? "border-primary bg-primary/5"
             : "border-muted-foreground/25 hover:border-muted-foreground/50"
