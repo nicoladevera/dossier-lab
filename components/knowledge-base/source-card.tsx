@@ -47,14 +47,14 @@ export function SourceCard({ source }: SourceCardProps) {
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="truncate font-medium">{source.title}</h3>
-            <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <Badge variant="secondary" className={colorClass}>
                 {source.sourceType}
               </Badge>
               {source.author && (
                 <span className="truncate">by {source.author}</span>
               )}
-              <span>
+              <span className="shrink-0">
                 {new Date(source.captureDate).toLocaleDateString()}
               </span>
             </div>
