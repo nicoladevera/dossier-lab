@@ -18,6 +18,7 @@ export function QuestionInput({ onSubmit, loading, disabled }: QuestionInputProp
     e.preventDefault();
     if (question.trim() && !loading && !disabled) {
       onSubmit(question.trim());
+      setQuestion("");
     }
   }
 

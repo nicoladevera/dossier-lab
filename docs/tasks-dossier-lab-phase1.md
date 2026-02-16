@@ -286,3 +286,13 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 11.10 Implement soft budget warning: when estimated daily costs exceed the configurable threshold (default $2/day), display a non-blocking warning banner on the Q&A page
   - [x] 11.11 Create the Dashboard/Home page (`app/(main)/page.tsx`) with quick capture input, recent sources list, and search bar
   - [x] 11.12 Final end-to-end testing pass: capture a URL, upload a PDF, paste text, search across all sources, ask a Q&A question with citations, check evaluation metrics, verify settings, and run through onboarding flow
+
+- [x] 12.0 Q&A chat history and thread deletion (no conversational memory)
+  - [x] 12.1 Add `ChatThread` and `ChatMessage` Prisma models, `ChatMessageRole` enum, and `Evaluation.assistantMessageId` relation with cascade delete semantics
+  - [x] 12.2 Add Q&A history APIs: list threads (`GET /api/qa/threads`), thread detail (`GET /api/qa/threads/[id]`), and thread delete (`DELETE /api/qa/threads/[id]`)
+  - [x] 12.3 Update `POST /api/qa` to accept optional `threadId`, persist user/assistant messages, and include thread/message metadata in completion responses
+  - [x] 12.4 Persist no-context fallback answers as assistant chat messages (`noContext=true`) without creating evaluation rows
+  - [x] 12.5 Add legacy backfill endpoint (`POST /api/qa/threads/backfill`) to migrate existing evaluations into chat threads/messages and link `assistantMessageId`
+  - [x] 12.6 Refactor Q&A UI to support thread history, manual new chat, mobile history sheet, and thread deletion confirmation
+  - [x] 12.7 Keep turn-level behavior retrieval-only (no conversational memory) while allowing multi-turn storage within a thread
+  - [x] 12.8 Add unit tests for chat-history utilities (title normalization/truncation, pagination clamps, backfill mapping)

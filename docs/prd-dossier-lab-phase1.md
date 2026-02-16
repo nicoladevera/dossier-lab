@@ -189,7 +189,7 @@ This PRD covers **Phase 1**: establishing the core RAG pipeline, hybrid search, 
 
 The following are explicitly **not** included in Phase 1:
 
-1. **Conversation history for Q&A** — Only single-turn question/answer. No follow-up questions with context (e.g., "Tell me more about that").
+1. **Conversational memory for Q&A** — Context-aware follow-up reasoning across prior turns remains out of scope. (Persistent thread/message history is implemented, but each turn is answered independently.)
 2. **Password reset/forgot password flow** — Users must contact support or recreate account if password is lost. Full password reset via email will be added post-launch.
 3. **YouTube video transcripts** — Planned for Phase 4.
 4. **Email forwarding ingestion** — Planned for Phase 3.
@@ -219,7 +219,7 @@ The following are explicitly **not** included in Phase 1:
 3. **Knowledge Base** — List of all sources with filtering/sorting.
 4. **Source Detail** — Full content view with metadata. Citations link here, scrolled to the relevant passage.
 5. **Search Results** — Ranked results with snippets.
-6. **Q&A Interface** — Question input, streaming answer with citations. Citations show document-level by default, expandable to reveal the specific passage used.
+6. **Q&A Interface** — Question input, streaming answer with citations, thread history sidebar, and per-thread deletion. Citations show document-level by default, expandable to reveal the specific passage used.
 7. **Evaluation Dashboard** — Metrics charts, test suite results, cost tracking.
 8. **Settings** — API keys, LLM provider selection, daily cost threshold.
 

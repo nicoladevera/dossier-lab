@@ -12,8 +12,39 @@ import {
   createOpenAIEmbeddingProvider,
   resolveOpenAIApiKey,
 } from "@/lib/services/embedding/provider-factory";
+import { buildThreadTitle } from "@/lib/services/qa/chat-history";
 
 const SOURCE_CONTEXT_CHUNK_LIMIT = 3;
+
+interface QARequestBody {
+  question?: string;
+  threadId?: string;
+}
+
+async function resolveThreadId(
+  userId: string,
+  question: string,
+  threadId?: string
+): Promise<string | null> {
+  if (threadId && threadId.trim().length > 0) {
+    const existing = await prisma.chatThread.findFirst({
+      where: { id: threadId.trim(), userId },
+      select: { id: true },
+    });
+
+    return existing?.id || null;
+  }
+
+  const thread = await prisma.chatThread.create({
+    data: {
+      userId,
+      title: buildThreadTitle(question),
+    },
+    select: { id: true },
+  });
+
+  return thread.id;
+}
 
 function runBackgroundEvaluationScoring(params: {
   evaluationId: string;
@@ -63,25 +94,54 @@ export async function POST(request: NextRequest) {
     const session = await getRequiredAuthSession();
     const userId = session.user!.id;
 
-    // Check rate limit
     const rateLimit = checkQueryRateLimit(userId);
     if (!rateLimit.allowed) {
-      return new Response(
-        JSON.stringify({ error: rateLimit.message }),
-        { status: 429, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: rateLimit.message }), {
+        status: 429,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    const { question } = await request.json();
+    let body: QARequestBody = {};
+    try {
+      body = (await request.json()) as QARequestBody;
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid request body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
-    if (!question || question.trim().length === 0) {
+    const question = body.question?.trim();
+    if (!question) {
       return new Response(JSON.stringify({ error: "Question is required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    // Get user settings for API keys and provider preferences
+    const resolvedThreadId = await resolveThreadId(userId, question, body.threadId);
+    if (!resolvedThreadId) {
+      return new Response(JSON.stringify({ error: "Thread not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    await prisma.chatMessage.create({
+      data: {
+        threadId: resolvedThreadId,
+        userId,
+        role: "USER",
+        content: question,
+      },
+    });
+
+    await prisma.chatThread.update({
+      where: { id: resolvedThreadId },
+      data: { updatedAt: new Date() },
+    });
+
     const settings = await prisma.userSettings.findUnique({
       where: { userId },
     });
@@ -89,22 +149,37 @@ export async function POST(request: NextRequest) {
     const embeddingApiKey = resolveOpenAIApiKey(settings);
     const embeddingProvider = createOpenAIEmbeddingProvider(settings);
 
-    // Retrieve relevant chunks
     const startTime = Date.now();
-    const searchResults = await hybridSearch(
-      question.trim(),
-      userId,
-      embeddingProvider,
-      10
-    );
+    const searchResults = await hybridSearch(question, userId, embeddingProvider, 10);
 
     if (searchResults.length === 0) {
+      const fallbackAnswer =
+        "I couldn't find relevant sources to answer this question. Try adding more sources or rephrasing your question.";
+
+      const assistantMessage = await prisma.chatMessage.create({
+        data: {
+          threadId: resolvedThreadId,
+          userId,
+          role: "ASSISTANT",
+          content: fallbackAnswer,
+          noContext: true,
+          citations: [],
+        },
+        select: { id: true },
+      });
+
+      await prisma.chatThread.update({
+        where: { id: resolvedThreadId },
+        data: { updatedAt: new Date() },
+      });
+
       return new Response(
         JSON.stringify({
-          answer:
-            "I couldn't find relevant sources to answer this question. Try adding more sources or rephrasing your question.",
+          answer: fallbackAnswer,
           citations: [],
           noContext: true,
+          threadId: resolvedThreadId,
+          assistantMessageId: assistantMessage.id,
         }),
         {
           status: 200,
@@ -113,7 +188,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get source metadata for citations
     const sourceIds = [...new Set(searchResults.map((r) => r.sourceId))];
     const sources = await prisma.source.findMany({
       where: { id: { in: sourceIds }, userId },
@@ -125,6 +199,7 @@ export async function POST(request: NextRequest) {
         sourceUrl: true,
       },
     });
+
     const sourceMap = new Map(
       sources.map(
         (s: {
@@ -137,11 +212,7 @@ export async function POST(request: NextRequest) {
       )
     );
 
-    // Group retrieval results by source so citations are source-level.
-    const sourceGroups = new Map<
-      string,
-      Array<(typeof searchResults)[number]>
-    >();
+    const sourceGroups = new Map<string, Array<(typeof searchResults)[number]>>();
     for (const result of searchResults) {
       if (!sourceGroups.has(result.sourceId)) {
         sourceGroups.set(result.sourceId, []);
@@ -171,16 +242,13 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    // Get the appropriate LLM provider
     const provider = settings?.defaultProvider || "OPENAI";
     const model = settings?.defaultModel || "gpt-5-mini";
     let llmApiKey: string;
 
     if (provider === "ANTHROPIC") {
       llmApiKey =
-        (settings?.anthropicApiKey
-          ? decrypt(settings.anthropicApiKey)
-          : null) ||
+        (settings?.anthropicApiKey ? decrypt(settings.anthropicApiKey) : null) ||
         process.env.ANTHROPIC_API_KEY ||
         "";
     } else {
@@ -201,7 +269,6 @@ export async function POST(request: NextRequest) {
 
     const llmProvider = createLLMProvider(provider, model, llmApiKey);
 
-    // Generate answer with streaming
     const contextTexts = citations.map((citation) => {
       const source = citation.source;
       const metadataLines = [
@@ -215,26 +282,21 @@ export async function POST(request: NextRequest) {
 
       return `${metadataLines}\n\nRelevant passages:\n${citation.content}`;
     });
-    const { stream, getUsage } = await llmProvider.generateAnswer(
-      question.trim(),
-      contextTexts
-    );
 
-    // Create a ReadableStream for the response
+    const { stream, getUsage } = await llmProvider.generateAnswer(question, contextTexts);
+
     const encoder = new TextEncoder();
     let fullAnswer = "";
 
     const readable = new ReadableStream({
       async start(controller) {
         try {
-          // Send citations first as a JSON event
           controller.enqueue(
             encoder.encode(
               `data: ${JSON.stringify({ type: "citations", citations })}\n\n`
             )
           );
 
-          // Stream the answer
           for await (const token of stream) {
             fullAnswer += token;
             controller.enqueue(
@@ -247,17 +309,33 @@ export async function POST(request: NextRequest) {
           const latencyMs = Date.now() - startTime;
           const usage = getUsage();
 
-          // Calculate cost
           const costUsd = usage
             ? calculateCost(model, usage.promptTokens, usage.completionTokens)
             : 0;
 
           let evaluationId: string | null = null;
+          let assistantMessageId: string | null = null;
+
           try {
+            const assistantMessage = await prisma.chatMessage.create({
+              data: {
+                threadId: resolvedThreadId,
+                userId,
+                role: "ASSISTANT",
+                content: fullAnswer,
+                noContext: false,
+                citations,
+              },
+              select: { id: true },
+            });
+
+            assistantMessageId = assistantMessage.id;
+
             const evaluation = await prisma.evaluation.create({
               data: {
                 userId,
-                query: question.trim(),
+                assistantMessageId,
+                query: question,
                 retrievedChunkIds: searchResults.map((r) => r.chunkId),
                 answer: fullAnswer,
                 latencyMs,
@@ -274,17 +352,21 @@ export async function POST(request: NextRequest) {
 
             runBackgroundEvaluationScoring({
               evaluationId,
-              query: question.trim(),
+              query: question,
               answer: fullAnswer,
               chunkContents: searchResults.map((r) => r.content),
               citedPassages: citations.map((citation) => citation.content),
               llmProvider,
             });
+
+            await prisma.chatThread.update({
+              where: { id: resolvedThreadId },
+              data: { updatedAt: new Date() },
+            });
           } catch (err) {
-            console.error("Failed to log evaluation:", err);
+            console.error("Failed to persist chat history or evaluation:", err);
           }
 
-          // Send completion event
           controller.enqueue(
             encoder.encode(
               `data: ${JSON.stringify({
@@ -292,6 +374,8 @@ export async function POST(request: NextRequest) {
                 latencyMs,
                 usage,
                 evaluationId,
+                threadId: resolvedThreadId,
+                assistantMessageId,
               })}\n\n`
             )
           );
@@ -302,8 +386,7 @@ export async function POST(request: NextRequest) {
             encoder.encode(
               `data: ${JSON.stringify({
                 type: "error",
-                message:
-                  err instanceof Error ? err.message : "Generation failed",
+                message: err instanceof Error ? err.message : "Generation failed",
               })}\n\n`
             )
           );
