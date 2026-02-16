@@ -60,6 +60,7 @@ interface FeedbackData {
   bad: number;
   ratedCount: number;
   totalQueries: number;
+  totalResponses?: number;
   goodRatePct: number | null;
   badRatePct: number | null;
   ratingCoveragePct: number | null;
@@ -403,7 +404,8 @@ export default function EvaluationPage() {
               User Feedback
             </CardTitle>
             <p className="text-xs text-muted-foreground">
-              All-time ratings across {feedback.totalQueries} queries
+              All-time ratings across{" "}
+              {feedback.totalResponses ?? feedback.totalQueries} responses
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -423,7 +425,7 @@ export default function EvaluationPage() {
                   {feedback.ratingCoveragePct ?? 0}%
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {feedback.ratedCount}/{feedback.totalQueries} queries
+                  {feedback.ratedCount}/{feedback.totalResponses ?? feedback.totalQueries} responses
                 </p>
               </div>
               <div className="rounded-md border p-3">

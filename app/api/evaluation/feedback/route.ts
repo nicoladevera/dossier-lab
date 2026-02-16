@@ -12,7 +12,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const daysParam = searchParams.get("days");
 
-    const where: { userId: string; createdAt?: { gte: Date } } = { userId };
+    const where: {
+      userId: string;
+      role: "ASSISTANT";
+      createdAt?: { gte: Date };
+    } = { userId, role: "ASSISTANT" };
     if (daysParam) {
       const days = parseInt(daysParam, 10);
       if (!Number.isNaN(days) && days > 0) {
@@ -22,11 +26,11 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const totalQueries = await prisma.evaluation.count({ where });
-    const goodCount = await prisma.evaluation.count({
+    const totalResponses = await prisma.chatMessage.count({ where });
+    const goodCount = await prisma.chatMessage.count({
       where: { ...where, userFeedback: "GOOD" },
     });
-    const badCount = await prisma.evaluation.count({
+    const badCount = await prisma.chatMessage.count({
       where: { ...where, userFeedback: "BAD" },
     });
 
@@ -36,13 +40,17 @@ export async function GET(request: NextRequest) {
     const badRatePct =
       ratedCount > 0 ? Math.round((badCount / ratedCount) * 100) : null;
     const ratingCoveragePct =
-      totalQueries > 0 ? Math.round((ratedCount / totalQueries) * 100) : null;
+      totalResponses > 0
+        ? Math.round((ratedCount / totalResponses) * 100)
+        : null;
 
     return NextResponse.json({
       good: goodCount,
       bad: badCount,
       ratedCount,
-      totalQueries,
+      totalResponses,
+      // Temporary compatibility alias for older callers.
+      totalQueries: totalResponses,
       goodRatePct,
       badRatePct,
       ratingCoveragePct,
@@ -65,7 +73,10 @@ export async function POST(request: Request) {
     const userId = session.user!.id;
     const { evaluationId, feedback } = await request.json();
 
-    if (!evaluationId || !["GOOD", "BAD"].includes(feedback)) {
+    if (
+      !evaluationId ||
+      !(feedback === "GOOD" || feedback === "BAD" || feedback === null)
+    ) {
       return NextResponse.json(
         { error: "Invalid feedback" },
         { status: 400 }
@@ -84,9 +95,25 @@ export async function POST(request: Request) {
       );
     }
 
-    await prisma.evaluation.update({
-      where: { id: evaluationId },
-      data: { userFeedback: feedback },
+    await prisma.$transaction(async (tx) => {
+      await tx.evaluation.update({
+        where: { id: evaluationId },
+        data: { userFeedback: feedback },
+      });
+
+      if (evaluation.assistantMessageId) {
+        await tx.chatMessage.updateMany({
+          where: {
+            id: evaluation.assistantMessageId,
+            userId,
+            role: "ASSISTANT",
+          },
+          data: {
+            userFeedback: feedback,
+            feedbackUpdatedAt: new Date(),
+          },
+        });
+      }
     });
 
     return NextResponse.json({ success: true });

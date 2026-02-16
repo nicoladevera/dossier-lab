@@ -42,6 +42,7 @@ export async function POST(request: Request) {
         query: true,
         answer: true,
         createdAt: true,
+        userFeedback: true,
       },
     });
 
@@ -88,6 +89,10 @@ export async function POST(request: Request) {
               citations: Prisma.JsonNull,
               noContext: false,
               legacyImported: true,
+              userFeedback: evaluation.userFeedback,
+              feedbackUpdatedAt: evaluation.userFeedback
+                ? payload.createdAt
+                : null,
               createdAt: assistantCreatedAt,
             },
             select: { id: true },

@@ -75,7 +75,7 @@ const sources = await prisma.source.findMany({
 | `UserSettings` | Encrypted API keys, provider/model preferences |
 | `Evaluation` | Q&A interaction metrics (scores, cost, latency) |
 | `ChatThread` | Q&A conversation thread metadata and ordering |
-| `ChatMessage` | Per-thread user/assistant messages with citation snapshots |
+| `ChatMessage` | Per-thread user/assistant messages with citation snapshots and mutable feedback state/timestamp |
 | `QueryTestCase` | Golden test queries for regression testing |
 
 ### Service Layer
@@ -88,7 +88,7 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 - **Extraction** (`extraction/`) -- Content extractors for URL, PDF, Word, Markdown, text
 - **Search** (`search/`) -- Semantic, keyword, and hybrid (RRF) search with metadata-aware keyword fallback
 - **Processing** (`processing/`) -- Async pipeline: chunk -> optional embed -> store
-- **Evaluation** (`evaluation/`) -- Retrieval accuracy, groundedness, scoring coverage health, operational trends (query volume/latency/cost), and cost tracking
+- **Evaluation** (`evaluation/`) -- Retrieval accuracy, groundedness, scoring coverage health, operational trends (query volume/latency/cost), response-level feedback coverage, and cost tracking
 - **Encryption** (`encryption.ts`) -- AES-256-GCM for API key storage
 
 ### Testing
@@ -137,6 +137,7 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 | `app/api/qa/route.ts` | Q&A orchestration (thread-aware persistence + source-level citation generation) |
 | `app/api/qa/threads/route.ts` | Q&A thread history listing (paginated, user-scoped) |
 | `app/api/qa/threads/[id]/route.ts` | Q&A thread detail and thread deletion |
+| `app/api/qa/messages/[id]/feedback/route.ts` | Per-message feedback update endpoint (good/bad/clear, user-scoped) |
 | `app/api/qa/threads/backfill/route.ts` | Legacy evaluation-to-thread history backfill |
 | `app/api/evaluation/backfill/route.ts` | One-time historical evaluation score backfill (user-scoped, batched) |
 | `components/evaluation/health-chart.tsx` | Evaluation health chart (scoring coverage + missing-score visibility) |

@@ -7,8 +7,8 @@ A personal intelligence tool that transforms your reading into a searchable, syn
 - **Content Capture** -- Ingest URLs (with automatic article extraction), PDFs, Word documents, Markdown, and plain text
 - **Hybrid Search** -- Semantic vector search (when OpenAI embeddings are configured) + metadata-aware PostgreSQL full-text search with fallback loose matching
 - **Q&A with Citations** -- Ask natural language questions and get streaming answers with source-level citations, expandable evidence passages, and markdown-style rendering (headings/lists/emphasis/links/code blocks)
-- **Q&A Chat History** -- Persist chats as threads/messages, reopen prior Q&A sessions, and permanently delete threads (including linked evaluation rows)
-- **Evaluation Dashboard** -- Track retrieval accuracy, groundedness, scoring coverage health, operational trends (queries/latency/cost), and one-time backfill support for legacy unscored rows
+- **Q&A Chat History** -- Persist chats as threads/messages, reopen prior Q&A sessions, rate any assistant response (including historical messages), and permanently delete threads (including linked evaluation rows)
+- **Evaluation Dashboard** -- Track retrieval accuracy, groundedness, scoring coverage health, operational trends (queries/latency/cost), and response-level feedback coverage with one-time backfill support for legacy unscored rows
 - **Multi-Provider LLM Support** -- Switch between OpenAI (GPT-4o) and Anthropic (Claude) with encrypted API key storage
 
 ## Tech Stack
@@ -212,6 +212,7 @@ Query --> Optional Query Embedding --> Semantic Search (cosine similarity)
       --> Source-level citation grouping
       --> LLM Generation (streaming, source metadata + passages) --> Cited Answer
       --> Persist thread + user/assistant messages
+      --> Persist mutable per-message user feedback (good/bad/clear)
       --> Evaluation logging + async retrieval/groundedness scoring
 ```
 

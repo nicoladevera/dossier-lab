@@ -128,19 +128,27 @@ export async function GET(request: NextRequest) {
     const budgetWarning = todayCost >= threshold * 0.8;
 
     // Feedback stats
-    const goodCount = evaluations.filter(
-      (e: { userFeedback: string | null }) => e.userFeedback === "GOOD"
-    ).length;
-    const badCount = evaluations.filter(
-      (e: { userFeedback: string | null }) => e.userFeedback === "BAD"
-    ).length;
+    const feedbackWhere = {
+      userId,
+      role: "ASSISTANT" as const,
+      createdAt: { gte: since },
+    };
+    const [totalResponses, goodCount, badCount] = await Promise.all([
+      prisma.chatMessage.count({ where: feedbackWhere }),
+      prisma.chatMessage.count({
+        where: { ...feedbackWhere, userFeedback: "GOOD" },
+      }),
+      prisma.chatMessage.count({
+        where: { ...feedbackWhere, userFeedback: "BAD" },
+      }),
+    ]);
     const ratedCount = goodCount + badCount;
     const goodRatePct =
       ratedCount > 0 ? Math.round((goodCount / ratedCount) * 100) : null;
     const badRatePct =
       ratedCount > 0 ? Math.round((badCount / ratedCount) * 100) : null;
     const ratingCoveragePct =
-      totalEvals > 0 ? Math.round((ratedCount / totalEvals) * 100) : null;
+      totalResponses > 0 ? Math.round((ratedCount / totalResponses) * 100) : null;
 
     return NextResponse.json({
       totalQueries: totalEvals,
@@ -160,6 +168,8 @@ export async function GET(request: NextRequest) {
         good: goodCount,
         bad: badCount,
         ratedCount,
+        totalResponses,
+        totalQueries: totalResponses,
         goodRatePct,
         badRatePct,
         ratingCoveragePct,

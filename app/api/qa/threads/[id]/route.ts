@@ -28,6 +28,8 @@ export async function GET(
             noContext: true,
             legacyImported: true,
             createdAt: true,
+            userFeedback: true,
+            feedbackUpdatedAt: true,
             evaluation: {
               select: { id: true },
             },
@@ -55,6 +57,8 @@ export async function GET(
         noContext: message.noContext,
         legacyImported: message.legacyImported,
         createdAt: message.createdAt,
+        userFeedback: message.userFeedback,
+        feedbackUpdatedAt: message.feedbackUpdatedAt,
         evaluationId: message.evaluation?.id || null,
       })),
     });
