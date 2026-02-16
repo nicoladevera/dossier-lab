@@ -24,4 +24,6 @@ export interface QAThreadMessage {
   legacyImported: boolean;
   createdAt: string;
   evaluationId: string | null;
+  userFeedback: "GOOD" | "BAD" | null;
+  feedbackUpdatedAt: string | null;
 }

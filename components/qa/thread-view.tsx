@@ -6,22 +6,21 @@ import { Loader2, ThumbsDown, ThumbsUp } from "lucide-react";
 import { AnswerDisplay } from "@/components/qa/answer-display";
 import { Citation } from "@/components/qa/citation";
 import type { QAThreadMessage } from "@/components/qa/types";
+import { nextFeedback } from "@/components/qa/feedback-utils";
 
 interface ThreadViewProps {
   messages: QAThreadMessage[];
   loading: boolean;
   streamingMessageId: string | null;
-  feedbackMessageId: string | null;
-  feedback: "GOOD" | "BAD" | null;
-  onFeedback: (type: "GOOD" | "BAD") => void;
+  feedbackPendingMessageIds: Set<string>;
+  onFeedback: (messageId: string, feedback: "GOOD" | "BAD" | null) => void;
 }
 
 export function ThreadView({
   messages,
   loading,
   streamingMessageId,
-  feedbackMessageId,
-  feedback,
+  feedbackPendingMessageIds,
   onFeedback,
 }: ThreadViewProps) {
   const citationsRef = useRef<HTMLDivElement>(null);
@@ -97,23 +96,29 @@ export function ThreadView({
               </div>
             )}
 
-            {feedbackMessageId === message.id && !loading && message.evaluationId && (
+            {streamingMessageId !== message.id && (
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">Was this helpful?</span>
                 <Button
-                  variant={feedback === "GOOD" ? "default" : "outline"}
+                  variant={message.userFeedback === "GOOD" ? "default" : "outline"}
                   size="sm"
                   className="h-7"
-                  onClick={() => onFeedback("GOOD")}
+                  disabled={feedbackPendingMessageIds.has(message.id)}
+                  onClick={() =>
+                    onFeedback(message.id, nextFeedback(message.userFeedback, "GOOD"))
+                  }
                 >
                   <ThumbsUp className="mr-1 h-3 w-3" />
                   Good
                 </Button>
                 <Button
-                  variant={feedback === "BAD" ? "default" : "outline"}
+                  variant={message.userFeedback === "BAD" ? "default" : "outline"}
                   size="sm"
                   className="h-7"
-                  onClick={() => onFeedback("BAD")}
+                  disabled={feedbackPendingMessageIds.has(message.id)}
+                  onClick={() =>
+                    onFeedback(message.id, nextFeedback(message.userFeedback, "BAD"))
+                  }
                 >
                   <ThumbsDown className="mr-1 h-3 w-3" />
                   Bad

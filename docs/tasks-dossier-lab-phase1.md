@@ -81,6 +81,7 @@
 - `app/api/evaluation/backfill/route.ts` - Historical evaluation score backfill API
 - `app/api/evaluation/test-suite/route.ts` - Test suite runner API
 - `app/api/evaluation/feedback/route.ts` - User feedback API (good/bad answers)
+- `app/api/qa/messages/[id]/feedback/route.ts` - Per-message feedback API (good/bad/clear on assistant responses)
 - `lib/services/evaluation/retrieval-accuracy.ts` - Retrieval accuracy scoring (LLM-as-judge)
 - `lib/services/evaluation/groundedness.ts` - Groundedness scoring (LLM-as-judge)
 - `lib/services/evaluation/cost-tracker.ts` - Cost tracking (parse token usage, per-token pricing)
@@ -296,3 +297,11 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 12.6 Refactor Q&A UI to support thread history, manual new chat, mobile history sheet, and thread deletion confirmation
   - [x] 12.7 Keep turn-level behavior retrieval-only (no conversational memory) while allowing multi-turn storage within a thread
   - [x] 12.8 Add unit tests for chat-history utilities (title normalization/truncation, pagination clamps, backfill mapping)
+
+- [x] 13.0 Retroactive per-message feedback + documentation sync
+  - [x] 13.1 Add mutable feedback fields to `ChatMessage` (`userFeedback`, `feedbackUpdatedAt`) and backfill explicit legacy ratings from linked evaluations
+  - [x] 13.2 Create `PATCH /api/qa/messages/[id]/feedback` for user-scoped assistant-message feedback updates (GOOD/BAD/clear) with evaluation mirroring for compatibility
+  - [x] 13.3 Update Q&A thread detail and frontend message types/state so all historical assistant responses can be rated and rerated
+  - [x] 13.4 Update evaluation feedback aggregates to use assistant-response coverage denominator (with temporary `totalQueries` alias)
+  - [x] 13.5 Add tests for feedback route behavior, thread detail feedback payload, and feedback toggle semantics
+  - [x] 13.6 Update `README.md`, `AGENTS.md`, and `docs/prd-dossier-lab-phase1.md` to reflect per-message mutable feedback and response-level coverage terminology

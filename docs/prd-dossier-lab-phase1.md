@@ -146,7 +146,8 @@ This PRD covers **Phase 1**: establishing the core RAG pipeline, hybrid search, 
 56c. The system should show operational trends over time (daily query volume, average latency, and daily cost).
 57. The system must track query latency (time from question to answer).
 58. The system must track actual cost per query by parsing token usage from API responses (prompt_tokens, completion_tokens) and multiplying by configurable per-token pricing for each provider.
-59. The system must allow users to mark answers as "good" or "bad" for feedback.
+59. The system must allow users to mark any assistant response as "good" or "bad" for feedback, including historical responses in prior threads.
+59a. The system must allow users to update or clear a prior response rating (mutable feedback state per assistant response).
 60. The system must support a curated test set of 20-30 queries with golden source documents for regression testing. The test set should be developer-created from real ingested sources and cover a mix of query types:
     - **Factual retrieval** (5-8 queries): Single-source lookups for specific facts.
     - **Cross-source synthesis** (8-10 queries): Questions requiring information from multiple sources.

@@ -206,6 +206,10 @@ model ChatMessage {
   citations      Json?
   noContext      Boolean         @default(false)
   legacyImported Boolean         @default(false)
+  // Mutable per-message user feedback (source of truth for rating coverage).
+  userFeedback   UserFeedback?
+  // Last feedback mutation timestamp (set/switch/clear).
+  feedbackUpdatedAt DateTime?
   createdAt      DateTime        @default(now())
 
   thread     ChatThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)

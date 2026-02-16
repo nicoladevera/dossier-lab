@@ -50,6 +50,8 @@ interface ThreadDetailResponse {
     legacyImported: boolean;
     createdAt: string;
     evaluationId: string | null;
+    userFeedback: "GOOD" | "BAD" | null;
+    feedbackUpdatedAt: string | null;
   }>;
 }
 
@@ -83,6 +85,8 @@ function normalizeMessages(
     legacyImported: message.legacyImported,
     createdAt: message.createdAt,
     evaluationId: message.evaluationId,
+    userFeedback: message.userFeedback ?? null,
+    feedbackUpdatedAt: message.feedbackUpdatedAt ?? null,
   }));
 }
 
@@ -104,10 +108,8 @@ export default function QAPage() {
   const [error, setError] = useState<string | null>(null);
   const [budgetWarning, setBudgetWarning] = useState(false);
 
-  const [feedback, setFeedback] = useState<"GOOD" | "BAD" | null>(null);
-  const [feedbackMessageId, setFeedbackMessageId] = useState<string | null>(null);
-  const [feedbackEvaluationId, setFeedbackEvaluationId] = useState<string | null>(
-    null
+  const [feedbackPendingMessageIds, setFeedbackPendingMessageIds] = useState<Set<string>>(
+    () => new Set()
   );
 
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -250,9 +252,7 @@ export default function QAPage() {
 
       setAutoSelectThread(false);
       setError(null);
-      setFeedback(null);
-      setFeedbackEvaluationId(null);
-      setFeedbackMessageId(null);
+      setFeedbackPendingMessageIds(new Set());
       setHistoryOpen(false);
 
       await fetchThreadDetail(threadId);
@@ -269,9 +269,7 @@ export default function QAPage() {
     setActiveThreadId(null);
     setActiveThreadTitle(null);
     setMessages([]);
-    setFeedback(null);
-    setFeedbackEvaluationId(null);
-    setFeedbackMessageId(null);
+    setFeedbackPendingMessageIds(new Set());
     setStreamingMessageId(null);
   }
 
@@ -280,9 +278,6 @@ export default function QAPage() {
 
     setAsking(true);
     setError(null);
-    setFeedback(null);
-    setFeedbackEvaluationId(null);
-    setFeedbackMessageId(null);
 
     const tempUserMessageId = `temp-user-${Date.now()}`;
     const tempAssistantMessageId = `temp-assistant-${Date.now()}`;
@@ -296,6 +291,8 @@ export default function QAPage() {
       legacyImported: false,
       createdAt: new Date().toISOString(),
       evaluationId: null,
+      userFeedback: null,
+      feedbackUpdatedAt: null,
     };
 
     const optimisticAssistantMessage: QAThreadMessage = {
@@ -307,6 +304,8 @@ export default function QAPage() {
       legacyImported: false,
       createdAt: new Date().toISOString(),
       evaluationId: null,
+      userFeedback: null,
+      feedbackUpdatedAt: null,
     };
 
     setMessages((prev) => [...prev, optimisticUserMessage, optimisticAssistantMessage]);
@@ -314,7 +313,6 @@ export default function QAPage() {
 
     let resolvedThreadId: string | null = activeThreadIdRef.current;
     let resolvedAssistantMessageId: string | null = null;
-    let resolvedEvaluationId: string | null = null;
 
     try {
       const response = await fetch("/api/qa", {
@@ -434,7 +432,6 @@ export default function QAPage() {
                 resolvedThreadId = event.threadId || resolvedThreadId;
                 resolvedAssistantMessageId =
                   event.assistantMessageId || resolvedAssistantMessageId;
-                resolvedEvaluationId = event.evaluationId || resolvedEvaluationId;
                 if (event.threadId) {
                   setActiveThreadId(event.threadId);
                 }
@@ -462,11 +459,6 @@ export default function QAPage() {
 
       setStreamingMessageId(null);
 
-      if (resolvedAssistantMessageId && resolvedEvaluationId) {
-        setFeedbackMessageId(resolvedAssistantMessageId);
-        setFeedbackEvaluationId(resolvedEvaluationId);
-      }
-
       await fetchThreads(1);
       if (resolvedThreadId) {
         await fetchThreadDetail(resolvedThreadId);
@@ -486,18 +478,79 @@ export default function QAPage() {
     }
   }
 
-  async function handleFeedback(type: "GOOD" | "BAD") {
-    if (!feedbackEvaluationId) return;
+  async function handleFeedback(messageId: string, feedback: "GOOD" | "BAD" | null) {
+    const currentMessage = messages.find((message) => message.id === messageId);
+    if (!currentMessage || currentMessage.role !== "ASSISTANT") return;
 
-    setFeedback(type);
+    const previousFeedback = currentMessage.userFeedback;
+    const previousFeedbackUpdatedAt = currentMessage.feedbackUpdatedAt;
+    const optimisticFeedbackUpdatedAt = new Date().toISOString();
+
+    setMessages((prev) =>
+      prev.map((message) =>
+        message.id === messageId
+          ? {
+              ...message,
+              userFeedback: feedback,
+              feedbackUpdatedAt: optimisticFeedbackUpdatedAt,
+            }
+          : message
+      )
+    );
+    setFeedbackPendingMessageIds((prev) => {
+      const next = new Set(prev);
+      next.add(messageId);
+      return next;
+    });
+
     try {
-      await fetch("/api/evaluation/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ evaluationId: feedbackEvaluationId, feedback: type }),
-      });
+      const response = await fetch(
+        `/api/qa/messages/${encodeURIComponent(messageId)}/feedback`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ feedback }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Feedback request failed");
+      }
+
+      const data = (await response.json()) as {
+        userFeedback: "GOOD" | "BAD" | null;
+        feedbackUpdatedAt: string | null;
+      };
+
+      setMessages((prev) =>
+        prev.map((message) =>
+          message.id === messageId
+            ? {
+                ...message,
+                userFeedback: data.userFeedback,
+                feedbackUpdatedAt: data.feedbackUpdatedAt,
+              }
+            : message
+        )
+      );
     } catch {
-      // Non-critical
+      setMessages((prev) =>
+        prev.map((message) =>
+          message.id === messageId
+            ? {
+                ...message,
+                userFeedback: previousFeedback,
+                feedbackUpdatedAt: previousFeedbackUpdatedAt,
+              }
+            : message
+        )
+      );
+    } finally {
+      setFeedbackPendingMessageIds((prev) => {
+        const next = new Set(prev);
+        next.delete(messageId);
+        return next;
+      });
     }
   }
 
@@ -508,6 +561,7 @@ export default function QAPage() {
     try {
       const response = await fetch(`/api/qa/threads/${deleteTarget.id}`, {
         method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       if (!response.ok) {
@@ -520,9 +574,7 @@ export default function QAPage() {
         setActiveThreadId(null);
         setActiveThreadTitle(null);
         setMessages([]);
-        setFeedback(null);
-        setFeedbackMessageId(null);
-        setFeedbackEvaluationId(null);
+        setFeedbackPendingMessageIds(new Set());
         setAutoSelectThread(false);
       }
 
@@ -626,8 +678,7 @@ export default function QAPage() {
                 messages={messages}
                 loading={asking || loadingMessages}
                 streamingMessageId={streamingMessageId}
-                feedbackMessageId={feedbackMessageId}
-                feedback={feedback}
+                feedbackPendingMessageIds={feedbackPendingMessageIds}
                 onFeedback={handleFeedback}
               />
               <div ref={messagesEndRef} />
