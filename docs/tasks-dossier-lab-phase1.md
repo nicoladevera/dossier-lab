@@ -305,3 +305,4 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 13.4 Update evaluation feedback aggregates to use assistant-response coverage denominator (with temporary `totalQueries` alias)
   - [x] 13.5 Add tests for feedback route behavior, thread detail feedback payload, and feedback toggle semantics
   - [x] 13.6 Update `README.md`, `AGENTS.md`, and `docs/prd-dossier-lab-phase1.md` to reflect per-message mutable feedback and response-level coverage terminology
+  - [x] 13.7 Persist `llmProvider` and `llmModel` on newly created `Evaluation` rows in `POST /api/qa` (historical rows remain nullable)

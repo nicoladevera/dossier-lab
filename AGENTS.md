@@ -73,7 +73,7 @@ const sources = await prisma.source.findMany({
 | `Source` | Captured document (URL, PDF, Word, Markdown, text) |
 | `Chunk` | Text chunk with embedding vector |
 | `UserSettings` | Encrypted API keys, provider/model preferences |
-| `Evaluation` | Q&A interaction metrics (scores, cost, latency) |
+| `Evaluation` | Q&A interaction metrics (scores, cost, latency, persisted LLM provider/model) |
 | `ChatThread` | Q&A conversation thread metadata and ordering |
 | `ChatMessage` | Per-thread user/assistant messages with citation snapshots and mutable feedback state/timestamp |
 | `QueryTestCase` | Golden test queries for regression testing |
