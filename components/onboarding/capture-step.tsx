@@ -36,7 +36,7 @@ export function CaptureStep({ onNext, onSkip }: CaptureStepProps) {
         {/* Mock capture process */}
         <div className="rounded-md border p-4 space-y-3 bg-muted/30">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-foreground shrink-0 mt-0.5" />
             <div className="space-y-1">
               <p className="text-sm font-medium">Content extracted</p>
               <p className="text-xs text-muted-foreground">
@@ -45,7 +45,7 @@ export function CaptureStep({ onNext, onSkip }: CaptureStepProps) {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <FileText className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+            <FileText className="h-5 w-5 text-foreground shrink-0 mt-0.5" />
             <div className="space-y-1">
               <p className="text-sm font-medium">Ready to search & query</p>
               <p className="text-xs text-muted-foreground">

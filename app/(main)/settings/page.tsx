@@ -127,8 +127,8 @@ export default function SettingsPage() {
 
   function ValidationIcon({ provider }: { provider: string }) {
     if (validating === provider) return <Loader2 className="h-4 w-4 animate-spin" />;
-    if (validationStatus[provider] === true) return <Check className="h-4 w-4 text-green-500" />;
-    if (validationStatus[provider] === false) return <X className="h-4 w-4 text-red-500" />;
+    if (validationStatus[provider] === true) return <Check className="h-4 w-4 text-foreground" />;
+    if (validationStatus[provider] === false) return <X className="h-4 w-4 text-destructive" />;
     return null;
   }
 

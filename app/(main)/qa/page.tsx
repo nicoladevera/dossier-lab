@@ -154,9 +154,9 @@ export default function QAPage() {
       </div>
 
       {budgetWarning && (
-        <Alert variant="destructive" className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20">
-          <AlertTriangle className="h-4 w-4 text-yellow-600" />
-          <AlertDescription className="text-yellow-700 dark:text-yellow-400">
+        <Alert className="border-border bg-muted/50">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
             Your estimated daily costs are approaching your budget threshold. You can
             adjust the threshold in Settings.
           </AlertDescription>
