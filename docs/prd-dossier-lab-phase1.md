@@ -1,12 +1,12 @@
-# PRD: Dossier AI — Phase 1 (Core RAG + Evaluation)
+# PRD: Dossier Lab — Phase 1 (Core RAG + Evaluation)
 
 ## 1. Introduction/Overview
 
-Dossier AI is a personal intelligence tool that transforms your reading into a searchable, synthesizable knowledge base. Users capture content from articles, documents (PDFs, Word, Markdown, text files), and raw text, which gets automatically indexed and embedded. They can then search semantically across all their sources, ask questions that synthesize information, and receive source-grounded answers with citations.
+Dossier Lab is a personal intelligence tool that transforms your reading into a searchable, synthesizable knowledge base. Users capture content from articles, documents (PDFs, Word, Markdown, text files), and raw text, which gets automatically indexed and embedded. They can then search semantically across all their sources, ask questions that synthesize information, and receive source-grounded answers with citations.
 
 **The Problem:** People consume vast amounts of information daily—newsletters, articles, PDFs, documents—but this knowledge disappears into scattered locations. When they need to synthesize insights or make decisions, they start from scratch.
 
-**The Solution:** Dossier AI automatically indexes everything you read into a personal knowledge base with hybrid search (semantic + keyword), natural language Q&A with citations, and built-in evaluation infrastructure to measure and improve system quality.
+**The Solution:** Dossier Lab automatically indexes everything you read into a personal knowledge base with hybrid search (semantic + keyword), natural language Q&A with citations, and built-in evaluation infrastructure to measure and improve system quality.
 
 This PRD covers **Phase 1**: establishing the core RAG pipeline, hybrid search, Q&A with citations, and the evaluation dashboard.
 

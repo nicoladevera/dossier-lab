@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dossier AI",
+  title: "Dossier Lab",
   description: "Transform your reading into a searchable, synthesizable knowledge base",
   icons: {
     icon: [

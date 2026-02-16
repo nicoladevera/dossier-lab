@@ -1,4 +1,4 @@
-# Dossier AI Icon Assets
+# Dossier Lab Icon Assets
 
 Production icon assets for the D Monogram (Variant A — Circuit Traces).
 

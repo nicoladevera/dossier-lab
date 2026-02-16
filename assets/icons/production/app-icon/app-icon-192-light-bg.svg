@@ -1,5 +1,5 @@
 <svg viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Dossier AI - App Icon 192px - Black icon on light background (PWA) -->
+  <!-- Dossier Lab - App Icon 192px - Black icon on light background (PWA) -->
   <rect width="192" height="192" rx="42" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
   <g transform="translate(40, 40) scale(1.167)">
     <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="#111111" stroke-width="3.5" fill="none"/>

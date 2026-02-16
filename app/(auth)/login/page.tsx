@@ -50,7 +50,7 @@ export default function LoginPage() {
         <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Welcome Back</CardTitle>
-          <CardDescription>Log in to Dossier AI</CardDescription>
+          <CardDescription>Log in to Dossier Lab</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
