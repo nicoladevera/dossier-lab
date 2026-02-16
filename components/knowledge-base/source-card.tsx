@@ -14,11 +14,11 @@ const typeIcons: Record<string, React.ElementType> = {
 };
 
 const typeColors: Record<string, string> = {
-  URL: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-  PDF: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-  WORD: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
-  MARKDOWN: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-  TEXT: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
+  URL: "bg-muted text-muted-foreground",
+  PDF: "bg-muted text-muted-foreground",
+  WORD: "bg-muted text-muted-foreground",
+  MARKDOWN: "bg-muted text-muted-foreground",
+  TEXT: "bg-muted text-muted-foreground",
 };
 
 interface SourceCardProps {

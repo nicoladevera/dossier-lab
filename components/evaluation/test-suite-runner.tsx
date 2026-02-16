@@ -104,7 +104,7 @@ export function TestSuiteRunner({ testCases }: TestSuiteRunnerProps) {
           </Card>
           <Card>
             <CardContent className="pt-4 text-center">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-foreground">
                 {summary.passed}
               </div>
               <p className="text-xs text-muted-foreground">Passed</p>
@@ -112,7 +112,7 @@ export function TestSuiteRunner({ testCases }: TestSuiteRunnerProps) {
           </Card>
           <Card>
             <CardContent className="pt-4 text-center">
-              <div className="text-2xl font-bold text-red-600">
+              <div className="text-2xl font-bold text-destructive">
                 {summary.failed}
               </div>
               <p className="text-xs text-muted-foreground">Failed</p>
@@ -129,9 +129,9 @@ export function TestSuiteRunner({ testCases }: TestSuiteRunnerProps) {
               className="flex items-start gap-3 rounded-md border p-3"
             >
               {result.pass ? (
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-foreground" />
               ) : (
-                <X className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+                <X className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
               )}
               <div className="min-w-0 flex-1">
                 <p className="text-sm">{result.query}</p>

@@ -34,9 +34,9 @@ export function QueryStep({ onNext, onSkip }: QueryStepProps) {
         </div>
 
         {/* Mock answer */}
-        <div className="rounded-md border p-4 space-y-3 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
+        <div className="rounded-md border p-4 space-y-3 bg-muted/30">
           <div className="flex items-center gap-2 text-sm font-medium">
-            <Sparkles className="h-4 w-4 text-blue-600" />
+            <Sparkles className="h-4 w-4 text-foreground" />
             <span>AI Answer</span>
           </div>
           <p className="text-sm leading-relaxed text-muted-foreground">
