@@ -74,6 +74,8 @@ const sources = await prisma.source.findMany({
 | `Chunk` | Text chunk with embedding vector |
 | `UserSettings` | Encrypted API keys, provider/model preferences |
 | `Evaluation` | Q&A interaction metrics (scores, cost, latency) |
+| `ChatThread` | Q&A conversation thread metadata and ordering |
+| `ChatMessage` | Per-thread user/assistant messages with citation snapshots |
 | `QueryTestCase` | Golden test queries for regression testing |
 
 ### Service Layer
@@ -132,7 +134,10 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 | `lib/services/processing/processing-queue.ts` | Document processing pipeline entry point |
 | `lib/services/search/hybrid-search.ts` | Search orchestration (RRF fusion) |
 | `lib/services/search/keyword-search.ts` | Metadata-aware keyword search with loose fallback |
-| `app/api/qa/route.ts` | Q&A orchestration (source-level citations + LLM context assembly) |
+| `app/api/qa/route.ts` | Q&A orchestration (thread-aware persistence + source-level citation generation) |
+| `app/api/qa/threads/route.ts` | Q&A thread history listing (paginated, user-scoped) |
+| `app/api/qa/threads/[id]/route.ts` | Q&A thread detail and thread deletion |
+| `app/api/qa/threads/backfill/route.ts` | Legacy evaluation-to-thread history backfill |
 | `app/api/evaluation/backfill/route.ts` | One-time historical evaluation score backfill (user-scoped, batched) |
 | `components/evaluation/health-chart.tsx` | Evaluation health chart (scoring coverage + missing-score visibility) |
 | `components/evaluation/operational-chart.tsx` | Operational trend chart (daily query volume, latency, and cost) |

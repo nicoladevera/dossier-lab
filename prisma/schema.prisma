@@ -27,6 +27,8 @@ model User {
   settings    UserSettings?
   evaluations Evaluation[]
   testCases   QueryTestCase[]
+  chatThreads ChatThread[]
+  chatMessages ChatMessage[]
   onboardingCompleted Boolean @default(false)
 
   @@map("users")
@@ -153,9 +155,15 @@ enum UserFeedback {
   BAD
 }
 
+enum ChatMessageRole {
+  USER
+  ASSISTANT
+}
+
 model Evaluation {
   id                String       @id @default(cuid())
   userId            String
+  assistantMessageId String?     @unique
   query             String       @db.Text
   retrievedChunkIds String[]
   answer            String       @db.Text
@@ -167,11 +175,46 @@ model Evaluation {
   costUsd           Float        @default(0)
   createdAt         DateTime     @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assistantMessage ChatMessage? @relation(fields: [assistantMessageId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([createdAt])
   @@map("evaluations")
+}
+
+model ChatThread {
+  id        String      @id @default(cuid())
+  userId    String
+  title     String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+
+  @@index([userId, updatedAt])
+  @@map("chat_threads")
+}
+
+model ChatMessage {
+  id             String          @id @default(cuid())
+  threadId       String
+  userId         String
+  role           ChatMessageRole
+  content        String          @db.Text
+  citations      Json?
+  noContext      Boolean         @default(false)
+  legacyImported Boolean         @default(false)
+  createdAt      DateTime        @default(now())
+
+  thread     ChatThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation Evaluation?
+
+  @@index([threadId, createdAt])
+  @@index([userId, createdAt])
+  @@map("chat_messages")
 }
 
 enum QueryType {
