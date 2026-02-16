@@ -63,6 +63,7 @@ const sources = await prisma.source.findMany({
 - **Import path:** Use `@/app/generated/prisma/client` (not `@/app/generated/prisma` -- there is no index file)
 - **Vector columns:** Use `Unsupported("vector(1536)")` in Prisma schema; interact via raw SQL (`$queryRawUnsafe`)
 - After schema changes: run `npx prisma migrate dev` then `npx prisma generate`
+- **Schema/runtime sync (important):** If you hit Prisma "unknown field/argument" errors after schema edits, ensure all three are in sync: (1) DB migration applied (`npx prisma migrate deploy` or `migrate dev` locally), (2) client regenerated (`npx prisma generate`), and (3) dev server restarted (`npm run dev`; if needed `rm -rf .next && npm run dev`).
 - **Important:** Do not manually create the pgvector extension before running migrations -- it causes drift detection errors. The migration SQL handles extension creation.
 
 ### Key Models
