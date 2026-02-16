@@ -9,9 +9,10 @@ interface QuestionInputProps {
   onSubmit: (question: string) => void;
   loading?: boolean;
   disabled?: boolean;
+  isNewChat?: boolean;
 }
 
-export function QuestionInput({ onSubmit, loading, disabled }: QuestionInputProps) {
+export function QuestionInput({ onSubmit, loading, disabled, isNewChat }: QuestionInputProps) {
   const [question, setQuestion] = useState("");
 
   function handleSubmit(e: FormEvent) {
@@ -23,12 +24,15 @@ export function QuestionInput({ onSubmit, loading, disabled }: QuestionInputProp
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="relative">
       <Textarea
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
-        placeholder="Ask a question about your knowledge base..."
-        rows={3}
+        placeholder={isNewChat
+          ? "Ask a question about your knowledge base..."
+          : "Follow up on this conversation..."}
+        rows={1}
+        className="resize-none pr-12 max-h-[10rem] overflow-y-auto"
         disabled={loading || disabled}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
@@ -37,16 +41,14 @@ export function QuestionInput({ onSubmit, loading, disabled }: QuestionInputProp
           }
         }}
       />
-      <div className="flex justify-end">
-        <Button type="submit" disabled={!question.trim() || loading || disabled}>
-          {loading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Send className="mr-2 h-4 w-4" />
-          )}
-          Ask
-        </Button>
-      </div>
+      <Button
+        type="submit"
+        size="icon"
+        disabled={!question.trim() || loading || disabled}
+        className="absolute bottom-1.5 right-1.5 h-8 w-8"
+      >
+        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+      </Button>
     </form>
   );
 }

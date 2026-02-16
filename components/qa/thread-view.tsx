@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Loader2, ThumbsDown, ThumbsUp } from "lucide-react";
 import { AnswerDisplay } from "@/components/qa/answer-display";
 import { Citation } from "@/components/qa/citation";
 import type { QAThreadMessage } from "@/components/qa/types";
@@ -27,21 +27,21 @@ export function ThreadView({
   const citationsRef = useRef<HTMLDivElement>(null);
 
   function handleCitationClick(messageId: string, index: number) {
-    const selector = `[data-citation-message=\"${messageId}\"][data-citation-index=\"${index}\"]`;
+    const selector = `[data-citation-message="${messageId}"][data-citation-index="${index}"]`;
     const element = citationsRef.current?.querySelector(selector);
     element?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
-  if (messages.length === 0 && !loading) {
+  if (messages.length === 0 && loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <MessageSquare className="mb-4 h-12 w-12 text-muted-foreground" />
-        <h3 className="text-lg font-medium">Ask a question</h3>
-        <p className="mt-1 max-w-md text-sm text-muted-foreground">
-          Start a new chat and ask questions about your knowledge base.
-        </p>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
+  }
+
+  if (messages.length === 0 && !loading) {
+    return null;
   }
 
   return (
@@ -50,7 +50,7 @@ export function ThreadView({
         if (message.role === "USER") {
           return (
             <div key={message.id} className="flex justify-end">
-              <div className="max-w-3xl rounded-lg bg-primary px-4 py-3 text-sm text-primary-foreground">
+              <div className="max-w-3xl rounded-lg bg-primary px-4 py-3 text-sm text-primary-foreground shadow-sm">
                 {message.content}
               </div>
             </div>
@@ -74,7 +74,7 @@ export function ThreadView({
             )}
 
             {citations.length > 0 && (
-              <div className="space-y-3">
+              <div className="rounded-lg bg-muted/30 p-3 space-y-3">
                 <div>
                   <h3 className="text-sm font-medium">Citations</h3>
                   <p className="text-xs text-muted-foreground">

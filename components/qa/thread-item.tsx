@@ -23,8 +23,8 @@ export function ThreadItem({
   return (
     <div
       className={cn(
-        "group flex items-start gap-2 rounded-md border p-2",
-        active ? "border-primary bg-primary/5" : "border-border"
+        "group flex items-start gap-2 rounded-md p-2 transition-colors",
+        active ? "bg-muted" : "hover:bg-muted/50"
       )}
     >
       <button
