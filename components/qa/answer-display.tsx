@@ -296,7 +296,7 @@ export function AnswerDisplay({ answer, streaming, onCitationClick }: AnswerDisp
   }
 
   return (
-    <div className="rounded-lg border p-4">
+    <div className="rounded-lg border bg-card p-4 shadow-sm">
       <div className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-3">
         {renderedBlocks.length > 0 ? renderedBlocks : <Fragment>{answer}</Fragment>}
         {streaming && (

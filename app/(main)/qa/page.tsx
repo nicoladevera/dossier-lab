@@ -21,7 +21,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { AlertTriangle, History, Plus } from "lucide-react";
+import { AlertTriangle, History, MessageSquare, Plus } from "lucide-react";
 import type { CitationData } from "@/components/qa/citation";
 import type {
   QAPagination,
@@ -92,6 +92,7 @@ export default function QAPage() {
   const [loadingThreads, setLoadingThreads] = useState(true);
 
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+  const [activeThreadTitle, setActiveThreadTitle] = useState<string | null>(null);
   const [messages, setMessages] = useState<QAThreadMessage[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
 
@@ -115,10 +116,24 @@ export default function QAPage() {
   const [autoSelectThread, setAutoSelectThread] = useState(true);
 
   const activeThreadIdRef = useRef<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     activeThreadIdRef.current = activeThreadId;
   }, [activeThreadId]);
+
+  // Auto-scroll when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages.length, streamingMessageId]);
+
+  // Keep scrolled to bottom during streaming
+  useEffect(() => {
+    if (!streamingMessageId) return;
+    const el = messagesContainerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages, streamingMessageId]);
 
   const fetchThreads = useCallback(async (page: number) => {
     setLoadingThreads(true);
@@ -154,6 +169,7 @@ export default function QAPage() {
       const detail = data as ThreadDetailResponse;
       setMessages(normalizeMessages(detail.messages));
       setActiveThreadId(threadId);
+      setActiveThreadTitle(detail.thread.title);
     } catch {
       setError("Failed to load thread");
     } finally {
@@ -251,6 +267,7 @@ export default function QAPage() {
     setHistoryOpen(false);
     setError(null);
     setActiveThreadId(null);
+    setActiveThreadTitle(null);
     setMessages([]);
     setFeedback(null);
     setFeedbackEvaluationId(null);
@@ -501,6 +518,7 @@ export default function QAPage() {
 
       if (activeThreadId === deleteTarget.id) {
         setActiveThreadId(null);
+        setActiveThreadTitle(null);
         setMessages([]);
         setFeedback(null);
         setFeedbackMessageId(null);
@@ -518,47 +536,24 @@ export default function QAPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="-m-4 lg:-m-6 flex h-[calc(100dvh-3.5rem)] flex-col">
+      <div className="shrink-0 p-4 pb-0 lg:p-6 lg:pb-0">
         <h2 className="text-2xl font-bold tracking-tight">Q&A</h2>
         <p className="mt-1 text-muted-foreground">
           Ask questions about your knowledge base and review chat history
         </p>
       </div>
 
-      {budgetWarning && (
-        <Alert className="border-border bg-muted/50">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Your estimated daily costs are approaching your budget threshold. You can
-            adjust the threshold in Settings.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <div className="flex items-center gap-2 lg:hidden">
-        <Button onClick={handleNewChat} disabled={asking}>
-          <Plus className="mr-2 h-4 w-4" />
-          New chat
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => setHistoryOpen(true)}
-          disabled={asking}
-        >
-          <History className="mr-2 h-4 w-4" />
-          History
-        </Button>
-      </div>
-
-      {error && <p className="text-sm text-destructive">{error}</p>}
-
-      <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-        <aside className="hidden space-y-3 lg:block">
-          <Button className="w-full" onClick={handleNewChat} disabled={asking}>
+    <div className="mt-4 flex min-h-0 flex-1 border-t">
+      {/* Sidebar (desktop only) */}
+      <aside className="hidden w-[280px] shrink-0 flex-col border-r bg-muted/30 lg:flex">
+        <div className="p-3">
+          <Button onClick={handleNewChat} disabled={asking} className="w-full">
             <Plus className="mr-2 h-4 w-4" />
             New chat
           </Button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-3 pb-3">
           <ThreadList
             threads={threads}
             pagination={pagination}
@@ -571,26 +566,89 @@ export default function QAPage() {
               void fetchThreads(page);
             }}
           />
-        </aside>
+        </div>
+      </aside>
 
-        <section className="min-w-0 space-y-4">
-          <QuestionInput
-            onSubmit={handleAsk}
-            loading={asking}
-            disabled={loadingMessages}
-          />
+      {/* Main content */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* Top bar */}
+        <div className="flex h-14 shrink-0 items-center gap-2 border-b bg-muted/40 px-4 shadow-sm">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setHistoryOpen(true)}
+          >
+            <History className="h-4 w-4" />
+          </Button>
+          <span className="truncate text-base font-semibold">
+            {activeThreadTitle || "New conversation"}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ml-auto lg:hidden"
+            onClick={handleNewChat}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
 
-          <ThreadView
-            messages={messages}
-            loading={asking || loadingMessages}
-            streamingMessageId={streamingMessageId}
-            feedbackMessageId={feedbackMessageId}
-            feedback={feedback}
-            onFeedback={handleFeedback}
-          />
-        </section>
+        {/* Banners */}
+        {budgetWarning && (
+          <Alert className="mx-4 mt-3 border-border bg-muted/50">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              Your estimated daily costs are approaching your budget threshold. You can
+              adjust the threshold in Settings.
+            </AlertDescription>
+          </Alert>
+        )}
+        {error && (
+          <Alert variant="destructive" className="mx-4 mt-3">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* Messages area */}
+        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto bg-muted/20">
+          {messages.length === 0 && !loadingMessages && !asking ? (
+            <div className="flex h-full flex-col items-center justify-center text-center px-4">
+              <MessageSquare className="mb-4 h-12 w-12 text-muted-foreground" />
+              <h3 className="text-lg font-medium">What would you like to know?</h3>
+              <p className="mt-1 max-w-md text-sm text-muted-foreground">
+                Get AI-powered answers with citations from your knowledge base.
+              </p>
+            </div>
+          ) : (
+            <div className="mx-auto max-w-3xl px-4 py-4">
+              <ThreadView
+                messages={messages}
+                loading={asking || loadingMessages}
+                streamingMessageId={streamingMessageId}
+                feedbackMessageId={feedbackMessageId}
+                feedback={feedback}
+                onFeedback={handleFeedback}
+              />
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+        </div>
+
+        {/* Input (pinned to bottom) */}
+        <div className="shrink-0 border-t bg-muted/40 px-4 py-3">
+          <div className="mx-auto max-w-3xl">
+            <QuestionInput
+              onSubmit={handleAsk}
+              loading={asking}
+              disabled={loadingMessages}
+              isNewChat={!activeThreadId}
+            />
+          </div>
+        </div>
       </div>
 
+      {/* Mobile history sheet */}
       <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
         <SheetContent side="left">
           <SheetHeader>
@@ -598,6 +656,10 @@ export default function QAPage() {
             <SheetDescription>Review and manage past Q&A threads.</SheetDescription>
           </SheetHeader>
           <div className="px-4 pb-4">
+            <Button onClick={handleNewChat} disabled={asking} className="mb-3 w-full">
+              <Plus className="mr-2 h-4 w-4" />
+              New chat
+            </Button>
             <ThreadList
               threads={threads}
               pagination={pagination}
@@ -619,6 +681,7 @@ export default function QAPage() {
         </SheetContent>
       </Sheet>
 
+      {/* Delete confirmation dialog */}
       <Dialog
         open={Boolean(deleteTarget)}
         onOpenChange={(open) => {
@@ -653,6 +716,7 @@ export default function QAPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
     </div>
   );
 }
