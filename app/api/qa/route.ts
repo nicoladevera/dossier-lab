@@ -335,6 +335,8 @@ export async function POST(request: NextRequest) {
               data: {
                 userId,
                 assistantMessageId,
+                llmProvider: provider,
+                llmModel: model,
                 query: question,
                 retrievedChunkIds: searchResults.map((r) => r.chunkId),
                 answer: fullAnswer,

@@ -164,6 +164,9 @@ model Evaluation {
   id                String       @id @default(cuid())
   userId            String
   assistantMessageId String?     @unique
+  // LLM identity used to generate this evaluated response (future model/provider analytics).
+  llmProvider       LLMProvider?
+  llmModel          String?
   query             String       @db.Text
   retrievedChunkIds String[]
   answer            String       @db.Text
