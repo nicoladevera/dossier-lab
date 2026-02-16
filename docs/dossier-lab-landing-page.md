@@ -1,4 +1,4 @@
-# DOSSIER AI — Landing Page Copy
+# DOSSIER LAB — Landing Page Copy
 
 ---
 
@@ -8,7 +8,7 @@
 Build personal intelligence from everything you read.
 
 ### Subhead
-Dossier AI indexes your articles, PDFs, and videos automatically—then helps you search, synthesize, and generate insights from your own knowledge base, with built-in evaluation so you can trust the AI.
+Dossier Lab indexes your articles, PDFs, and videos automatically—then helps you search, synthesize, and generate insights from your own knowledge base, with built-in evaluation so you can trust the AI.
 
 ### CTA
 Join the waitlist
@@ -36,7 +36,7 @@ When you need to synthesize information, compare viewpoints, or make decisions b
 
 ### Transform your reading into personal intelligence
 
-Dossier AI automatically indexes everything you read into a searchable knowledge base.
+Dossier Lab automatically indexes everything you read into a searchable knowledge base.
 
 You can find any source instantly, ask questions that synthesize across your reading, and generate intelligence briefs—all grounded in citations from YOUR sources, not the internet's.
 
@@ -50,7 +50,7 @@ Build dossiers on topics you care about. Search them. Synthesize them. Reuse the
 Paste article URLs. Upload PDFs. Copy text from anywhere. Each source joins your knowledge base.
 
 ### 2. Automatic indexing
-Dossier AI extracts text, chunks content, generates embeddings, and builds a hybrid search index. You do nothing.
+Dossier Lab extracts text, chunks content, generates embeddings, and builds a hybrid search index. You do nothing.
 
 ### 3. Search your intelligence
 Find sources by meaning, not just keywords. "What have I learned about RAG systems?" returns relevant content even if you never used those exact words.
@@ -122,7 +122,7 @@ Stop losing track of tutorials, documentation, and technical articles. Build a s
 
 Most AI tools generate answers that sound good but can't be verified.
 
-Dossier AI shows you:
+Dossier Lab shows you:
 - Which sources were retrieved for each query
 - Whether the answer actually used those sources or hallucinated
 - How retrieval quality changes as your knowledge base grows

@@ -1,4 +1,4 @@
-# Dossier AI
+# Dossier Lab
 
 A personal intelligence tool that transforms your reading into a searchable, synthesizable knowledge base. Capture articles, documents, and text, then search semantically, ask questions, and get source-grounded answers with citations.
 
@@ -43,7 +43,7 @@ npm install
 ### 2. Create the database
 
 ```bash
-createdb dossier_ai
+createdb dossier_lab
 ```
 
 Do **not** manually create the pgvector extension -- the Prisma migration handles that.
@@ -54,7 +54,7 @@ Create `.env.local` with the following (generate secrets with `openssl`):
 
 ```bash
 # Database connection (macOS Homebrew uses your system user, no password)
-DATABASE_URL="postgresql://YOUR_USERNAME:@localhost:5432/dossier_ai"
+DATABASE_URL="postgresql://YOUR_USERNAME:@localhost:5432/dossier_lab"
 
 # Generate with: openssl rand -base64 32
 NEXTAUTH_SECRET="your-generated-secret"
@@ -109,7 +109,7 @@ This opens a visual database browser at [http://localhost:5555](http://localhost
 For command-line access:
 
 ```bash
-psql dossier_ai
+psql dossier_lab
 ```
 
 Useful commands:

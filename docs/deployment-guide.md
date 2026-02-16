@@ -1,6 +1,6 @@
-# Deployment Guide - Dossier AI
+# Deployment Guide - Dossier Lab
 
-This guide covers deploying Dossier AI to production environments. Choose the deployment option that best fits your needs.
+This guide covers deploying Dossier Lab to production environments. Choose the deployment option that best fits your needs.
 
 ## Table of Contents
 
@@ -175,7 +175,7 @@ In your app service settings, add:
 
 - `DATABASE_URL` (should be auto-populated, verify it's correct)
 - `NEXTAUTH_SECRET` → Generate with `openssl rand -base64 32`
-- `NEXTAUTH_URL` → Your Railway app URL (e.g., `https://dossier-ai-production.up.railway.app`)
+- `NEXTAUTH_URL` → Your Railway app URL (e.g., `https://dossier-lab-production.up.railway.app`)
 - `ENCRYPTION_KEY` → Generate with `openssl rand -hex 16`
 - `NODE_ENV` → `production`
 
@@ -223,9 +223,9 @@ Railway auto-detects Next.js, but verify:
 1. Sign up at [render.com](https://render.com)
 2. Click **New → PostgreSQL**
 3. Configure:
-   - **Name:** `dossier-ai-db`
-   - **Database:** `dossier_ai`
-   - **User:** `dossier_ai_user`
+   - **Name:** `dossier-lab-db`
+   - **Database:** `dossier_lab`
+   - **User:** `dossier_lab_user`
    - **Region:** Choose closest to your users
    - **Plan:** Choose based on your needs (Free tier available)
 4. Click **Create Database**
@@ -250,7 +250,7 @@ Railway auto-detects Next.js, but verify:
 1. Click **New → Web Service**
 2. Connect your GitHub repository
 3. Configure:
-   - **Name:** `dossier-ai`
+   - **Name:** `dossier-lab`
    - **Region:** Same as database
    - **Branch:** `main`
    - **Build Command:** `npm install && npx prisma generate && npm run build`
@@ -264,7 +264,7 @@ In your web service settings, add environment variables:
 
 - `DATABASE_URL` → Your database's **Internal Database URL** (found in database settings)
 - `NEXTAUTH_SECRET` → `openssl rand -base64 32`
-- `NEXTAUTH_URL` → Your Render app URL (e.g., `https://dossier-ai.onrender.com`)
+- `NEXTAUTH_URL` → Your Render app URL (e.g., `https://dossier-lab.onrender.com`)
 - `ENCRYPTION_KEY` → `openssl rand -hex 16`
 - `NODE_ENV` → `production`
 
@@ -391,9 +391,9 @@ version: '3.8'
 services:
   postgres:
     image: pgvector/pgvector:pg17
-    container_name: dossier-ai-db
+    container_name: dossier-lab-db
     environment:
-      POSTGRES_DB: dossier_ai
+      POSTGRES_DB: dossier_lab
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${DB_PASSWORD:-change_me_in_production}
     volumes:
@@ -408,11 +408,11 @@ services:
 
   app:
     build: .
-    container_name: dossier-ai-app
+    container_name: dossier-lab-app
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-change_me_in_production}@postgres:5432/dossier_ai
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-change_me_in_production}@postgres:5432/dossier_lab
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
@@ -571,7 +571,7 @@ Consider adding:
 |----------|-------------|----------------|---------|
 | `DATABASE_URL` | PostgreSQL connection string | From your database provider | `postgresql://user:pass@host:5432/db` |
 | `NEXTAUTH_SECRET` | Secret for NextAuth.js session encryption | `openssl rand -base64 32` | `abc123...xyz` (long random string) |
-| `NEXTAUTH_URL` | Full URL of your deployed app | Your production domain | `https://dossier-ai.vercel.app` |
+| `NEXTAUTH_URL` | Full URL of your deployed app | Your production domain | `https://dossier-lab.vercel.app` |
 | `ENCRYPTION_KEY` | Key for encrypting user API keys | `openssl rand -hex 16` | `a1b2c3d4e5f6...` (32 hex chars) |
 
 ### Optional Variables
@@ -692,10 +692,10 @@ Error: Can't reach database server
 1. **Verify NEXTAUTH_URL exactly matches your domain:**
    ```bash
    # Correct
-   NEXTAUTH_URL=https://dossier-ai.vercel.app
+   NEXTAUTH_URL=https://dossier-lab.vercel.app
 
    # Wrong (trailing slash)
-   NEXTAUTH_URL=https://dossier-ai.vercel.app/
+   NEXTAUTH_URL=https://dossier-lab.vercel.app/
    ```
 
 2. **Check NEXTAUTH_SECRET is set and non-empty:**

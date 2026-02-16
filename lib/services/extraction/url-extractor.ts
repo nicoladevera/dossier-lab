@@ -202,7 +202,7 @@ export async function extractFromUrl(
     const response = await fetch(url, {
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (compatible; DossierAI/1.0; +https://dossier.ai)",
+          "Mozilla/5.0 (compatible; DossierLab/1.0; +https://dossier.lab)",
         Accept: "text/html,application/xhtml+xml",
       },
       redirect: "manual",

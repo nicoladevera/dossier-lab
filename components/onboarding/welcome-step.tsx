@@ -15,12 +15,12 @@ export function WelcomeStep({ onNext, onSkip }: WelcomeStepProps) {
         <DossierLogo className="h-10 w-10 text-primary" />
       </div>
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold">Welcome to Dossier AI</h2>
+        <h2 className="text-2xl font-bold">Welcome to Dossier Lab</h2>
         <p className="text-muted-foreground max-w-md">
           Transform your reading into a searchable, synthesizable knowledge base.
         </p>
         <p className="text-sm text-muted-foreground max-w-md pt-2">
-          Take a quick tour to see what you can do with Dossier AI.
+          Take a quick tour to see what you can do with Dossier Lab.
         </p>
       </div>
       <div className="flex gap-3">

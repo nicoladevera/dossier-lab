@@ -4,7 +4,7 @@ This document provides context for AI coding agents working on this codebase.
 
 ## Project Overview
 
-Dossier AI is a RAG (Retrieval-Augmented Generation) application built with Next.js 16 (App Router), Prisma 7, PostgreSQL + pgvector, and TypeScript. It provides content capture, hybrid search, Q&A with citations, and evaluation infrastructure.
+Dossier Lab is a RAG (Retrieval-Augmented Generation) application built with Next.js 16 (App Router), Prisma 7, PostgreSQL + pgvector, and TypeScript. It provides content capture, hybrid search, Q&A with citations, and evaluation infrastructure.
 
 ## Development Commands
 
@@ -166,8 +166,8 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 
 After implementing significant features, refactors, or architectural changes, check and update relevant documentation:
 
-- `docs/tasks-dossier-ai-phase1.md` -- Mark completed tasks, update status
-- `docs/prd-dossier-ai-phase1.md` -- Ensure requirements still reflect reality
+- `docs/tasks-dossier-lab-phase1.md` -- Mark completed tasks, update status
+- `docs/prd-dossier-lab-phase1.md` -- Ensure requirements still reflect reality
 - `AGENTS.md` -- Update if new patterns, models, services, or conventions were introduced
 - `README.md` -- Update if setup steps, architecture, or usage instructions changed
 - `prisma/schema.prisma` comments -- Keep in sync with model changes

@@ -1,10 +1,10 @@
-# DOSSIER AI — Project Brief
+# DOSSIER LAB — Project Brief
 
 ---
 
 ## Executive Summary
 
-Dossier AI helps you build personal intelligence from everything you read.
+Dossier Lab helps you build personal intelligence from everything you read.
 
 It automatically indexes articles, PDFs, and videos into a searchable knowledge base, then helps you synthesize insights, generate research briefs, and answer questions—all grounded in citations from YOUR sources.
 
@@ -26,11 +26,11 @@ You don't lack information. You lack a system that turns your reading into usabl
 
 ## The Solution
 
-Dossier AI transforms your reading into personal intelligence.
+Dossier Lab transforms your reading into personal intelligence.
 
 Everything you read gets automatically indexed into your knowledge base. You can search across all your sources semantically, ask questions that synthesize across them, and generate intelligence briefs—with every answer grounded in citations you can verify.
 
-You build dossiers—collections of sources on topics you care about—and Dossier AI helps you search them, analyze them, and synthesize them into actionable insights.
+You build dossiers—collections of sources on topics you care about—and Dossier Lab helps you search them, analyze them, and synthesize them into actionable insights.
 
 ---
 
@@ -67,7 +67,7 @@ Your reading becomes reusable intelligence.
 
 ## The Technical Differentiator: Evaluation
 
-Most RAG systems feel like they work. Dossier AI measures whether they actually work.
+Most RAG systems feel like they work. Dossier Lab measures whether they actually work.
 
 Built-in evaluation infrastructure tracks:
 
@@ -142,7 +142,7 @@ Early version: Personal tool for individual knowledge management, potentially sh
 
 ## Positioning Statement
 
-For people who read and research constantly, Dossier AI transforms everything you learn into personal intelligence—a searchable, synthesizable knowledge base with built-in evaluation so you can trust the insights it generates.
+For people who read and research constantly, Dossier Lab transforms everything you learn into personal intelligence—a searchable, synthesizable knowledge base with built-in evaluation so you can trust the insights it generates.
 
 ---
 

@@ -29,7 +29,7 @@ export function Sidebar({ className }: { className?: string }) {
     <nav className={cn("flex flex-col gap-1 p-4", className)}>
       <div className="mb-6 px-2 flex items-center gap-2">
         <DossierLogo className="h-6 w-6" />
-        <h1 className="text-xl font-bold">Dossier AI</h1>
+        <h1 className="text-xl font-bold">Dossier Lab</h1>
       </div>
       {navItems.map((item) => {
         const isActive = pathname.startsWith(item.href);
