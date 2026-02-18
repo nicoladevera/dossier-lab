@@ -9,7 +9,7 @@ A personal intelligence tool that transforms your reading into a searchable, syn
 - **Q&A with Citations** -- Ask natural language questions and get streaming answers with source-level citations, expandable evidence passages, and markdown-style rendering (headings/lists/emphasis/links/code blocks)
 - **Q&A Chat History** -- Persist chats as threads/messages, reopen prior Q&A sessions, rate any assistant response (including historical messages), and permanently delete threads (including linked evaluation rows)
 - **Evaluation Dashboard** -- Track retrieval accuracy, groundedness, scoring coverage health, operational trends (queries/latency/cost), and response-level feedback coverage with one-time backfill support for legacy unscored rows
-- **Multi-Provider LLM Support** -- Switch between OpenAI (GPT-4o) and Anthropic (Claude) with encrypted API key storage
+- **Multi-Provider LLM Support** -- Switch between OpenAI (GPT-5+) and Anthropic (Claude) with encrypted API key storage
 
 ## Tech Stack
 
