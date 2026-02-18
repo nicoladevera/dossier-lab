@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Library, BarChart3, Settings, KeyRound } from "lucide-react";
+import { Settings, KeyRound } from "lucide-react";
 import Link from "next/link";
 
 interface ExploreStepProps {
@@ -14,7 +14,7 @@ export function ExploreStep({ onFinish }: ExploreStepProps) {
       <div className="text-center space-y-2">
         <h3 className="text-lg font-semibold">Ready to Get Started!</h3>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          First, configure your API key, then explore these features:
+          One thing left to get started:
         </p>
       </div>
 
@@ -23,11 +23,10 @@ export function ExploreStep({ onFinish }: ExploreStepProps) {
         <div className="rounded-md border-2 border-primary/50 bg-primary/5 p-4 space-y-3">
           <div className="flex items-center gap-2">
             <KeyRound className="h-5 w-5 text-primary" />
-            <h4 className="text-sm font-semibold">First Step: Add Your API Key</h4>
+            <h4 className="text-sm font-semibold">Add Your API Key</h4>
           </div>
           <p className="text-xs text-muted-foreground">
-            Configure your OpenAI API key in Settings to enable content capture,
-            embeddings, and AI-powered Q&A.
+            Enables content capture and AI Q&amp;A.
           </p>
           <Link href="/settings" onClick={onFinish}>
             <Button size="sm" className="w-full gap-2">
@@ -35,24 +34,6 @@ export function ExploreStep({ onFinish }: ExploreStepProps) {
               Go to Settings
             </Button>
           </Link>
-        </div>
-      </div>
-
-      {/* Other Features */}
-      <div className="grid gap-4 max-w-lg mx-auto sm:grid-cols-2">
-        <div className="rounded-md border p-4 space-y-2">
-          <Library className="h-5 w-5 text-primary" />
-          <h4 className="text-sm font-medium">Knowledge Base</h4>
-          <p className="text-xs text-muted-foreground">
-            View, search, and manage all your captured sources in one place.
-          </p>
-        </div>
-        <div className="rounded-md border p-4 space-y-2">
-          <BarChart3 className="h-5 w-5 text-primary" />
-          <h4 className="text-sm font-medium">Evaluation Dashboard</h4>
-          <p className="text-xs text-muted-foreground">
-            Monitor retrieval accuracy, groundedness, and cost metrics over time.
-          </p>
         </div>
       </div>
 
