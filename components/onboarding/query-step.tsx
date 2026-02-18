@@ -39,23 +39,12 @@ export function QueryStep({ onNext, onSkip }: QueryStepProps) {
             <Sparkles className="h-4 w-4 text-foreground" />
             <span>AI Answer</span>
           </div>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Production RAG systems face three critical challenges: retrieval quality,
-            answer groundedness, and cost management. Teams must balance chunk size and
-            overlap for optimal context retrieval, implement evaluation frameworks to
-            measure whether answers are factually grounded in source material, and
-            optimize embedding/LLM costs as usage scales. The most successful implementations
-            treat RAG as a product iteration problem—continuously measuring retrieval
-            precision, testing chunking strategies, and monitoring hallucination rates.
-          </p>
-          <p className="text-xs text-muted-foreground italic">
-            Answers are grounded in your captured sources with citations.
-          </p>
+          <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+            <li>Answers drawn from your captured sources</li>
+            <li>Grounded in what you&apos;ve read</li>
+            <li>Cited back to the original article</li>
+          </ul>
         </div>
-
-        <p className="text-xs text-center text-muted-foreground">
-          This is a preview. Set up your API key in Settings to ask real questions.
-        </p>
       </div>
 
       <div className="flex justify-center gap-3">

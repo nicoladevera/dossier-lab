@@ -35,29 +35,15 @@ export function CaptureStep({ onNext, onSkip }: CaptureStepProps) {
 
         {/* Mock capture process */}
         <div className="rounded-md border p-4 space-y-3 bg-muted/30">
-          <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-foreground shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <p className="text-sm font-medium">Content extracted</p>
-              <p className="text-xs text-muted-foreground">
-                The page is processed and split into searchable chunks
-              </p>
-            </div>
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-foreground shrink-0" />
+            <p className="text-sm font-medium">Content extracted</p>
           </div>
-          <div className="flex items-start gap-3">
-            <FileText className="h-5 w-5 text-foreground shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <p className="text-sm font-medium">Ready to search & query</p>
-              <p className="text-xs text-muted-foreground">
-                Your content is indexed and ready for questions
-              </p>
-            </div>
+          <div className="flex items-center gap-3">
+            <FileText className="h-5 w-5 text-foreground shrink-0" />
+            <p className="text-sm font-medium">Ready to search & query</p>
           </div>
         </div>
-
-        <p className="text-xs text-center text-muted-foreground">
-          This is a preview. Set up your API key in Settings to try it for real.
-        </p>
       </div>
 
       <div className="flex justify-center gap-3">
