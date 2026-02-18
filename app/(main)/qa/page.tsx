@@ -114,6 +114,14 @@ export default function QAPage() {
 
   const [historyOpen, setHistoryOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<QAThreadSummary | null>(null);
+
+  const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("qa-sidebar-width");
+      if (saved) return Math.min(480, Math.max(200, Number(saved)));
+    }
+    return 280;
+  });
   const [deletingThread, setDeletingThread] = useState(false);
   const [autoSelectThread, setAutoSelectThread] = useState(true);
 
@@ -136,6 +144,30 @@ export default function QAPage() {
     const el = messagesContainerRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, streamingMessageId]);
+
+  useEffect(() => {
+    localStorage.setItem("qa-sidebar-width", String(sidebarWidth));
+  }, [sidebarWidth]);
+
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      const startX = e.clientX;
+      const startWidth = sidebarWidth;
+
+      const onMove = (ev: MouseEvent) => {
+        const delta = ev.clientX - startX;
+        setSidebarWidth(Math.min(480, Math.max(200, startWidth + delta)));
+      };
+      const onUp = () => {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      };
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    },
+    [sidebarWidth]
+  );
 
   const fetchThreads = useCallback(async (page: number) => {
     setLoadingThreads(true);
@@ -598,7 +630,10 @@ export default function QAPage() {
 
     <div className="mt-4 flex min-h-0 flex-1 border-t">
       {/* Sidebar (desktop only) */}
-      <aside className="hidden w-[280px] shrink-0 flex-col border-r bg-muted/30 lg:flex">
+      <aside
+        className="relative hidden shrink-0 flex-col border-r bg-muted/30 lg:flex"
+        style={{ width: sidebarWidth }}
+      >
         <div className="p-3">
           <Button onClick={handleNewChat} disabled={asking} className="w-full">
             <Plus className="mr-2 h-4 w-4" />
@@ -619,6 +654,11 @@ export default function QAPage() {
             }}
           />
         </div>
+        {/* Drag handle */}
+        <div
+          className="absolute inset-y-0 right-0 w-1 cursor-col-resize select-none hover:bg-primary/20 active:bg-primary/40"
+          onMouseDown={handleResizeStart}
+        />
       </aside>
 
       {/* Main content */}
