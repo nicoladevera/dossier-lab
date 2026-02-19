@@ -23,7 +23,7 @@ interface DotRenderProps {
   cx?: number;
   cy?: number;
   stroke?: string;
-  strokeWidth?: number;
+  strokeWidth?: string | number;
 }
 
 interface LegendPayloadEntry {
@@ -165,7 +165,7 @@ export function HealthChart({ data }: HealthChartProps) {
           }
         />
         <Legend
-          content={({ payload }: { payload?: LegendPayloadEntry[] }) => {
+          content={({ payload }) => {
             const keys = new Set(
               (payload || [])
                 .map((entry) => String(entry.dataKey || ""))
