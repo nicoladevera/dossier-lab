@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Check, Copy, Loader2, ThumbsDown, ThumbsUp } from "lucide-react";
 import { AnswerDisplay } from "@/components/qa/answer-display";
 import { Citation } from "@/components/qa/citation";
 import type { QAThreadMessage } from "@/components/qa/types";
@@ -24,6 +24,13 @@ export function ThreadView({
   onFeedback,
 }: ThreadViewProps) {
   const citationsRef = useRef<HTMLDivElement>(null);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+
+  const handleCopy = (content: string, messageId: string) => {
+    navigator.clipboard.writeText(content);
+    setCopiedMessageId(messageId);
+    setTimeout(() => setCopiedMessageId(null), 2000);
+  };
 
   function handleCitationClick(messageId: string, index: number) {
     const selector = `[data-citation-message="${messageId}"][data-citation-index="${index}"]`;
@@ -97,31 +104,43 @@ export function ThreadView({
             )}
 
             {streamingMessageId !== message.id && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">Was this helpful?</span>
+              <div className="flex items-center gap-1">
                 <Button
-                  variant={message.userFeedback === "GOOD" ? "default" : "outline"}
-                  size="sm"
-                  className="h-7"
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => handleCopy(message.content, message.id)}
+                  title="Copy response"
+                >
+                  {copiedMessageId === message.id ? (
+                    <Check className="h-3.5 w-3.5" />
+                  ) : (
+                    <Copy className="h-3.5 w-3.5" />
+                  )}
+                </Button>
+                <Button
+                  variant={message.userFeedback === "GOOD" ? "default" : "ghost"}
+                  size="icon"
+                  className="h-7 w-7"
                   disabled={feedbackPendingMessageIds.has(message.id)}
                   onClick={() =>
                     onFeedback(message.id, nextFeedback(message.userFeedback, "GOOD"))
                   }
+                  title="Good response"
                 >
-                  <ThumbsUp className="mr-1 h-3 w-3" />
-                  Good
+                  <ThumbsUp className="h-3.5 w-3.5" />
                 </Button>
                 <Button
-                  variant={message.userFeedback === "BAD" ? "default" : "outline"}
-                  size="sm"
-                  className="h-7"
+                  variant={message.userFeedback === "BAD" ? "default" : "ghost"}
+                  size="icon"
+                  className="h-7 w-7"
                   disabled={feedbackPendingMessageIds.has(message.id)}
                   onClick={() =>
                     onFeedback(message.id, nextFeedback(message.userFeedback, "BAD"))
                   }
+                  title="Bad response"
                 >
-                  <ThumbsDown className="mr-1 h-3 w-3" />
-                  Bad
+                  <ThumbsDown className="h-3.5 w-3.5" />
                 </Button>
               </div>
             )}
