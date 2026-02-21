@@ -14,14 +14,6 @@ const typeIcons: Record<string, React.ElementType> = {
   YOUTUBE: Youtube,
 };
 
-const typeColors: Record<string, string> = {
-  URL: "bg-muted text-muted-foreground",
-  PDF: "bg-muted text-muted-foreground",
-  WORD: "bg-muted text-muted-foreground",
-  MARKDOWN: "bg-muted text-muted-foreground",
-  TEXT: "bg-muted text-muted-foreground",
-  YOUTUBE: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400",
-};
 
 interface SourceCardProps {
   source: {
@@ -38,7 +30,6 @@ interface SourceCardProps {
 
 export function SourceCard({ source }: SourceCardProps) {
   const Icon = typeIcons[source.sourceType] || FileText;
-  const colorClass = typeColors[source.sourceType] || typeColors.TEXT;
 
   return (
     <Link href={`/knowledge-base/${source.id}`}>
@@ -50,7 +41,7 @@ export function SourceCard({ source }: SourceCardProps) {
           <div className="min-w-0 flex-1">
             <h3 className="truncate font-medium">{source.title}</h3>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-              <Badge variant="secondary" className={colorClass}>
+              <Badge variant="secondary" className="bg-muted text-muted-foreground">
                 {source.sourceType}
               </Badge>
               {source.author && (
