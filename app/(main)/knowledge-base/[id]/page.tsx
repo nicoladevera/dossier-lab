@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, ArrowUp, Trash2, ExternalLink, Globe, FileText, File, FileCode, AlignLeft } from "lucide-react";
+import { ArrowLeft, ArrowUp, Trash2, ExternalLink, Globe, FileText, File, FileCode, AlignLeft, Youtube } from "lucide-react";
 
 const typeIcons: Record<string, React.ElementType> = {
   URL: Globe,
@@ -24,6 +24,7 @@ const typeIcons: Record<string, React.ElementType> = {
   WORD: FileText,
   MARKDOWN: FileCode,
   TEXT: AlignLeft,
+  YOUTUBE: Youtube,
 };
 
 interface SourceDetail {
@@ -158,6 +159,9 @@ export default function SourceDetailPage() {
   }
 
   const Icon = typeIcons[source.sourceType] || FileText;
+  const ytMeta = source.sourceType === "YOUTUBE" && source.metadata
+    ? (source.metadata as Record<string, unknown>)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -193,6 +197,47 @@ export default function SourceDetailPage() {
       </div>
 
       <Separator />
+
+      {ytMeta && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              {!!ytMeta.thumbnailUrl && (
+                <a
+                  href={source.sourceUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block shrink-0 overflow-hidden rounded-lg"
+                >
+                  <img
+                    src={ytMeta.thumbnailUrl as string}
+                    alt={source.title}
+                    className="w-full sm:w-64 rounded-lg transition-opacity hover:opacity-80"
+                  />
+                </a>
+              )}
+              <div className="flex flex-col justify-center gap-1">
+                {!!ytMeta.channel && (
+                  <p className="text-sm text-muted-foreground">
+                    Channel: <span className="font-medium text-foreground">{String(ytMeta.channel)}</span>
+                  </p>
+                )}
+                {source.sourceUrl && (
+                  <a
+                    href={source.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    Watch on YouTube
+                  </a>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Metadata */}
       {source.metadata && Object.keys(source.metadata).length > 0 && (

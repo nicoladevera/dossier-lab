@@ -39,6 +39,7 @@ export function SourceFilters({
           <SelectItem value="WORD">Word</SelectItem>
           <SelectItem value="MARKDOWN">Markdown</SelectItem>
           <SelectItem value="TEXT">Text</SelectItem>
+          <SelectItem value="YOUTUBE">YouTube</SelectItem>
         </SelectContent>
       </Select>
 

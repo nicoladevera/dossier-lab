@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRequiredAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { extractFromUrl } from "@/lib/services/extraction/url-extractor";
+import { isYouTubeUrl, extractFromYouTube } from "@/lib/services/extraction/youtube-extractor";
 import { processSource } from "@/lib/services/processing/processing-queue";
 import { createOpenAIEmbeddingProvider } from "@/lib/services/embedding/provider-factory";
 import { checkIngestionRateLimit } from "@/lib/rate-limit";
@@ -32,6 +33,55 @@ export async function POST(request: NextRequest) {
       new URL(url);
     } catch {
       return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
+    }
+
+    // YouTube URL detection — route to YouTube extractor
+    if (isYouTubeUrl(url)) {
+      const ytResult = await extractFromYouTube(url);
+
+      if (ytResult.error) {
+        return NextResponse.json({ error: ytResult.error }, { status: 422 });
+      }
+
+      if (!ytResult.data) {
+        return NextResponse.json(
+          { error: "Failed to extract YouTube content" },
+          { status: 422 }
+        );
+      }
+
+      const source = await prisma.source.create({
+        data: {
+          userId,
+          title: ytResult.data.title,
+          sourceType: "YOUTUBE",
+          sourceUrl: url,
+          author: ytResult.data.author,
+          content: ytResult.data.content,
+          metadata: {
+            videoId: ytResult.data.metadata.videoId,
+            thumbnailUrl: ytResult.data.metadata.thumbnailUrl,
+            channel: ytResult.data.metadata.channel,
+          },
+        },
+      });
+
+      const settings = await prisma.userSettings.findUnique({
+        where: { userId },
+      });
+      const embeddingProvider = createOpenAIEmbeddingProvider(settings);
+
+      processSource(source.id, { embeddingProvider }).catch((err) =>
+        console.error("Processing failed for source", source.id, err)
+      );
+
+      return NextResponse.json({
+        source: {
+          id: source.id,
+          title: source.title,
+          status: source.status,
+        },
+      });
     }
 
     const result = await extractFromUrl(url);

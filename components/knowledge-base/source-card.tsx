@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Globe, FileText, File, FileCode, AlignLeft } from "lucide-react";
+import { Globe, FileText, File, FileCode, AlignLeft, Youtube } from "lucide-react";
 
 const typeIcons: Record<string, React.ElementType> = {
   URL: Globe,
@@ -11,6 +11,7 @@ const typeIcons: Record<string, React.ElementType> = {
   WORD: FileText,
   MARKDOWN: FileCode,
   TEXT: AlignLeft,
+  YOUTUBE: Youtube,
 };
 
 const typeColors: Record<string, string> = {
@@ -19,6 +20,7 @@ const typeColors: Record<string, string> = {
   WORD: "bg-muted text-muted-foreground",
   MARKDOWN: "bg-muted text-muted-foreground",
   TEXT: "bg-muted text-muted-foreground",
+  YOUTUBE: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400",
 };
 
 interface SourceCardProps {
