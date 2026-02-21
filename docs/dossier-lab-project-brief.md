@@ -40,7 +40,8 @@ You build dossiers—collections of sources on topics you care about—and Dossi
 - Paste article URLs
 - Upload PDFs  
 - Paste text from anywhere
-- (Phase 2: YouTube videos; Phase 4: email ingestion)
+- YouTube videos (automatic transcript extraction) ✅
+- (Phase 4: email ingestion)
 
 ### 2. Automatic indexing
 Every source gets chunked, embedded, and added to your personal knowledge base. No manual organization required.
@@ -87,7 +88,7 @@ This transforms the app from a productivity tool into an AI experimentation lab.
 - URL paste
 - PDF upload
 - Text paste
-- (Phase 2: YouTube transcripts, video content indexing)
+- YouTube transcripts, video content indexing ✅
 - (Phase 4: Email ingestion, audio transcription)
 
 ### Personal Knowledge Base
@@ -178,7 +179,7 @@ This shows you can build production-grade AI systems with measurable quality, no
 - Q&A with source citations
 - Basic evaluation framework with test dataset
 
-### Phase 2 (2-3 weeks): YouTube Capture + Source Type Filtering
+### Phase 2 (2-3 weeks): YouTube Capture + Source Type Filtering ✅
 - YouTube transcript integration
 - Video content indexing (metadata, thumbnail, channel)
 - Source type filtering in knowledge base UI

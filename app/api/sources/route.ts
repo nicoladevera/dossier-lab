@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRequiredAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-const VALID_TYPES = ["URL", "PDF", "WORD", "MARKDOWN", "TEXT"] as const;
+const VALID_TYPES = ["URL", "PDF", "WORD", "MARKDOWN", "TEXT", "YOUTUBE"] as const;
 
 export async function GET(request: NextRequest) {
   try {

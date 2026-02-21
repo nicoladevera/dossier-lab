@@ -84,6 +84,9 @@ export function UrlCaptureForm({ onSuccess, onSwitchToText }: UrlCaptureFormProp
           )}
         </Button>
       </div>
+      <p className="text-xs text-muted-foreground">
+        YouTube links are supported — transcripts are extracted automatically.
+      </p>
 
       {error && (
         <Alert variant="destructive">

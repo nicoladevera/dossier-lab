@@ -4,7 +4,7 @@ A personal intelligence tool that transforms your reading into a searchable, syn
 
 ## Features
 
-- **Content Capture** -- Ingest URLs (with automatic article extraction), PDFs, Word documents, Markdown, and plain text
+- **Content Capture** -- Ingest URLs (with automatic article extraction), YouTube videos (automatic transcript extraction), PDFs, Word documents, Markdown, and plain text
 - **Hybrid Search** -- Semantic vector search (when OpenAI embeddings are configured) + metadata-aware PostgreSQL full-text search with fallback loose matching
 - **Q&A with Citations** -- Ask natural language questions and get streaming answers with source-level citations, expandable evidence passages, and markdown-style rendering (headings/lists/emphasis/links/code blocks)
 - **Q&A Chat History** -- Persist chats as threads/messages, reopen prior Q&A sessions, rate any assistant response (including historical messages), and permanently delete threads (including linked evaluation rows)
@@ -185,7 +185,7 @@ lib/
     embedding/         # Embedding generation + provider/key resolution
     encryption/        # AES-256-GCM API key encryption
     evaluation/        # Retrieval accuracy, groundedness, scoring coverage, cost tracking
-    extraction/        # Content extractors (URL, PDF, Word, Markdown, text)
+    extraction/        # Content extractors (URL, YouTube, PDF, Word, Markdown, text)
     llm/               # LLM provider abstraction (OpenAI, Anthropic)
     processing/        # Async document processing queue
     search/            # Semantic, keyword, and hybrid search

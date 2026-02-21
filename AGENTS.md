@@ -71,7 +71,7 @@ const sources = await prisma.source.findMany({
 | Model | Purpose |
 |-------|---------|
 | `User` | Auth + data ownership |
-| `Source` | Captured document (URL, PDF, Word, Markdown, text) |
+| `Source` | Captured document (URL, YouTube, PDF, Word, Markdown, text) |
 | `Chunk` | Text chunk with embedding vector |
 | `UserSettings` | Encrypted API keys, provider/model preferences |
 | `Evaluation` | Q&A interaction metrics (scores, cost, latency, persisted LLM provider/model) |
@@ -86,7 +86,7 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 - **Chunking** (`chunking/`) -- `ChunkingStrategy` interface with `RecursiveCharacterSplitter` implementation
 - **Embedding** (`embedding/`) -- `EmbeddingProvider` interface with OpenAI implementation plus key/provider resolution (`provider-factory.ts`)
 - **LLM** (`llm/`) -- `LLMProvider` interface with OpenAI and Anthropic implementations, plus a factory
-- **Extraction** (`extraction/`) -- Content extractors for URL, PDF, Word, Markdown, text
+- **Extraction** (`extraction/`) -- Content extractors for URL, YouTube (transcript + oEmbed), PDF, Word, Markdown, text
 - **Search** (`search/`) -- Semantic, keyword, and hybrid (RRF) search with metadata-aware keyword fallback
 - **Processing** (`processing/`) -- Async pipeline: chunk -> optional embed -> store
 - **Evaluation** (`evaluation/`) -- Retrieval accuracy, groundedness, scoring coverage health, operational trends (query volume/latency/cost), response-level feedback coverage, and cost tracking
