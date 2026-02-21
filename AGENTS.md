@@ -107,6 +107,8 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 - App-level providers in `components/providers/`
 - Styling: Tailwind CSS v4 utility classes, responsive breakpoints (`sm`, `md`, `lg`, `xl`)
 - Light/dark mode via `next-themes` (ThemeProvider in root layout)
+- **Follow existing styling patterns:** Before implementing UI for a new feature, inspect existing similar components to understand established patterns (color tokens, spacing, variants). New UI elements must match the visual language of their surrounding context.
+- **Use semantic color tokens:** Always use semantic Tailwind tokens (`bg-muted`, `text-muted-foreground`, `bg-secondary`, `bg-accent`, etc.) rather than hard-coded color classes (e.g., `bg-red-100`, `text-red-700`). Hard-coded colors break dark mode and create visual inconsistencies. The only exception is when a specific semantic meaning (error, warning, success) is intentional and consistent with how the rest of the app handles that state (e.g., `variant="destructive"` on a Badge).
 
 ### API Keys & Secrets
 
@@ -161,6 +163,7 @@ Services live in `lib/services/` and follow a provider/strategy pattern:
 2. Add corresponding test file
 3. Register the type in the upload API route (`app/api/ingest/upload/route.ts`)
 4. Add the source type to the `SourceType` enum in `prisma/schema.prisma`
+5. Add the source type icon to the `typeIcons` map in `components/knowledge-base/source-card.tsx` -- badges use a shared `bg-muted text-muted-foreground` style; do not introduce per-type colors
 
 ### Adding a new LLM provider
 
