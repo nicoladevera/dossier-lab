@@ -204,7 +204,7 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 5.5 Create the source detail page (`app/(main)/knowledge-base/[id]/page.tsx`) showing the full extracted content, metadata (title, author, source URL, capture date, document type), and a delete button
   - [x] 5.6 Implement source deletion via the API (`app/api/sources/[id]/route.ts` DELETE handler) — cascade delete all associated chunks and embeddings; confirm deletion with a dialog in the UI
   - [x] 5.7 Add anchor IDs to chunk boundaries on the source detail page so that citation click-throughs can scroll to the relevant passage
-  - [ ] 5.8 Write tests for the sources API (list with filters/sort, get by ID, delete cascade)
+  - [x] 5.8 Write tests for the sources API (list with filters/sort, get by ID, delete cascade)
 
 - [x] 6.0 Hybrid search (semantic + keyword with RRF)
   - [x] 6.1 Create the search input component (`components/search/search-input.tsx`) with a text input and search button, usable on the dashboard and search page
