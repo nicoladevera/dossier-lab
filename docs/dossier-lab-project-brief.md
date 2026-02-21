@@ -40,7 +40,7 @@ You build dossiers—collections of sources on topics you care about—and Dossi
 - Paste article URLs
 - Upload PDFs  
 - Paste text from anywhere
-- (Later: YouTube videos, email forwarding)
+- (Phase 2: YouTube videos; Phase 4: email ingestion)
 
 ### 2. Automatic indexing
 Every source gets chunked, embedded, and added to your personal knowledge base. No manual organization required.
@@ -87,7 +87,8 @@ This transforms the app from a productivity tool into an AI experimentation lab.
 - URL paste
 - PDF upload
 - Text paste
-- (Phase 2: YouTube transcripts, email forwarding)
+- (Phase 2: YouTube transcripts, video content indexing)
+- (Phase 4: Email ingestion, audio transcription)
 
 ### Personal Knowledge Base
 - Document viewer with metadata
@@ -170,28 +171,29 @@ This shows you can build production-grade AI systems with measurable quality, no
 ## Development Timeline
 (with AI coding agents)
 
-### Phase 1 (3-4 weeks): Core RAG + Evaluation
+### Phase 1 (3-4 weeks): Core RAG + Evaluation ✅
 - URL/PDF ingestion pipeline
 - Chunking and embedding infrastructure
 - Hybrid search (semantic + keyword)
 - Q&A with source citations
 - Basic evaluation framework with test dataset
 
-### Phase 2 (2 weeks): Intelligence Workbench  
+### Phase 2 (2-3 weeks): YouTube Capture + Source Type Filtering
+- YouTube transcript integration
+- Video content indexing (metadata, thumbnail, channel)
+- Source type filtering in knowledge base UI
+
+### Phase 3 (2 weeks): Intelligence Workbench
 - Research brief generation
 - Topic summaries
 - Cross-source synthesis
 - Comparative analysis outputs
 
-### Phase 3 (2-3 weeks): Capture Friction Reduction
-- Email forwarding
+### Phase 4 (2-3 weeks): Email Ingestion + Capture Polish
+- Gmail label sync (or email forwarding)
+- Audio transcription
 - Browser extension (optional)
 - Batch upload improvements
-
-### Phase 4 (2-3 weeks): Media Expansion
-- YouTube transcript integration
-- Audio transcription
-- Video content indexing
 
 **Total: 9-12 weeks to full v1**
 
