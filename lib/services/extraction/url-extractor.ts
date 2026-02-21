@@ -1,6 +1,7 @@
 import { JSDOM } from "jsdom";
 import { Readability } from "@mozilla/readability";
 import dns from "dns/promises";
+import type { LookupAddress } from "dns";
 
 export interface ExtractedContent {
   title: string;
@@ -150,7 +151,7 @@ async function checkResolvedIPs(hostname: string): Promise<string | null> {
     return null;
   }
 
-  let results: dns.LookupAddress[];
+  let results: LookupAddress[];
   try {
     results = await dns.lookup(hostname, { all: true });
   } catch {
