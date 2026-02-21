@@ -115,19 +115,14 @@ export default function QAPage() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<QAThreadSummary | null>(null);
 
-  const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("qa-sidebar-width");
-      if (saved) return Math.min(480, Math.max(200, Number(saved)));
-    }
-    return 280;
-  });
+  const [sidebarWidth, setSidebarWidth] = useState<number>(280);
   const [deletingThread, setDeletingThread] = useState(false);
   const [autoSelectThread, setAutoSelectThread] = useState(true);
 
   const activeThreadIdRef = useRef<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const userScrolledUp = useRef(false);
 
   useEffect(() => {
     activeThreadIdRef.current = activeThreadId;
@@ -135,15 +130,37 @@ export default function QAPage() {
 
   // Auto-scroll when new messages arrive
   useEffect(() => {
+    if (userScrolledUp.current) return;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length, streamingMessageId]);
+
+  const handleMessagesWheel = useCallback((e: React.WheelEvent) => {
+    if (e.deltaY < 0) {
+      userScrolledUp.current = true;
+    } else if (e.deltaY > 0) {
+      const el = messagesContainerRef.current;
+      if (el) {
+        const distanceFromBottom =
+          el.scrollHeight - el.scrollTop - el.clientHeight;
+        if (distanceFromBottom <= 150) {
+          userScrolledUp.current = false;
+        }
+      }
+    }
+  }, []);
 
   // Keep scrolled to bottom during streaming
   useEffect(() => {
     if (!streamingMessageId) return;
+    if (userScrolledUp.current) return;  // Respect user's manual scroll
     const el = messagesContainerRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, streamingMessageId]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("qa-sidebar-width");
+    if (saved) setSidebarWidth(Math.min(480, Math.max(200, Number(saved))));
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("qa-sidebar-width", String(sidebarWidth));
@@ -308,6 +325,7 @@ export default function QAPage() {
   async function handleAsk(question: string) {
     if (asking) return;
 
+    userScrolledUp.current = false;  // Reset so new response auto-scrolls
     setAsking(true);
     setError(null);
 
@@ -703,7 +721,7 @@ export default function QAPage() {
         )}
 
         {/* Messages area */}
-        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto bg-muted/20">
+        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto bg-muted/20" onWheel={handleMessagesWheel}>
           {messages.length === 0 && !loadingMessages && !asking ? (
             <div className="flex h-full flex-col items-center justify-center text-center px-4">
               <MessageSquare className="mb-4 h-12 w-12 text-muted-foreground" />
