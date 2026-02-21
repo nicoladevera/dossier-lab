@@ -117,7 +117,7 @@ export default function QAPage() {
 
   const [sidebarWidth, setSidebarWidth] = useState<number>(280);
   const [deletingThread, setDeletingThread] = useState(false);
-  const [autoSelectThread, setAutoSelectThread] = useState(true);
+  const [autoSelectThread, setAutoSelectThread] = useState(false);
 
   const activeThreadIdRef = useRef<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
