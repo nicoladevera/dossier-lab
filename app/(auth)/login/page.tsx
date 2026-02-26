@@ -45,9 +45,9 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="flex flex-col items-center gap-6">
+      <div className="flex w-full max-w-md lg:max-w-[350px] flex-col items-center gap-6">
         <DossierLogo className="h-12 w-12" />
-        <Card className="w-full max-w-md">
+        <Card className="w-full">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Welcome Back</CardTitle>
           <CardDescription>Log in to Dossier Lab</CardDescription>
