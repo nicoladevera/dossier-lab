@@ -14,8 +14,8 @@ import {
 interface HealthChartProps {
   data: Array<{
     date: string;
-    retrievalScoredPct: number;
-    groundednessScoredPct: number;
+    retrievalScoredPct: number | null;
+    groundednessScoredPct: number | null;
   }>;
 }
 
@@ -103,8 +103,8 @@ export function HealthChart({ data }: HealthChartProps) {
 
   const chartData = data.map((d) => ({
     ...d,
-    retrievalScoredPct: Math.round(d.retrievalScoredPct * 100),
-    groundednessScoredPct: Math.round(d.groundednessScoredPct * 100),
+    retrievalScoredPct: d.retrievalScoredPct !== null ? Math.round(d.retrievalScoredPct * 100) : null,
+    groundednessScoredPct: d.groundednessScoredPct !== null ? Math.round(d.groundednessScoredPct * 100) : null,
   }));
 
   const tooltipContentStyle = {
