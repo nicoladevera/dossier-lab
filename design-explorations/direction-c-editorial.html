@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossier Lab — Direction C: Bold & Editorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'Inter Tight', -apple-system, sans-serif;
+
+    /* Light — layered grays with editorial contrast */
+    --bg-page: #ffffff;
+    --bg-sidebar: #f6f5f3;
+    --bg-navbar: #fafaf9;
+    --bg-surface: #f8f7f6;
+    --bg-surface-hover: #f2f1ef;
+    --bg-input: #f4f3f1;
+    --bg-input-focus: #ffffff;
+    --bg-badge: #eeedeb;
+    --bg-row-hover: #f9f8f7;
+
+    --border-heavy: #1a1a1a;
+    --border-medium: #d4d3d0;
+    --border-light: #e9e8e5;
+    --border-rule: #1a1a1a;
+
+    --text-primary: #0a0a0a;
+    --text-secondary: #4a4a4a;
+    --text-tertiary: #8a8a87;
+    --text-quaternary: #b5b4b0;
+    --text-inverse: #ffffff;
+
+    --divider-thick: 3px;
+    --divider-thin: 1px;
+  }
+
+  [data-theme="dark"] {
+    --bg-page: #0a0a0a;
+    --bg-sidebar: #050505;
+    --bg-navbar: #0e0e0e;
+    --bg-surface: #111110;
+    --bg-surface-hover: #1a1a18;
+    --bg-input: #151514;
+    --bg-input-focus: #1c1c1a;
+    --bg-badge: #1e1e1c;
+    --bg-row-hover: #121211;
+
+    --border-heavy: #e8e8e8;
+    --border-medium: #2a2a28;
+    --border-light: #1e1e1c;
+    --border-rule: #e8e8e8;
+
+    --text-primary: #f0f0ee;
+    --text-secondary: #a0a09c;
+    --text-tertiary: #6a6a66;
+    --text-quaternary: #444440;
+    --text-inverse: #0a0a0a;
+
+    --divider-thick: 3px;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ─── Sidebar ─── */
+  .sidebar {
+    width: 240px;
+    background: var(--bg-sidebar);
+    border-right: var(--divider-thick) solid var(--border-heavy);
+    padding: 32px 0;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-brand {
+    padding: 0 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .sidebar-logo {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    color: var(--text-primary);
+    transition: color 0.2s ease;
+  }
+
+  .sidebar-logo svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .sidebar-brand-text h1 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .sidebar-brand-text span {
+    font-family: var(--font-body);
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+    display: block;
+  }
+
+  .sidebar-rule {
+    border: none;
+    border-top: var(--divider-thin) solid var(--border-medium);
+    margin: 0 24px 20px;
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    padding: 0 24px;
+  }
+
+  .sidebar-nav li {
+    border-bottom: var(--divider-thin) solid var(--border-light);
+  }
+
+  .sidebar-nav li:last-child { border-bottom: none; }
+
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.15s ease;
+  }
+
+  .sidebar-nav a:hover {
+    color: var(--text-secondary);
+  }
+
+  .sidebar-nav a.active {
+    color: var(--text-primary);
+  }
+
+  .sidebar-nav a .arrow {
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .sidebar-nav a:hover .arrow,
+  .sidebar-nav a.active .arrow {
+    opacity: 1;
+  }
+
+  .sidebar-nav a.active .arrow { transform: translateX(2px); }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 0 24px;
+  }
+
+  .sidebar-footer hr {
+    border: none;
+    border-top: var(--divider-thin) solid var(--border-medium);
+    margin-bottom: 16px;
+  }
+
+  .user-line {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
+  }
+
+  .user-line strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* ─── Main area ─── */
+  .main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* ─── Navbar ─── */
+  .navbar {
+    height: 52px;
+    border-bottom: var(--divider-thin) solid var(--border-light);
+    background: var(--bg-navbar);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .navbar-section {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .theme-toggle {
+    background: var(--bg-surface);
+    border: var(--divider-thin) solid var(--border-light);
+    padding: 6px 16px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    transition: all 0.15s ease;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--border-medium);
+    color: var(--text-secondary);
+    background: var(--bg-surface-hover);
+  }
+
+  /* ─── Content ─── */
+  .content {
+    flex: 1;
+    padding: 60px 48px;
+    max-width: 920px;
+  }
+
+  .page-heading {
+    margin-bottom: 48px;
+  }
+
+  .page-heading .overline {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+
+  .page-heading h2 {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 12px;
+  }
+
+  .page-heading .subtitle {
+    font-size: 1rem;
+    color: var(--text-tertiary);
+    font-weight: 400;
+    max-width: 480px;
+    line-height: 1.55;
+  }
+
+  .thick-rule {
+    border: none;
+    border-top: var(--divider-thick) solid var(--border-rule);
+    margin: 0 0 36px;
+  }
+
+  .thin-rule {
+    border: none;
+    border-top: var(--divider-thin) solid var(--border-medium);
+    margin: 36px 0;
+  }
+
+  /* ─── Search ─── */
+  .search-section {
+    margin-bottom: 0;
+  }
+
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--bg-input);
+    border: var(--divider-thin) solid var(--border-light);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .search-row:focus-within {
+    border-color: var(--border-medium);
+    background: var(--bg-input-focus);
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    padding: 14px 20px;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-quaternary);
+    font-weight: 400;
+  }
+
+  .search-btn {
+    background: var(--text-primary);
+    color: var(--text-inverse);
+    border: none;
+    padding: 14px 28px;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .search-btn:hover { opacity: 0.8; }
+
+  /* ─── Capture ─── */
+  .capture-section {}
+
+  .capture-header {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-bottom: 20px;
+  }
+
+  .capture-header h3 {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .capture-tabs {
+    display: flex;
+    gap: 4px;
+  }
+
+  .capture-tab {
+    background: none;
+    border: var(--divider-thin) solid transparent;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-quaternary);
+    cursor: pointer;
+    padding: 4px 12px;
+    transition: all 0.15s ease;
+  }
+
+  .capture-tab:hover {
+    color: var(--text-secondary);
+    border-color: var(--border-light);
+  }
+
+  .capture-tab.active {
+    color: var(--text-primary);
+    background: var(--bg-badge);
+    border-color: var(--border-medium);
+  }
+
+  .capture-form {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    background: var(--bg-surface);
+    border: var(--divider-thin) solid var(--border-light);
+    transition: border-color 0.15s ease;
+  }
+
+  .capture-form:focus-within {
+    border-color: var(--border-medium);
+  }
+
+  .capture-form .field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .capture-form label {
+    display: block;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-quaternary);
+    padding: 12px 20px 0;
+  }
+
+  .capture-form input {
+    width: 100%;
+    padding: 6px 20px 12px;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    background: transparent;
+    color: var(--text-primary);
+    outline: none;
+    font-weight: 400;
+  }
+
+  .capture-form input::placeholder {
+    color: var(--text-quaternary);
+  }
+
+  .btn-editorial {
+    padding: 0 32px;
+    background: var(--text-primary);
+    color: var(--text-inverse);
+    border: none;
+    border-left: var(--divider-thin) solid var(--border-light);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s ease;
+  }
+
+  .btn-editorial:hover { opacity: 0.85; }
+
+  /* ─── Sources ─── */
+  .sources-section {}
+
+  .sources-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0;
+    padding-bottom: 14px;
+    border-bottom: var(--divider-thick) solid var(--border-rule);
+  }
+
+  .sources-header h3 {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .sources-header a {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .sources-header a:hover { color: var(--text-primary); }
+
+  .source-list {}
+
+  .source-item {
+    display: grid;
+    grid-template-columns: 32px 72px 1fr auto;
+    align-items: baseline;
+    gap: 0 16px;
+    padding: 14px 8px;
+    margin: 0 -8px;
+    border-bottom: var(--divider-thin) solid var(--border-light);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .source-item:hover {
+    background: var(--bg-row-hover);
+  }
+
+  .source-item:last-child {
+    border-bottom: var(--divider-thin) solid var(--border-medium);
+  }
+
+  .source-number {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-quaternary);
+    font-style: italic;
+    line-height: 1;
+  }
+
+  .source-type-label {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    background: var(--bg-badge);
+    padding: 3px 8px;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  .source-info { min-width: 0; }
+
+  .source-title {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .source-meta {
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  .source-date {
+    font-size: 0.7rem;
+    color: var(--text-quaternary);
+    font-weight: 500;
+    white-space: nowrap;
+    text-align: right;
+    letter-spacing: 0.02em;
+  }
+
+  /* ─── Direction label ─── */
+  .direction-label {
+    position: fixed;
+    bottom: 20px;
+    right: 24px;
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="currentColor" stroke-width="3" fill="none"/>
+          <line x1="24" y1="36" x2="40" y2="36" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="40" y1="36" x2="40" y2="28" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="40" y1="28" x2="56" y2="28" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="56" cy="28" r="2" fill="currentColor"/>
+          <line x1="24" y1="48" x2="52" y2="48" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="52" y1="48" x2="52" y2="40" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="52" y1="40" x2="64" y2="40" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="64" cy="40" r="2" fill="currentColor"/>
+          <line x1="24" y1="60" x2="44" y2="60" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="44" y1="60" x2="44" y2="52" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="44" cy="52" r="2" fill="currentColor"/>
+          <line x1="24" y1="72" x2="36" y2="72" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="36" y1="72" x2="36" y2="66" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="36" y1="66" x2="58" y2="66" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="58" cy="66" r="2" fill="currentColor"/>
+          <circle cx="72" cy="56" r="2.5" fill="currentColor"/>
+          <line x1="58" y1="66" x2="72" y2="56" stroke="currentColor" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="sidebar-brand-text">
+        <h1>Dossier</h1>
+        <span>Lab</span>
+      </div>
+    </div>
+
+    <hr class="sidebar-rule">
+
+    <ul class="sidebar-nav">
+      <li><a href="#" class="active">Dashboard <span class="arrow">→</span></a></li>
+      <li><a href="#">Knowledge Base <span class="arrow">→</span></a></li>
+      <li><a href="#">Q&A <span class="arrow">→</span></a></li>
+      <li><a href="#">Collections <span class="arrow">→</span></a></li>
+      <li><a href="#">Analytics <span class="arrow">→</span></a></li>
+      <li><a href="#">Settings <span class="arrow">→</span></a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <hr>
+      <div class="user-line">
+        <strong>Nicola de Vera</strong><br>
+        Researcher
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-area">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-section">Dossier Lab — Dashboard</div>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span class="toggle-label">Dark</span>
+      </button>
+    </nav>
+
+    <!-- Content -->
+    <main class="content">
+      <div class="page-heading">
+        <p class="overline">Dashboard</p>
+        <h2>Your Knowledge,<br>Organized.</h2>
+        <p class="subtitle">Capture sources from the web, search your library, and build understanding.</p>
+      </div>
+
+      <hr class="thick-rule">
+
+      <!-- Search -->
+      <div class="search-section">
+        <div class="search-row">
+          <input type="text" class="search-input" placeholder="Search your sources…">
+          <button class="search-btn">Search</button>
+        </div>
+      </div>
+
+      <hr class="thin-rule">
+
+      <!-- Capture -->
+      <div class="capture-section">
+        <div class="capture-header">
+          <h3>Capture</h3>
+          <div class="capture-tabs">
+            <button class="capture-tab active">URL</button>
+            <button class="capture-tab">PDF</button>
+            <button class="capture-tab">YouTube</button>
+          </div>
+        </div>
+        <div class="capture-form">
+          <div class="field">
+            <label>Source URL</label>
+            <input type="url" placeholder="https://example.com/article">
+          </div>
+          <button class="btn-editorial">Capture</button>
+        </div>
+      </div>
+
+      <hr class="thin-rule">
+
+      <!-- Sources -->
+      <div class="sources-section">
+        <div class="sources-header">
+          <h3>Recent Sources</h3>
+          <a href="#">View Archive →</a>
+        </div>
+        <div class="source-list">
+          <div class="source-item">
+            <span class="source-number">01</span>
+            <span class="source-type-label">Article</span>
+            <div class="source-info">
+              <div class="source-title">Attention Is All You Need</div>
+              <div class="source-meta">arxiv.org · 14 pages</div>
+            </div>
+            <span class="source-date">Feb 24, 2026</span>
+          </div>
+          <div class="source-item">
+            <span class="source-number">02</span>
+            <span class="source-type-label">PDF</span>
+            <div class="source-info">
+              <div class="source-title">The Design of Everyday Things — Chapter 3 Notes</div>
+              <div class="source-meta">Uploaded · 8 pages</div>
+            </div>
+            <span class="source-date">Feb 22, 2026</span>
+          </div>
+          <div class="source-item">
+            <span class="source-number">03</span>
+            <span class="source-type-label">YouTube</span>
+            <div class="source-info">
+              <div class="source-title">But what is a neural network?</div>
+              <div class="source-meta">3Blue1Brown · 19 min</div>
+            </div>
+            <span class="source-date">Feb 20, 2026</span>
+          </div>
+          <div class="source-item">
+            <span class="source-number">04</span>
+            <span class="source-type-label">Article</span>
+            <div class="source-info">
+              <div class="source-title">A Brief History of Human-Computer Interaction</div>
+              <div class="source-meta">interactions.acm.org · 6 pages</div>
+            </div>
+            <span class="source-date">Feb 18, 2026</span>
+          </div>
+          <div class="source-item">
+            <span class="source-number">05</span>
+            <span class="source-type-label">PDF</span>
+            <div class="source-info">
+              <div class="source-title">Thinking, Fast and Slow — Annotated Summary</div>
+              <div class="source-meta">Uploaded · 22 pages</div>
+            </div>
+            <span class="source-date">Feb 15, 2026</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="direction-label">Direction C · Bold & Editorial (v4)</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.querySelector('.theme-toggle .toggle-label');
+  if (html.dataset.theme === 'light') {
+    html.dataset.theme = 'dark';
+    btn.textContent = 'Light';
+  } else {
+    html.dataset.theme = 'light';
+    btn.textContent = 'Dark';
+  }
+}
+</script>
+</body>
+</html>

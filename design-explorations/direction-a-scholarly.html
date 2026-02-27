@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossier Lab — Direction A: Scholarly & Refined</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Source Sans 3', 'Segoe UI', sans-serif;
+
+    /* Light theme — warm parchment tones */
+    --bg-page: #f5f0e8;
+    --bg-sidebar: #ece6da;
+    --bg-card: #faf7f2;
+    --bg-card-hover: #f5f0e8;
+    --bg-input: #faf7f2;
+    --bg-input-focus: #ffffff;
+    --bg-tab-active: #faf7f2;
+    --bg-badge: #e8e2d6;
+
+    --border-primary: #d4cfc4;
+    --border-light: #e8e2d6;
+    --border-hairline: rgba(0,0,0,0.06);
+
+    --text-primary: #2c2825;
+    --text-secondary: #6b6460;
+    --text-tertiary: #9a948d;
+    --text-inverse: #faf7f2;
+
+    --shadow-card: 0 1px 3px rgba(44,40,37,0.04), inset 0 1px 0 rgba(255,255,255,0.6);
+    --shadow-card-hover: 0 2px 8px rgba(44,40,37,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+    --shadow-elevated: 0 4px 16px rgba(44,40,37,0.08);
+
+    --grain-opacity: 0.03;
+  }
+
+  [data-theme="dark"] {
+    --bg-page: #1a1816;
+    --bg-sidebar: #151311;
+    --bg-card: #222019;
+    --bg-card-hover: #2a2720;
+    --bg-input: #1e1c18;
+    --bg-input-focus: #2a2720;
+    --bg-tab-active: #2a2720;
+    --bg-badge: #2e2b24;
+
+    --border-primary: #3a3630;
+    --border-light: #2e2b24;
+    --border-hairline: rgba(255,255,255,0.05);
+
+    --text-primary: #e8e0d4;
+    --text-secondary: #a09888;
+    --text-tertiary: #706860;
+    --text-inverse: #1a1816;
+
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.02);
+    --shadow-card-hover: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03);
+    --shadow-elevated: 0 4px 16px rgba(0,0,0,0.3);
+
+    --grain-opacity: 0.02;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  /* Paper grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: var(--grain-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+  }
+
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ─── Sidebar ─── */
+  .sidebar {
+    width: 260px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-light);
+    padding: 28px 0;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: background 0.3s ease;
+  }
+
+  .sidebar-brand {
+    padding: 0 28px 24px;
+    border-bottom: 1px solid var(--border-hairline);
+    margin-bottom: 20px;
+  }
+
+  .sidebar-brand h1 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--text-primary);
+  }
+
+  .sidebar-brand span {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    display: block;
+    margin-top: 2px;
+  }
+
+  .sidebar-section-label {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    padding: 0 28px;
+    margin-bottom: 8px;
+    font-variant: small-caps;
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    padding: 0 12px;
+  }
+
+  .sidebar-nav li {
+    margin-bottom: 2px;
+  }
+
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 16px;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: all 0.15s ease;
+  }
+
+  .sidebar-nav a:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+
+  .sidebar-nav a.active {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-weight: 500;
+    box-shadow: var(--shadow-card);
+  }
+
+  .sidebar-nav .icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+  }
+
+  .sidebar-nav a.active .icon { opacity: 0.8; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 20px 28px 0;
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .sidebar-footer .user-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--border-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+  }
+
+  /* ─── Main area ─── */
+  .main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* ─── Navbar ─── */
+  .navbar {
+    height: 56px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    background: var(--bg-page);
+    transition: background 0.3s ease;
+  }
+
+  .navbar-breadcrumb {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
+  }
+
+  .navbar-breadcrumb strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-card);
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--border-primary);
+    color: var(--text-primary);
+  }
+
+  /* ─── Content ─── */
+  .content {
+    flex: 1;
+    padding: 40px 48px;
+    max-width: 960px;
+  }
+
+  .page-heading {
+    margin-bottom: 36px;
+  }
+
+  .page-heading h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .page-heading p {
+    font-size: 0.92rem;
+    color: var(--text-tertiary);
+    font-weight: 300;
+  }
+
+  /* ─── Search card ─── */
+  .search-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 32px;
+    transition: all 0.3s ease;
+  }
+
+  .search-card:focus-within {
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-primary);
+  }
+
+  .search-label {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+    display: block;
+    font-variant: small-caps;
+  }
+
+  .search-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .search-input-wrap .search-icon {
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    padding: 4px 0;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+
+  /* ─── Capture tabs ─── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border-hairline);
+    margin: 4px 0 28px;
+  }
+
+  .capture-section {
+    margin-bottom: 36px;
+  }
+
+  .section-label {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 14px;
+    font-variant: small-caps;
+  }
+
+  .capture-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 20px;
+  }
+
+  .capture-tab {
+    padding: 10px 20px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s ease;
+  }
+
+  .capture-tab:hover {
+    color: var(--text-secondary);
+  }
+
+  .capture-tab.active {
+    color: var(--text-primary);
+    font-weight: 500;
+    border-bottom-color: var(--text-primary);
+  }
+
+  .capture-form {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .capture-form .field {
+    flex: 1;
+  }
+
+  .capture-form label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  .capture-form input {
+    width: 100%;
+    padding: 9px 14px;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    outline: none;
+    transition: all 0.15s ease;
+  }
+
+  .capture-form input:focus {
+    border-color: var(--border-primary);
+    background: var(--bg-input-focus);
+    box-shadow: 0 0 0 3px rgba(44,40,37,0.04);
+  }
+
+  .btn-primary {
+    padding: 9px 22px;
+    background: var(--text-primary);
+    color: var(--text-inverse);
+    border: none;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s ease;
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+
+  /* ─── Recent sources ─── */
+  .sources-section {
+    margin-top: 4px;
+  }
+
+  .sources-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .sources-header h3 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .sources-header a {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.15s ease;
+  }
+
+  .sources-header a:hover { color: var(--text-primary); }
+
+  .source-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .source-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    box-shadow: var(--shadow-card);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .source-card:hover {
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-primary);
+  }
+
+  .source-type-badge {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: var(--bg-badge);
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    font-variant: small-caps;
+  }
+
+  .source-info { flex: 1; min-width: 0; }
+
+  .source-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .source-meta {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    font-weight: 300;
+  }
+
+  .source-date {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  /* ─── Direction label (fixed) ─── */
+  .direction-label {
+    position: fixed;
+    bottom: 20px;
+    right: 24px;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    padding: 6px 14px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-elevated);
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1>Dossier</h1>
+      <span>Research Laboratory</span>
+    </div>
+
+    <p class="sidebar-section-label">Navigation</p>
+    <ul class="sidebar-nav">
+      <li><a href="#" class="active"><span class="icon">◈</span> Dashboard</a></li>
+      <li><a href="#"><span class="icon">◇</span> Knowledge Base</a></li>
+      <li><a href="#"><span class="icon">◆</span> Q&A</a></li>
+      <li><a href="#"><span class="icon">▫</span> Collections</a></li>
+      <li><a href="#"><span class="icon">△</span> Analytics</a></li>
+      <li><a href="#"><span class="icon">○</span> Settings</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar">N</div>
+        <span>Nicola de Vera</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-area">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-breadcrumb">
+        Dossier &nbsp;/&nbsp; <strong>Dashboard</strong>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span class="toggle-icon">☽</span> <span class="toggle-label">Dark mode</span>
+      </button>
+    </nav>
+
+    <!-- Content -->
+    <main class="content">
+      <div class="page-heading">
+        <h2>Your Research Library</h2>
+        <p>Curate, search, and explore your collected knowledge.</p>
+      </div>
+
+      <!-- Search -->
+      <div class="search-card">
+        <span class="search-label">Search your library</span>
+        <div class="search-input-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" class="search-input" placeholder="Search articles, papers, videos…">
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- Capture -->
+      <div class="capture-section">
+        <p class="section-label">Capture a new source</p>
+        <div class="capture-tabs">
+          <button class="capture-tab active">URL</button>
+          <button class="capture-tab">PDF Upload</button>
+          <button class="capture-tab">YouTube</button>
+        </div>
+        <div class="capture-form">
+          <div class="field">
+            <label>Paste a URL to capture</label>
+            <input type="url" placeholder="https://example.com/article">
+          </div>
+          <button class="btn-primary">Capture</button>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- Recent Sources -->
+      <div class="sources-section">
+        <div class="sources-header">
+          <h3>Recent Sources</h3>
+          <a href="#">View all →</a>
+        </div>
+        <div class="source-list">
+          <div class="source-card">
+            <span class="source-type-badge">Article</span>
+            <div class="source-info">
+              <div class="source-title">Attention Is All You Need</div>
+              <div class="source-meta">arxiv.org · 14 pages</div>
+            </div>
+            <span class="source-date">Feb 24</span>
+          </div>
+          <div class="source-card">
+            <span class="source-type-badge">PDF</span>
+            <div class="source-info">
+              <div class="source-title">The Design of Everyday Things — Chapter 3 Notes</div>
+              <div class="source-meta">Uploaded · 8 pages</div>
+            </div>
+            <span class="source-date">Feb 22</span>
+          </div>
+          <div class="source-card">
+            <span class="source-type-badge">YouTube</span>
+            <div class="source-info">
+              <div class="source-title">3Blue1Brown: But what is a neural network?</div>
+              <div class="source-meta">youtube.com · 19 min</div>
+            </div>
+            <span class="source-date">Feb 20</span>
+          </div>
+          <div class="source-card">
+            <span class="source-type-badge">Article</span>
+            <div class="source-info">
+              <div class="source-title">A Brief History of Human-Computer Interaction</div>
+              <div class="source-meta">interactions.acm.org · 6 pages</div>
+            </div>
+            <span class="source-date">Feb 18</span>
+          </div>
+          <div class="source-card">
+            <span class="source-type-badge">PDF</span>
+            <div class="source-info">
+              <div class="source-title">Thinking, Fast and Slow — Annotated Summary</div>
+              <div class="source-meta">Uploaded · 22 pages</div>
+            </div>
+            <span class="source-date">Feb 15</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="direction-label">Direction A · Scholarly & Refined</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.querySelector('.theme-toggle');
+  if (html.dataset.theme === 'light') {
+    html.dataset.theme = 'dark';
+    btn.querySelector('.toggle-icon').textContent = '☀';
+    btn.querySelector('.toggle-label').textContent = 'Light mode';
+  } else {
+    html.dataset.theme = 'light';
+    btn.querySelector('.toggle-icon').textContent = '☽';
+    btn.querySelector('.toggle-label').textContent = 'Dark mode';
+  }
+}
+</script>
+</body>
+</html>
