@@ -14,8 +14,8 @@ import {
 interface MetricsChartProps {
   data: Array<{
     date: string;
-    retrievalAccuracy: number;
-    groundedness: number;
+    retrievalAccuracy: number | null;
+    groundedness: number | null;
     queries: number;
     cost: number;
   }>;
@@ -86,8 +86,8 @@ export function MetricsChart({ data }: MetricsChartProps) {
 
   const chartData = data.map((d) => ({
     ...d,
-    retrievalAccuracy: Math.round(d.retrievalAccuracy * 100),
-    groundedness: Math.round(d.groundedness * 100),
+    retrievalAccuracy: d.retrievalAccuracy !== null ? Math.round(d.retrievalAccuracy * 100) : null,
+    groundedness: d.groundedness !== null ? Math.round(d.groundedness * 100) : null,
   }));
 
   const tooltipContentStyle = {

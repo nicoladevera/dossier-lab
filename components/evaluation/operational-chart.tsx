@@ -16,7 +16,7 @@ interface OperationalChartProps {
   data: Array<{
     date: string;
     queries: number;
-    avgLatencyMs: number;
+    avgLatencyMs: number | null;
     cost: number;
   }>;
 }
@@ -94,7 +94,7 @@ export function OperationalChart({ data }: OperationalChartProps) {
 
   const chartData = data.map((d) => ({
     ...d,
-    avgLatencySec: Math.round((d.avgLatencyMs / 1000) * 10) / 10,
+    avgLatencySec: d.avgLatencyMs !== null ? Math.round((d.avgLatencyMs / 1000) * 10) / 10 : null,
     dailyCostUsd: Math.round(d.cost * 10000) / 10000,
   }));
 

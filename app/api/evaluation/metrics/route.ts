@@ -100,23 +100,41 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const trend = Object.values(dailyMetrics).map((dm) => ({
-      date: dm.date,
-      retrievalAccuracy:
-        dm.retrievalCount > 0 ? dm.retrievalAccuracy / dm.retrievalCount : 0,
-      groundedness:
-        dm.groundednessCount > 0
-          ? dm.groundedness / dm.groundednessCount
-          : 0,
-      queries: dm.count,
-      retrievalScoredQueries: dm.retrievalCount,
-      groundednessScoredQueries: dm.groundednessCount,
-      retrievalScoredPct: dm.count > 0 ? dm.retrievalCount / dm.count : 0,
-      groundednessScoredPct:
-        dm.count > 0 ? dm.groundednessCount / dm.count : 0,
-      avgLatencyMs: dm.count > 0 ? Math.round(dm.latencyMsSum / dm.count) : 0,
-      cost: dm.cost,
-    }));
+    const trend = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const date = d.toISOString().split("T")[0];
+      const dm = dailyMetrics[date];
+
+      if (!dm) {
+        trend.push({
+          date,
+          retrievalAccuracy: null,
+          groundedness: null,
+          queries: 0,
+          retrievalScoredQueries: 0,
+          groundednessScoredQueries: 0,
+          retrievalScoredPct: null,
+          groundednessScoredPct: null,
+          avgLatencyMs: null,
+          cost: 0,
+        });
+      } else {
+        trend.push({
+          date,
+          retrievalAccuracy: dm.retrievalCount > 0 ? dm.retrievalAccuracy / dm.retrievalCount : null,
+          groundedness: dm.groundednessCount > 0 ? dm.groundedness / dm.groundednessCount : null,
+          queries: dm.count,
+          retrievalScoredQueries: dm.retrievalCount,
+          groundednessScoredQueries: dm.groundednessCount,
+          retrievalScoredPct: dm.count > 0 ? dm.retrievalCount / dm.count : null,
+          groundednessScoredPct: dm.count > 0 ? dm.groundednessCount / dm.count : null,
+          avgLatencyMs: dm.count > 0 ? Math.round(dm.latencyMsSum / dm.count) : null,
+          cost: dm.cost,
+        });
+      }
+    }
 
     // Check budget warning
     const todayKey = new Date().toISOString().split("T")[0];
