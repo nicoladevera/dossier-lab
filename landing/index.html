@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dossier Lab — Personal Knowledge Base</title>
+  <meta name="description" content="Transform your reading into a searchable, synthesizable knowledge base. A personal knowledge tool for ingesting, searching, and questioning your content.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dossier Lab — Personal Knowledge Base">
+  <meta property="og:description" content="Transform your reading into a searchable, synthesizable knowledge base.">
+  <meta property="og:image" content="assets/og-image.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Dossier Lab — Personal Knowledge Base">
+  <meta name="twitter:description" content="Transform your reading into a searchable, synthesizable knowledge base.">
+  <meta name="twitter:image" content="assets/og-image.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Grain overlay -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="Dossier Lab">
+        <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" class="nav-logo-icon" aria-hidden="true">
+          <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="currentColor" stroke-width="3" fill="none"/>
+          <line x1="24" y1="36" x2="40" y2="36" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="40" y1="36" x2="40" y2="28" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="40" y1="28" x2="56" y2="28" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="56" cy="28" r="2" fill="currentColor"/>
+          <line x1="24" y1="48" x2="52" y2="48" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="52" y1="48" x2="52" y2="40" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="52" y1="40" x2="64" y2="40" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="64" cy="40" r="2" fill="currentColor"/>
+          <line x1="24" y1="60" x2="44" y2="60" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="44" y1="60" x2="44" y2="52" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="44" cy="52" r="2" fill="currentColor"/>
+          <line x1="24" y1="72" x2="36" y2="72" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="36" y1="72" x2="36" y2="66" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="36" y1="66" x2="58" y2="66" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="58" cy="66" r="2" fill="currentColor"/>
+          <circle cx="72" cy="56" r="2.5" fill="currentColor"/>
+          <line x1="58" y1="66" x2="72" y2="56" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <span class="nav-wordmark">Dossier Lab</span>
+      </a>
+      <div class="nav-links">
+        <button class="theme-toggle" aria-label="Toggle dark mode" type="button">
+          <svg class="theme-icon theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="theme-icon theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-inner">
+      <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" class="hero-watermark" aria-hidden="true">
+        <path d="M24 12 L24 84 L52 84 C72 84 84 70 84 48 C84 26 72 12 52 12 Z" stroke="currentColor" stroke-width="3" fill="none"/>
+        <line x1="24" y1="36" x2="40" y2="36" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="40" y1="36" x2="40" y2="28" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="40" y1="28" x2="56" y2="28" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="56" cy="28" r="2" fill="currentColor"/>
+        <line x1="24" y1="48" x2="52" y2="48" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="52" y1="48" x2="52" y2="40" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="52" y1="40" x2="64" y2="40" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="64" cy="40" r="2" fill="currentColor"/>
+        <line x1="24" y1="60" x2="44" y2="60" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="44" y1="60" x2="44" y2="52" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="44" cy="52" r="2" fill="currentColor"/>
+        <line x1="24" y1="72" x2="36" y2="72" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="36" y1="72" x2="36" y2="66" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="36" y1="66" x2="58" y2="66" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="58" cy="66" r="2" fill="currentColor"/>
+        <circle cx="72" cy="56" r="2.5" fill="currentColor"/>
+        <line x1="58" y1="66" x2="72" y2="56" stroke="currentColor" stroke-width="1"/>
+      </svg>
+      <!-- Knowledge Graph Background -->
+      <svg class="hero-graph" viewBox="0 0 960 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+        <!-- Connecting lines -->
+        <line x1="120" y1="80" x2="280" y2="140" stroke="currentColor" stroke-width="0.75" opacity="0.4"/>
+        <line x1="280" y1="140" x2="420" y2="100" stroke="currentColor" stroke-width="0.75" opacity="0.3"/>
+        <line x1="420" y1="100" x2="580" y2="180" stroke="currentColor" stroke-width="0.75" opacity="0.4"/>
+        <line x1="580" y1="180" x2="720" y2="120" stroke="currentColor" stroke-width="0.75" opacity="0.3"/>
+        <line x1="720" y1="120" x2="860" y2="200" stroke="currentColor" stroke-width="0.75" opacity="0.4"/>
+        <line x1="200" y1="260" x2="380" y2="300" stroke="currentColor" stroke-width="0.75" opacity="0.3"/>
+        <line x1="380" y1="300" x2="540" y2="240" stroke="currentColor" stroke-width="0.75" opacity="0.4"/>
+        <line x1="540" y1="240" x2="700" y2="320" stroke="currentColor" stroke-width="0.75" opacity="0.3"/>
+        <line x1="280" y1="140" x2="200" y2="260" stroke="currentColor" stroke-width="0.75" opacity="0.25"/>
+        <line x1="420" y1="100" x2="380" y2="300" stroke="currentColor" stroke-width="0.75" opacity="0.2"/>
+        <line x1="580" y1="180" x2="540" y2="240" stroke="currentColor" stroke-width="0.75" opacity="0.3"/>
+        <line x1="720" y1="120" x2="700" y2="320" stroke="currentColor" stroke-width="0.75" opacity="0.2"/>
+        <!-- Nodes -->
+        <circle class="node-a" cx="120" cy="80" r="3" fill="currentColor" opacity="0.5"/>
+        <circle class="node-b" cx="280" cy="140" r="4" fill="var(--accent)" opacity="0.7"/>
+        <circle class="node-c" cx="420" cy="100" r="2.5" fill="currentColor" opacity="0.4"/>
+        <circle class="node-d" cx="580" cy="180" r="3.5" fill="var(--accent)" opacity="0.6"/>
+        <circle class="node-e" cx="720" cy="120" r="3" fill="currentColor" opacity="0.5"/>
+        <circle class="node-f" cx="860" cy="200" r="2.5" fill="currentColor" opacity="0.35"/>
+        <circle class="node-c" cx="200" cy="260" r="3" fill="currentColor" opacity="0.4"/>
+        <circle class="node-a" cx="380" cy="300" r="2.5" fill="var(--accent)" opacity="0.5"/>
+        <circle class="node-e" cx="540" cy="240" r="3" fill="currentColor" opacity="0.45"/>
+        <circle class="node-b" cx="700" cy="320" r="2.5" fill="currentColor" opacity="0.35"/>
+        <circle class="node-d" cx="80" cy="200" r="2" fill="currentColor" opacity="0.3"/>
+        <circle class="node-f" cx="480" cy="340" r="2" fill="currentColor" opacity="0.3"/>
+        <circle class="node-a" cx="820" cy="80" r="2" fill="currentColor" opacity="0.3"/>
+        <circle class="node-c" cx="660" cy="60" r="2.5" fill="var(--accent)" opacity="0.4"/>
+        <circle class="node-e" cx="160" cy="340" r="2" fill="currentColor" opacity="0.25"/>
+      </svg>
+      <h1 class="hero-headline reveal">Transform your reading into a searchable, synthesizable knowledge base.</h1>
+      <p class="hero-subtitle reveal">A personal knowledge tool — currently in development.</p>
+    </div>
+  </header>
+
+  <!-- Problem & Solution -->
+  <section class="prose-block">
+    <div class="container">
+      <h2 class="prose-headline reveal">You read constantly.<br>But where does it all go?</h2>
+      <p class="prose-sub reveal">Articles, PDFs, videos — scattered across apps, impossible to synthesize.</p>
+      <div class="prose-ornament reveal" aria-hidden="true"></div>
+      <h2 class="prose-headline reveal">Dossier Lab brings it together.</h2>
+      <p class="prose-sub reveal">One knowledge base. Searchable by meaning. Questionable in natural language.</p>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="container">
+      <h2 class="section-label reveal">How It Works</h2>
+      <div class="steps-flow">
+        <article class="step reveal">
+          <div class="step-node" aria-hidden="true"></div>
+          <h3 class="step-title">Capture</h3>
+          <p class="step-desc">Paste a URL, upload a PDF, or drop a YouTube link. Each source joins your knowledge base.</p>
+        </article>
+        <article class="step reveal">
+          <div class="step-node" aria-hidden="true"></div>
+          <h3 class="step-title">Index</h3>
+          <p class="step-desc">Content is automatically extracted, chunked, and embedded. You do nothing.</p>
+        </article>
+        <article class="step reveal">
+          <div class="step-node" aria-hidden="true"></div>
+          <h3 class="step-title">Search &amp; Ask</h3>
+          <p class="step-desc">Find sources by meaning, not just keywords. Ask questions and get cited answers grounded in your material.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Capabilities -->
+  <section class="capabilities">
+    <div class="container">
+      <h2 class="section-label reveal">Capabilities</h2>
+      <div class="capabilities-grid">
+        <article class="capability reveal">
+          <span class="capability-number">01</span>
+          <h3 class="capability-title">Multi-format Ingestion</h3>
+          <p class="capability-desc">URLs, PDFs, YouTube videos, Word documents, and Markdown — all processed and indexed automatically.</p>
+        </article>
+        <article class="capability reveal">
+          <span class="capability-number">02</span>
+          <h3 class="capability-title">Semantic Search</h3>
+          <p class="capability-desc">Full-text and vector similarity search across your entire knowledge base.</p>
+        </article>
+        <article class="capability reveal">
+          <span class="capability-number">03</span>
+          <h3 class="capability-title">Q&A with Citations</h3>
+          <p class="capability-desc">Multi-turn conversations with source attribution — every answer traces back to your material.</p>
+        </article>
+        <article class="capability reveal">
+          <span class="capability-number">04</span>
+          <h3 class="capability-title">Evaluation Dashboard</h3>
+          <p class="capability-desc">Track retrieval accuracy, groundedness, latency, and cost across your queries.</p>
+        </article>
+        <article class="capability reveal">
+          <span class="capability-number">05</span>
+          <h3 class="capability-title">YouTube Transcript Extraction</h3>
+          <p class="capability-desc">Custom InnerTube integration — reliable transcript extraction without broken third-party libraries.</p>
+        </article>
+        <article class="capability reveal">
+          <span class="capability-number">06</span>
+          <h3 class="capability-title">Source Management</h3>
+          <p class="capability-desc">Filter, sort, and track processing status across all your ingested content types.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p class="footer-attr">&copy; 2026 Dossier Lab. All rights reserved.</p>
+      <a href="https://github.com/nicoladevera/dossier-lab" class="footer-link" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="footer-icon" aria-hidden="true">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+      </a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
