@@ -24,6 +24,13 @@
     localStorage.setItem(STORAGE_KEY, next);
   });
 
+  // --- Nav Logo Scroll to Top ---
+  const navLogo = document.querySelector('.nav-logo');
+  navLogo.addEventListener('click', function (e) {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
   // --- Scroll Reveal ---
   var revealElements = document.querySelectorAll('.reveal');
 
