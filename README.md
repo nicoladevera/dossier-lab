@@ -192,6 +192,7 @@ lib/
 prisma/
   schema.prisma        # Database schema
   migrations/          # SQL migrations
+landing/               # Static landing page (deployed via GitHub Pages)
 ```
 
 ## Architecture
