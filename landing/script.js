@@ -13,9 +13,10 @@
     root.setAttribute('data-theme', theme);
   }
 
-  // Initialize theme: light by default, respect saved preference
+  // Initialize theme: system preference by default, respect saved preference
   const savedTheme = localStorage.getItem(STORAGE_KEY);
-  applyTheme(savedTheme || 'light');
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  applyTheme(savedTheme || systemTheme);
 
   toggle.addEventListener('click', function () {
     const current = root.getAttribute('data-theme');

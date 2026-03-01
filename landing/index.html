@@ -19,6 +19,14 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
+  <script>
+    (function() {
+      var saved = localStorage.getItem('dossier-theme');
+      var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
