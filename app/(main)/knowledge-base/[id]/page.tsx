@@ -170,7 +170,7 @@ export default function SourceDetailPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1 min-w-0">
-          <h2 className="text-2xl font-bold tracking-tight break-words">{source.title}</h2>
+          <h2 className="text-2xl font-serif tracking-tight break-words">{source.title}</h2>
           <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
             <Badge variant="secondary" className="flex items-center gap-1">
               <Icon className="h-3 w-3" />

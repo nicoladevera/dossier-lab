@@ -10,8 +10,8 @@ export default function KnowledgeBasePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Knowledge Base</h2>
-        <p className="text-muted-foreground mt-1">
+        <h2 className="text-2xl font-serif tracking-tight">Knowledge Base</h2>
+        <p className="text-muted-foreground mt-1 italic">
           Manage your captured sources
         </p>
       </div>

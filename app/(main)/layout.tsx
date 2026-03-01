@@ -11,7 +11,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </aside>
         <div className="flex flex-1 flex-col min-w-0">
           <Navbar />
-          <main className="flex-1 p-4 lg:p-6">{children}</main>
+          <main className="flex-1 p-4 lg:p-6 animate-page-reveal">{children}</main>
         </div>
       </div>
     </SessionProvider>

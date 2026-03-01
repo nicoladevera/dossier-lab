@@ -289,8 +289,8 @@ export default function EvaluationPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Evaluation</h2>
-        <p className="text-muted-foreground mt-1">
+        <h2 className="text-2xl font-serif tracking-tight">Evaluation</h2>
+        <p className="text-muted-foreground mt-1 italic">
           Monitor retrieval accuracy, groundedness, and cost metrics
         </p>
       </div>
@@ -300,7 +300,7 @@ export default function EvaluationPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-base">
                 Retrieval Accuracy
               </CardTitle>
               <Tooltip>
@@ -327,7 +327,7 @@ export default function EvaluationPage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Groundedness</CardTitle>
+              <CardTitle className="text-base">Groundedness</CardTitle>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Shield className="h-4 w-4 text-muted-foreground" />
@@ -351,7 +351,7 @@ export default function EvaluationPage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg Latency</CardTitle>
+              <CardTitle className="text-base">Avg Latency</CardTitle>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Clock className="h-4 w-4 text-muted-foreground" />
@@ -374,7 +374,7 @@ export default function EvaluationPage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
+              <CardTitle className="text-base">Total Cost</CardTitle>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -400,7 +400,7 @@ export default function EvaluationPage() {
       {feedback && (feedback.good > 0 || feedback.bad > 0) && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-base">
               User Feedback
             </CardTitle>
             <p className="text-xs text-muted-foreground">
@@ -471,7 +471,7 @@ export default function EvaluationPage() {
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
-            <CardTitle className="text-sm font-medium">Metrics Trend</CardTitle>
+            <CardTitle className="text-base">Metrics Trend</CardTitle>
             <p className="text-xs text-muted-foreground">
               Daily retrieval quality and answer groundedness
             </p>
@@ -501,7 +501,7 @@ export default function EvaluationPage() {
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
-            <CardTitle className="text-sm font-medium">Evaluation Health</CardTitle>
+            <CardTitle className="text-base">Evaluation Health</CardTitle>
             <p className="text-xs text-muted-foreground">
               Scoring coverage and missing-score status
             </p>
@@ -566,7 +566,7 @@ export default function EvaluationPage() {
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-base">
               Operational Trend
             </CardTitle>
             <p className="text-xs text-muted-foreground">
@@ -625,7 +625,7 @@ export default function EvaluationPage() {
       {/* Test suite */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">
+          <CardTitle className="text-base">
             Regression Test Suite
           </CardTitle>
         </CardHeader>
@@ -638,7 +638,7 @@ export default function EvaluationPage() {
         <Card className="border-dashed bg-muted/20">
           <CardContent className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-medium">Backfill Missing Scores</p>
+              <p className="text-base">Backfill Missing Scores</p>
               <p className="text-xs text-muted-foreground">
                 One-time recovery for historical rows that were logged before scoring was enabled.
               </p>

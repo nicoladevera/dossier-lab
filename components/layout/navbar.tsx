@@ -11,7 +11,7 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b bg-background px-4 lg:px-6">
+    <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b bg-background/92 backdrop-blur-xl px-4 lg:px-6">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="lg:hidden">
