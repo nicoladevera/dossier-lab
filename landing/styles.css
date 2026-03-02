@@ -233,7 +233,6 @@ button {
   margin-top: 24px;
   font-size: 17px;
   color: var(--text-secondary);
-  font-style: italic;
   position: relative;
 }
 
@@ -261,7 +260,6 @@ button {
   font-size: 16px;
   line-height: 1.6;
   color: var(--text-secondary);
-  font-style: italic;
   max-width: 480px;
 }
 
