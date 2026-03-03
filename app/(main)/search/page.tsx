@@ -99,7 +99,7 @@ export default function SearchPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-serif tracking-tight">Search</h2>
-        <p className="text-muted-foreground mt-1 italic">
+        <p className="text-muted-foreground mt-1">
           Find information across your knowledge base
         </p>
       </div>

@@ -11,7 +11,7 @@ export default function KnowledgeBasePage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-serif tracking-tight">Knowledge Base</h2>
-        <p className="text-muted-foreground mt-1 italic">
+        <p className="text-muted-foreground mt-1">
           Manage your captured sources
         </p>
       </div>

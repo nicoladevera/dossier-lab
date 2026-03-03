@@ -290,7 +290,7 @@ export default function EvaluationPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-serif tracking-tight">Evaluation</h2>
-        <p className="text-muted-foreground mt-1 italic">
+        <p className="text-muted-foreground mt-1">
           Monitor retrieval accuracy, groundedness, and cost metrics
         </p>
       </div>
