@@ -136,7 +136,7 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <h2 className="text-2xl font-serif tracking-tight">Settings</h2>
-        <p className="text-muted-foreground italic">Manage your API keys and preferences.</p>
+        <p className="text-muted-foreground">Manage your API keys and preferences.</p>
       </div>
 
       <Card>

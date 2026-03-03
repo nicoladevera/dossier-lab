@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
       <div>
         <h2 className="text-2xl font-serif tracking-tight">Dashboard</h2>
-        <p className="text-muted-foreground mt-2 italic">
+        <p className="text-muted-foreground mt-2">
           Welcome to Dossier Lab. Capture content, search your knowledge base, and ask questions.
         </p>
       </div>

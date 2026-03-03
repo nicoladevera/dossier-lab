@@ -641,7 +641,7 @@ export default function QAPage() {
     <div className="-m-4 lg:-m-6 flex h-[calc(100dvh-3.5rem)] flex-col">
       <div className="shrink-0 p-4 pb-0 lg:p-6 lg:pb-0">
         <h2 className="text-2xl font-serif tracking-tight">Q&A</h2>
-        <p className="mt-1 text-muted-foreground italic">
+        <p className="mt-1 text-muted-foreground">
           Ask questions about your knowledge base and review chat history
         </p>
       </div>
