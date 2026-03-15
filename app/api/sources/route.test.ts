@@ -30,6 +30,7 @@ describe("GET /api/sources", () => {
       captureDate: new Date("2026-01-01"),
       status: "READY",
       processingProgress: 100,
+      metadata: null,
     },
   ];
 
@@ -52,6 +53,33 @@ describe("GET /api/sources", () => {
     expect(body.sources).toHaveLength(1);
     expect(body.sources[0]).toMatchObject({ id: "src-1", sourceType: "URL" });
     expect(body.pagination).toMatchObject({ page: 1, limit: 20, total: 1, totalPages: 1 });
+  });
+
+  it("projects errorMessage from metadata without exposing metadata", async () => {
+    mockFindMany.mockResolvedValue([
+      {
+        id: "src-2",
+        title: "Broken Source",
+        sourceType: "PDF",
+        sourceUrl: null,
+        author: null,
+        captureDate: new Date("2026-01-02"),
+        status: "ERROR",
+        processingProgress: 70,
+        metadata: { error: "Failed to embed" },
+      },
+    ]);
+
+    const response = await GET(
+      new Request("http://localhost/api/sources") as never
+    );
+    const body = await response.json();
+
+    expect(body.sources[0]).toMatchObject({
+      id: "src-2",
+      errorMessage: "Failed to embed",
+    });
+    expect(body.sources[0]).not.toHaveProperty("metadata");
   });
 
   it("queries with userId in where clause", async () => {

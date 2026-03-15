@@ -8,6 +8,7 @@ import { extractFromText } from "@/lib/services/extraction/text-extractor";
 import { processSource } from "@/lib/services/processing/processing-queue";
 import { createOpenAIEmbeddingProvider } from "@/lib/services/embedding/provider-factory";
 import { checkIngestionRateLimit } from "@/lib/rate-limit";
+import { toSourceSummary } from "@/lib/sources/source-status";
 type SourceType = "PDF" | "WORD" | "MARKDOWN" | "TEXT";
 
 const FILE_LIMITS: Record<string, { maxSize: number; sourceType: SourceType }> = {
@@ -161,11 +162,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json({
-      source: {
-        id: source.id,
-        title: source.title,
-        status: source.status,
-      },
+      source: toSourceSummary(source),
     });
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {

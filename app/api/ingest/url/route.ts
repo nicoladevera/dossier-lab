@@ -6,6 +6,7 @@ import { isYouTubeUrl, extractFromYouTube } from "@/lib/services/extraction/yout
 import { processSource } from "@/lib/services/processing/processing-queue";
 import { createOpenAIEmbeddingProvider } from "@/lib/services/embedding/provider-factory";
 import { checkIngestionRateLimit } from "@/lib/rate-limit";
+import { toSourceSummary } from "@/lib/sources/source-status";
 
 export async function POST(request: NextRequest) {
   try {
@@ -76,11 +77,7 @@ export async function POST(request: NextRequest) {
       );
 
       return NextResponse.json({
-        source: {
-          id: source.id,
-          title: source.title,
-          status: source.status,
-        },
+        source: toSourceSummary(source),
       });
     }
 
@@ -125,11 +122,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json({
-      source: {
-        id: source.id,
-        title: source.title,
-        status: source.status,
-      },
+      source: toSourceSummary(source),
       warning: result.warning,
     });
   } catch (error) {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getRequiredAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { toSourceSummary } from "@/lib/sources/source-status";
 
 export async function GET(
   _request: Request,
@@ -17,8 +18,14 @@ export async function GET(
       },
       select: {
         id: true,
+        title: true,
+        sourceType: true,
+        sourceUrl: true,
+        author: true,
+        captureDate: true,
         status: true,
         processingProgress: true,
+        metadata: true,
       },
     });
 
@@ -26,7 +33,7 @@ export async function GET(
       return NextResponse.json({ error: "Source not found" }, { status: 404 });
     }
 
-    return NextResponse.json(source);
+    return NextResponse.json(toSourceSummary(source));
   } catch {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

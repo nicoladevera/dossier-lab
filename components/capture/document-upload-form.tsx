@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Upload, AlertTriangle, CheckCircle2, FileText } from "lucide-react";
+import type { CapturedSourceSummary } from "@/lib/sources/source-status";
 
 const ACCEPTED_TYPES = {
   "application/pdf": ".pdf",
@@ -16,7 +17,7 @@ const ACCEPTED_TYPES = {
 const ACCEPT_STRING = Object.values(ACCEPTED_TYPES).join(",") + ",.markdown";
 
 interface DocumentUploadFormProps {
-  onSuccess?: (sourceId: string) => void;
+  onSuccess?: (source: CapturedSourceSummary) => void;
 }
 
 export function DocumentUploadForm({ onSuccess }: DocumentUploadFormProps) {
@@ -70,7 +71,7 @@ export function DocumentUploadForm({ onSuccess }: DocumentUploadFormProps) {
       setSuccess(true);
       setFile(null);
       if (inputRef.current) inputRef.current.value = "";
-      onSuccess?.(data.source.id);
+      onSuccess?.(data.source);
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -161,7 +162,7 @@ export function DocumentUploadForm({ onSuccess }: DocumentUploadFormProps) {
         <Alert>
           <CheckCircle2 className="h-4 w-4" />
           <AlertDescription>
-            Document uploaded successfully! Processing in the background.
+            Document uploaded successfully. Live processing updates will appear below.
           </AlertDescription>
         </Alert>
       )}
