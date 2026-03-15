@@ -47,10 +47,15 @@ export function SourceList({ trackedSources = [] }: SourceListProps) {
   const pollingRef = useRef(false);
   const trackedSourceMapRef = useRef<Record<string, TrackedSourceState>>({});
   const seenTrackedSourceIdsRef = useRef<Set<string>>(new Set());
+  const sourcesRef = useRef<SourceSummary[]>([]);
 
   useEffect(() => {
     trackedSourceMapRef.current = trackedSourceMap;
   }, [trackedSourceMap]);
+
+  useEffect(() => {
+    sourcesRef.current = sources;
+  }, [sources]);
 
   useEffect(() => {
     function handleVisibilityChange() {
@@ -264,7 +269,7 @@ export function SourceList({ trackedSources = [] }: SourceListProps) {
       try {
         const latestSources = await fetchSources();
         const visibleSourceIds = new Set(
-          (latestSources ?? sources).map((source) => source.id)
+          (latestSources ?? sourcesRef.current).map((source) => source.id)
         );
         await refreshHiddenTrackedSources(visibleSourceIds);
       } finally {
@@ -279,7 +284,7 @@ export function SourceList({ trackedSources = [] }: SourceListProps) {
     }, POLL_INTERVAL_MS);
 
     return () => window.clearInterval(intervalId);
-  }, [fetchSources, hasProcessingSources, refreshHiddenTrackedSources, sources, tabVisible]);
+  }, [fetchSources, hasProcessingSources, refreshHiddenTrackedSources, tabVisible]);
 
   useEffect(() => {
     const readySources = Object.values(trackedSourceMap).filter(
