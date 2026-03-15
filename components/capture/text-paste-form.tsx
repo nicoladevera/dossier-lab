@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertTriangle, CheckCircle2 } from "lucide-react";
+import type { CapturedSourceSummary } from "@/lib/sources/source-status";
 
 interface TextPasteFormProps {
-  onSuccess?: (sourceId: string) => void;
+  onSuccess?: (source: CapturedSourceSummary) => void;
 }
 
 export function TextPasteForm({ onSuccess }: TextPasteFormProps) {
@@ -53,7 +54,7 @@ export function TextPasteForm({ onSuccess }: TextPasteFormProps) {
       setText("");
       setTitle("");
       setSourceUrl("");
-      onSuccess?.(data.source.id);
+      onSuccess?.(data.source);
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -109,7 +110,7 @@ export function TextPasteForm({ onSuccess }: TextPasteFormProps) {
         <Alert>
           <CheckCircle2 className="h-4 w-4" />
           <AlertDescription>
-            Text saved successfully! Processing in the background.
+            Text saved successfully. Live processing updates will appear below.
           </AlertDescription>
         </Alert>
       )}

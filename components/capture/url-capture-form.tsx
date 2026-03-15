@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertTriangle, CheckCircle2 } from "lucide-react";
+import type { CapturedSourceSummary } from "@/lib/sources/source-status";
 
 interface UrlCaptureFormProps {
-  onSuccess?: (sourceId: string) => void;
+  onSuccess?: (source: CapturedSourceSummary) => void;
   onSwitchToText?: () => void;
 }
 
@@ -54,7 +55,7 @@ export function UrlCaptureForm({ onSuccess, onSwitchToText }: UrlCaptureFormProp
 
       setSuccess(true);
       setUrl("");
-      onSuccess?.(data.source.id);
+      onSuccess?.(data.source);
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -117,7 +118,7 @@ export function UrlCaptureForm({ onSuccess, onSwitchToText }: UrlCaptureFormProp
         <Alert>
           <CheckCircle2 className="h-4 w-4" />
           <AlertDescription>
-            Content captured successfully! Processing in the background.
+            Content captured successfully. Live processing updates will appear below.
           </AlertDescription>
         </Alert>
       )}

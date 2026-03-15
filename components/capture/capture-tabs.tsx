@@ -7,9 +7,10 @@ import { UrlCaptureForm } from "./url-capture-form";
 import { DocumentUploadForm } from "./document-upload-form";
 import { TextPasteForm } from "./text-paste-form";
 import { Globe, Upload, FileText } from "lucide-react";
+import type { CapturedSourceSummary } from "@/lib/sources/source-status";
 
 interface CaptureTabsProps {
-  onSuccess?: (sourceId: string) => void;
+  onSuccess?: (source: CapturedSourceSummary) => void;
 }
 
 export function CaptureTabs({ onSuccess }: CaptureTabsProps) {

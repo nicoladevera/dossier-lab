@@ -1,11 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { SourceList } from "@/components/knowledge-base/source-list";
 import { CaptureTabs } from "@/components/capture/capture-tabs";
-import { useRouter } from "next/navigation";
+import type { CapturedSourceSummary } from "@/lib/sources/source-status";
 
 export default function KnowledgeBasePage() {
-  const router = useRouter();
+  const [capturedSources, setCapturedSources] = useState<CapturedSourceSummary[]>(
+    []
+  );
+
+  function handleCaptureSuccess(source: CapturedSourceSummary) {
+    setCapturedSources((current) => [
+      source,
+      ...current.filter((existingSource) => existingSource.id !== source.id),
+    ]);
+  }
 
   return (
     <div className="space-y-6">
@@ -16,9 +26,9 @@ export default function KnowledgeBasePage() {
         </p>
       </div>
 
-      <CaptureTabs onSuccess={() => router.refresh()} />
+      <CaptureTabs onSuccess={handleCaptureSuccess} />
 
-      <SourceList />
+      <SourceList trackedSources={capturedSources} />
     </div>
   );
 }

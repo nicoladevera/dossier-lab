@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -16,7 +17,21 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, ArrowUp, Trash2, ExternalLink, Globe, FileText, File, FileCode, AlignLeft, Youtube } from "lucide-react";
+import { getSourceErrorMessage, getSourceStatusLabel } from "@/lib/sources/source-status";
+import {
+  ArrowLeft,
+  ArrowUp,
+  Trash2,
+  ExternalLink,
+  Globe,
+  FileText,
+  File,
+  FileCode,
+  AlignLeft,
+  Youtube,
+  AlertTriangle,
+  Loader2,
+} from "lucide-react";
 
 const typeIcons: Record<string, React.ElementType> = {
   URL: Globe,
@@ -104,22 +119,39 @@ export default function SourceDetailPage() {
     }));
   }, [source]);
 
-  useEffect(() => {
-    async function fetchSource() {
-      try {
-        const response = await fetch(`/api/sources/${params.id}`);
-        const data = await response.json();
-        if (response.ok) {
-          setSource(data.source);
-        }
-      } catch (err) {
-        console.error("Failed to fetch source:", err);
-      } finally {
-        setLoading(false);
+  const fetchSource = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/sources/${params.id}`);
+      const data = await response.json();
+      if (response.ok) {
+        setSource(data.source);
       }
+    } catch (err) {
+      console.error("Failed to fetch source:", err);
+    } finally {
+      setLoading(false);
     }
-    fetchSource();
   }, [params.id]);
+
+  useEffect(() => {
+    void fetchSource();
+  }, [fetchSource]);
+
+  useEffect(() => {
+    if (!source || source.status !== "PROCESSING") {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+
+      void fetchSource();
+    }, 2000);
+
+    return () => window.clearInterval(intervalId);
+  }, [fetchSource, source]);
 
   async function handleDelete() {
     setDeleting(true);
@@ -162,6 +194,8 @@ export default function SourceDetailPage() {
   const ytMeta = source.sourceType === "YOUTUBE" && source.metadata
     ? (source.metadata as Record<string, unknown>)
     : null;
+  const errorMessage = getSourceErrorMessage(source.metadata);
+  const statusLabel = getSourceStatusLabel(source);
 
   return (
     <div className="space-y-6">
@@ -190,13 +224,29 @@ export default function SourceDetailPage() {
             {source.author && <span>by {source.author}</span>}
             <span className="shrink-0">{new Date(source.captureDate).toLocaleDateString()}</span>
             {source.status === "PROCESSING" && (
-              <Badge variant="outline">Processing {source.processingProgress}%</Badge>
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                {statusLabel}
+              </Badge>
+            )}
+            {source.status === "ERROR" && (
+              <Badge variant="destructive" className="flex items-center gap-1">
+                <AlertTriangle className="h-3 w-3" />
+                {statusLabel}
+              </Badge>
             )}
           </div>
         </div>
       </div>
 
       <Separator />
+
+      {source.status === "ERROR" && errorMessage ? (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      ) : null}
 
       {ytMeta && (
         <Card>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequiredAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { toSourceSummary } from "@/lib/sources/source-status";
 
 const VALID_TYPES = ["URL", "PDF", "WORD", "MARKDOWN", "TEXT", "YOUTUBE"] as const;
 
@@ -37,13 +38,14 @@ export async function GET(request: NextRequest) {
           captureDate: true,
           status: true,
           processingProgress: true,
+          metadata: true,
         },
       }),
       prisma.source.count({ where }),
     ]);
 
     return NextResponse.json({
-      sources,
+      sources: sources.map((source) => toSourceSummary(source)),
       pagination: {
         page,
         limit,
