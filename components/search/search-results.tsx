@@ -53,7 +53,7 @@ export function SearchResults({ results, query }: SearchResultsProps) {
         >
           <Card className="transition-colors hover:bg-accent/50">
             <CardContent className="p-4">
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start gap-2">
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium">
                     {result.source?.title || "Unknown Source"}
@@ -80,9 +80,6 @@ export function SearchResults({ results, query }: SearchResultsProps) {
                     {result.snippet}
                   </p>
                 </div>
-                <span className="shrink-0 text-xs text-muted-foreground">
-                  {(result.score * 100).toFixed(1)}%
-                </span>
               </div>
             </CardContent>
           </Card>
